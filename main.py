@@ -300,11 +300,24 @@ class GameMode(Mode):
    
     def doMove(mode):
         dice1, dice2 = mode.diceRoll()
+        #this implements moving the player and tracking whether or not it 
+        #passed or landed on go
         if mode.turnCounter % 2 == 1:
+            prev = mode.player1.position // 40
             mode.player1.position += (dice1 + dice2)
+            newPos = mode.player1.position // 40
+            if mode.player1.position % 40 == 0:
+                mode.player1.money += 400
+            elif prev != newPos:
+                mode.player1.money += 200
         else:
+            prev = mode.player2.position // 40
             mode.player2.position += (dice1 + dice2)
-        
+            newPos = mode.player2.position // 40
+            if mode.player2.position % 40 == 0:
+                mode.player2.money += 400
+            elif prev != newPos:
+                mode.player2.money += 200
         
 
     def timerFired(mode):
@@ -346,10 +359,23 @@ class GameMode(Mode):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
-        canvas.create_text(50,50,text = f'player 1 money:{mode.player1.money}')
+        canvas.create_text(125,150,text = (
+                           f'player 1 money:{mode.player1.money}'))
+        canvas.create_text(125,170,text = 'properties')
+        counter = 0
+        for element in player1.properties:
+            canvas.create_text(125, 190 + (20 * counter), text = element.name)
+            counter += 1
         
     def drawPlayer2Values(mode, canvas, player2):
-        canvas.create_text(50,100,text = f'player 2 money:{mode.player2.money}')
+        canvas.create_text(1075,150,text = (
+                           f'player 2 money:{mode.player2.money}'))
+        canvas.create_text(1075,170,text = 'properties')
+        counter = 0
+        for element in player2.properties:
+            canvas.create_text(1075, 190 + (20 * counter), text = element.name)
+            counter += 1
+        
     
     '''    
     def drawDice(mode, canvas, twodice):
@@ -384,6 +410,8 @@ class GameMode(Mode):
         #draw players values
         mode.drawPlayer1Values(canvas, mode.player1)
         mode.drawPlayer2Values(canvas, mode.player2)
+        
+        
         
         
         '''
