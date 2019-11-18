@@ -8,7 +8,17 @@ class Player(object):
         self.money = 1500
         self.position = 0
         self.properties = []
+        self.numRailroads = 0
+        self.inJail = False
+        self.jailCounter = 0
 
+    def numRail(self):
+        counter = 0
+        for property in self.properties:
+            if ininstance(property, Railroad):
+                counter += 1
+        self.numRailroads = counter
+        
 class Property(object):
     def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost):
         self.name = name
@@ -21,6 +31,7 @@ class Property(object):
         self.hotel = hotel
         self.houseCost = houseCost
         self.double = False
+        self.numHouse = 0
         
 class Railroad(object):
     def __init__(self, name):
@@ -190,21 +201,36 @@ class GameMode(Mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
         
+        #roll tracking in order to help calculate the rent for utilities
+        mode.prevRoll = 0
+        
+        #roll counter used to make sure the gameplay goes as it is supposed to
+        mode.rollCounter = 0
+        
         #turn counter
-        #if divisible by 2 then it is player 2's turn
+        #if divisible by 2 then it is player 1's turn
         mode.turnCounter = 0
         
+        #this is the monopoly logo we are uploading
+        logo = ('monopolyLogo.jpg')
+        mode.logo = mode.loadImage(logo)
+        mode.logo = mode.scaleImage(mode.logo, 0.06)
+        
         #this is the board image that we are uploading
-        board = ('https://i.imgur.com/VmStLDi.jpg')
+        board = ('board.jpg')
         mode.board = mode.loadImage(board)
         
         #this is the buy button that we are uploading
-        buyButton = ('https://i.imgur.com/yu2NQTg.png')
+        buyButton = ('buyProperty.png')
         mode.buy = mode.loadImage(buyButton)
         
         #this is the end turn button
-        turnButton = ('https://i.imgur.com/sffBHbo.png')
+        turnButton = ('endTurn.png')
         mode.turn = mode.loadImage(turnButton)
+        
+        #this is the roll dice button
+        rollDice = ('rollDice.png')
+        mode.roll = mode.loadImage(rollDice)
         
         '''
         #these are the pictures of the dices
@@ -279,9 +305,12 @@ class GameMode(Mode):
         y = random.randint(1,6)
         return (x,y)
         
+    def communityChance(mode):
+        x = random.randint()
+        
     def buyProperty(mode):
         #player 1 turn
-        if mode.turnCounter % 2 == 1:
+        if mode.turnCounter % 2 == 0:
             space = board[mode.player1.position % 40]
             if space in propertySet: 
                 if mode.player1.money >= space.cost:
@@ -296,28 +325,172 @@ class GameMode(Mode):
                     mode.player2.money -= space.cost
                     mode.player2.properties.append(space)
                     propertySet.remove(space)
+                    
+    #this function takes in a property and returns how much to pay
+    def rentPriceProperty(mode, property):
+        if property.numHouse == 0:
+            if property.double:
+                return property.rent * 2
+            else:
+                return property.rent
+        elif property.numHouse == 1:
+            return property.h1
+        elif property.numHouse == 2:
+            return property.h2
+        elif property.numHouse == 3:
+            return property.h3
+        elif property.numHouse == 4:
+            return property.h4
+        elif property.numHouse == 5:
+            return property.hotel
 
-   
-    def doMove(mode):
-        dice1, dice2 = mode.diceRoll()
-        #this implements moving the player and tracking whether or not it 
-        #passed or landed on go
-        if mode.turnCounter % 2 == 1:
-            prev = mode.player1.position // 40
-            mode.player1.position += (dice1 + dice2)
-            newPos = mode.player1.position // 40
-            if mode.player1.position % 40 == 0:
-                mode.player1.money += 400
-            elif prev != newPos:
-                mode.player1.money += 200
+    def rentPriceUtility(mode, utility):
+        if utility.double:
+            return mode.prevRoll * 10
         else:
-            prev = mode.player2.position // 40
-            mode.player2.position += (dice1 + dice2)
-            newPos = mode.player2.position // 40
-            if mode.player2.position % 40 == 0:
-                mode.player2.money += 400
-            elif prev != newPos:
-                mode.player2.money += 200
+            return mode.prevRoll * 4
+        
+    def rentPriceRailroad(mode, railroad):
+        if mode.turnCounter % 2 == 1:
+            mode.player1.numRail()
+            if mode.player1.numRailroads == 1:
+                return railroad.r1
+            elif mode.player1.numRailroads == 2:
+                return railroad.r2
+            elif mode.player1.numRailroads == 3:
+                return railroad.r3
+            elif mode.player1.numRailroads == 4:
+                return railroad.r4
+        else:
+            mode.player2.numRail()
+            if mode.player2.numRailroads == 1:
+                return railroad.r1
+            elif mode.player2.numRailroads == 2:
+                return railroad.r2
+            elif mode.player2.numRailroads == 3:
+                return railroad.r3
+            elif mode.player2.numRailroads == 4:
+                return railroad.r4
+    #this implements moving the player and tracking whether or not it 
+    #passed or landed on go
+    def didRollAndPassGo(mode, dice, doubleBool):
+        if mode.turnCounter % 2 == 0:
+            if mode.moveForwardJail(doubleBool):
+                prev = mode.player1.position // 40
+                mode.player1.position += (dice)
+                mode.landOnJail()
+                newPos = mode.player1.position // 40
+                if mode.player1.position % 40 == 0:
+                    mode.player1.money += 400
+                elif prev != newPos:
+                    mode.player1.money += 200
+        else:
+            if mode.moveForwardJail(doubleBool):
+                prev = mode.player2.position // 40
+                mode.player2.position += (dice)
+                mode.landOnJail()
+                newPos = mode.player2.position // 40
+                if mode.player2.position % 40 == 0:
+                    mode.player2.money += 400
+                elif prev != newPos:
+                    mode.player2.money += 200
+                
+    #This is a function that returns a bool on whether or not the player can move
+    def moveForwardJail(mode, doubleBool):
+        if mode.turnCounter % 2 == 0:
+            if mode.player1.jailCounter == 3:
+                mode.player1.inJail = False
+                mode.player1.money -= 50
+                return True
+            elif not doubleBool and mode.player1.inJail:
+                mode.player1.jailCounter += 1
+                return False
+            elif doubleBool and mode.player1.inJail:
+                mode.player1.inJail = False
+                mode.player1.jailCounter = 0
+                return True
+        else:
+            if mode.player2.jailCounter == 3:
+                mode.player2.money -= 50
+                return True
+            elif not doubleBool and mode.player2.inJail:
+                mode.player2.jailCounter += 1
+                return False
+            elif doubleBool and mode.player2.inJail:
+                mode.player2.inJail = False
+                mode.player2.jailCounter = 0
+                return True
+        return True
+        
+    def landOnJail(mode):
+        if mode.turnCounter % 2 == 0:
+            if mode.player1.position % 40 == 30:
+                mode.player1.position -= 20
+                mode.player1.inJail = True
+        else:
+            if mode.player2.position % 40 == 30:
+                mode.player2.position -= 20
+                mode.player2.inJail = True
+            
+                
+    def landOpponentOrTax(mode):
+        if mode.turnCounter % 2 == 0:
+            #redefine location as space
+            space = board[mode.player1.position % 40]
+            if space in mode.player2.properties:
+                if isinstance(space, Property):
+                    rent = mode.rentPriceProperty(space)
+                    mode.player1.money -= rent
+                    mode.player2.money += rent
+                elif isinstance(space, Utility):
+                    rent = mode.rentPriceUtility(space)
+                    mode.player1.money -= rent
+                    mode.player2.money += rent
+                elif isinstance(space, Railroad):
+                    rent = mode.rentPriceRailroad(space)
+                    mode.player1.money -= rent
+                    mode.player2.money += rent
+            elif isinstance(space, Tax):
+                mode.player1.money -= space.tax
+        else:
+            #redefine location as space
+            space = board[mode.player2.position % 40]
+            #if where you landed is owned by the opponent, pay rent
+            if space in mode.player1.properties:
+                if isinstance(space, Property):
+                    rent = mode.rentPriceProperty(space)
+                    mode.player2.money -= rent
+                    mode.player1.money += rent
+                elif isinstance(space, Utility):
+                    rent = mode.rentPriceUtility(space)
+                    mode.player2.money -= rent
+                    mode.player1.money += rent
+                elif isinstance(space, Railroad):
+                    rent = mode.rentPriceRailroad(space)
+                    mode.player2.money -= rent
+                    mode.player1.money += rent
+            elif isinstance(space, Tax):
+                mode.player2.money -= space.tax
+   
+    def rollDice(mode):
+        if mode.rollCounter == 0:
+            mode.rollCounter += 1
+            dice1, dice2 = mode.diceRoll()
+            double = False
+            if dice1 == dice2:
+                double == True
+            #stores the previous dice in the app
+            mode.prevRoll = dice1 + dice2
+            diceTotal = dice1 + dice2
+            mode.didRollAndPassGo(diceTotal, double)
+            
+            mode.landOpponentOrTax()
+    
+                    
+    def endTurn(mode):
+        if mode.rollCounter == 1:
+            mode.turnCounter += 1
+            mode.rollCounter = 0
         
 
     def timerFired(mode):
@@ -330,13 +503,17 @@ class GameMode(Mode):
             mode.buyProperty()
             print('you pressed the buy button')
             
-        #pressed end turn button
-        if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
+        #pressed roll dice button
+        if (event.x >= mode.width - 136 and event.x <= mode.width - 10 and 
             event.y >= 60 and event.y <= 100):
-            mode.turnCounter += 1
+            print('you pressed the roll dice button')
+            mode.rollDice()
+            
+        #pressed end turn button
+        if (event.x >- mode.width - 138 and event.x <= mode.width - 10 and 
+            event.y >= mode.height - 50 and event.y <= mode.height - 10):
+            mode.endTurn()
             print('you pressed the end turn button')
-            mode.doMove()
-            print(mode.turnCounter)
             
 
     def keyPressed(mode, event):
@@ -359,22 +536,25 @@ class GameMode(Mode):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
-        canvas.create_text(125,150,text = (
+        canvas.create_text(125,200,text = (
                            f'player 1 money:{mode.player1.money}'))
-        canvas.create_text(125,170,text = 'properties')
+        canvas.create_text(125,220,text = 'properties')
         counter = 0
         for element in player1.properties:
-            canvas.create_text(125, 190 + (20 * counter), text = element.name)
+            canvas.create_text(125, 240 + (20 * counter), text = element.name)
             counter += 1
         
     def drawPlayer2Values(mode, canvas, player2):
-        canvas.create_text(1075,150,text = (
+        canvas.create_text(1075,200,text = (
                            f'player 2 money:{mode.player2.money}'))
-        canvas.create_text(1075,170,text = 'properties')
+        canvas.create_text(1075,220,text = 'properties')
         counter = 0
         for element in player2.properties:
-            canvas.create_text(1075, 190 + (20 * counter), text = element.name)
+            canvas.create_text(1075, 240 + (20 * counter), text = element.name)
             counter += 1
+            
+    def drawCommunityChance(modek, canvas):
+        pass
         
     
     '''    
@@ -384,7 +564,7 @@ class GameMode(Mode):
     '''
     
     def drawTurn(mode, canvas):
-        if mode.turn % 2 == 1:
+        if mode.turnCounter % 2 == 0:
             print("Player 1's turn")   
         else:
             print("Player 2's turn")
@@ -392,6 +572,12 @@ class GameMode(Mode):
     
 
     def redrawAll(mode, canvas):
+        #draw turn
+        mode.drawTurn(canvas)
+        
+        #draw logo
+        canvas.create_image(140, 65, image = ImageTk.PhotoImage(mode.logo))
+        
         #draw board
         canvas.create_image(mode.width / 2,mode.height / 2,
                             image=ImageTk.PhotoImage(mode.board))
@@ -400,8 +586,12 @@ class GameMode(Mode):
                             ImageTk.PhotoImage(mode.buy))
                             
         #draw turn button
-        canvas.create_image(mode.width - 74, 80, image = 
+        canvas.create_image(mode.width - 74, mode.height - 30, image = 
                             ImageTk.PhotoImage(mode.turn))
+                            
+        #draw roll dice button
+        canvas.create_image(mode.width - 73, 80, image = 
+                            ImageTk.PhotoImage(mode.roll))
         
         #draw players
         mode.drawPlayer1(canvas, mode.player1)
