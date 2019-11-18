@@ -11,6 +11,7 @@ class Player(object):
         self.numRailroads = 0
         self.inJail = False
         self.jailCounter = 0
+        self.colorBuild = []
 
     def numRail(self):
         counter = 0
@@ -18,7 +19,100 @@ class Player(object):
             if ininstance(property, Railroad):
                 counter += 1
         self.numRailroads = counter
-        
+    
+    def doubleRent(self):
+        #brown properties
+        if mediterranean in self.properties and baltic in self.properties:
+            self.colorBuild.append('brown')
+            mediterranean.double = True
+            baltic.double = True
+        else:
+            mediterranean.double = False
+            baltic.double = False
+        #grey properties
+        if (oriental in self.properties and vermont in self.properties and 
+              connecticut in self.properties):
+            self.colorBuild.append('grey')
+            oriental.double = True
+            vermont.double = True
+            connecticut.double = True
+        else:
+            oriental.double = False
+            vermont.double = False
+            connecticut.double = False
+        #pink properties
+        if (stCharles in self.properties and state in self.properties and 
+            virginia in self.properties):
+            self.colorBuild.append('pink')
+            stCharles.double = True
+            state.double = True
+            virginia.double = True
+        else:
+            stCharles.double = False
+            state.double = False
+            virginia.double = False
+        #orange properties
+        if (stJames in self.properties and tennessee in self.properties and 
+            newYork in self.properties):
+            self.colorBuild.append('orange')
+            stJames.double = True
+            tennessee.double = True
+            newYork.double = True
+        else:
+            stJames.double = False
+            tennessee.double = False
+            newYork.double = False
+        #red properties
+        if (kentucky in self.properties and indiana in self.properties and 
+            illinois in self.properties):
+            self.colorBuild.append('red')
+            kentucky.double = True
+            indiana.double = True
+            illinois.double = True
+        else:
+            kentucky.double = False
+            indiana.double = False
+            illinois.double = False
+        #yellow properties
+        if (atlantic in self.properties and vetnor in self.properties and 
+            marvin in self.properties):
+            self.colorBuild.append('yellow')
+            atlantic.double = True
+            vetnor.double = True
+            marvin.double = True
+        else:
+            atlantic.double = False
+            vetnor.double = False
+            marvin.double = False
+        #green properties
+        if (pacific in self.properties and northCarolina in self.properties and 
+            pennsylvania in self.properties):
+            self.colorBuild.append('green')
+            pacific.double = True
+            northCarolina.double = True
+            pennsylvania.double = True
+        else:
+            pacific.double = False
+            northCarolina.double = False
+            pennsylvania.double = False
+        #blue properties
+        if (parkPlace in self.properties and boardwalk in self.properties):
+            self.colorBuild.append('blue')
+            parkPlace.double = True
+            boardwalk.double = True
+        else:
+            parkPlace.double = False
+            boardwalk.double = False
+        #utilities
+        if (electric in self.properties and water in self.properties):
+            electric.double = True
+            water.double = True
+        else:
+            electric.double = False
+            water.double = False
+            
+            
+            
 class Property(object):
     def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost):
         self.name = name
@@ -344,12 +438,14 @@ class GameMode(Mode):
         elif property.numHouse == 5:
             return property.hotel
 
+    #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility):
         if utility.double:
             return mode.prevRoll * 10
         else:
             return mode.prevRoll * 4
-        
+    
+    #this function takes in a railroad and returns how much to pay
     def rentPriceRailroad(mode, railroad):
         if mode.turnCounter % 2 == 1:
             mode.player1.numRail()
@@ -491,6 +587,8 @@ class GameMode(Mode):
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
+        mode.player1.doubleRent()
+        mode.player2.doubleRent()
         
 
     def timerFired(mode):
@@ -553,7 +651,7 @@ class GameMode(Mode):
             canvas.create_text(1075, 240 + (20 * counter), text = element.name)
             counter += 1
             
-    def drawCommunityChance(modek, canvas):
+    def drawCommunityChance(mode, canvas):
         pass
         
     
@@ -564,10 +662,11 @@ class GameMode(Mode):
     '''
     
     def drawTurn(mode, canvas):
+        canvas.create_text(125, 150, text = 'Turn:')
         if mode.turnCounter % 2 == 0:
-            print("Player 1's turn")   
+            canvas.create_text(125, 170, text = 'Player 1')
         else:
-            print("Player 2's turn")
+            canvas.create_text(125, 170, text = 'Player 2')
         
     
 
