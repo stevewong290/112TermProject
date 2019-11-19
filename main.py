@@ -2,6 +2,10 @@ from cmu_112_graphics import *
 from tkinter import *
 import random, math, copy, string, time
 
+############################  Class Setup  #####################################  
+
+
+
 class Player(object):
     def __init__(self, name):
         self.name = name
@@ -114,7 +118,7 @@ class Player(object):
             
             
 class Property(object):
-    def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost):
+    def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost, color, setRank):
         self.name = name
         self.cost = cost
         self.rent = rent
@@ -127,6 +131,8 @@ class Property(object):
         self.double = False
         self.numHouse = 0
         self.selected = False
+        self.color = color
+        self.setRank = setRank
         
         
 class Railroad(object):
@@ -157,32 +163,33 @@ class Utilities(object):
         self.cost = cost
         self.double = False
 
-        
-    
+############################  Board Setup  #####################################     
 
+
+#################################  Spaces  #####################################
 #instantiated properties        
-mediterranean = Property('Mediterranean Avenue', 60, 2, 10, 30, 90, 160, 250, 50)
-baltic = Property('Baltic Avenue', 60, 4, 20, 60, 180, 320, 450, 50)
-oriental = Property('Oriental Avenue', 100, 6, 30, 90, 270, 400, 550, 50)
-vermont = Property('Vermont Avenue', 100, 6, 30, 90, 270, 400, 550, 50)
-connecticut = Property('Connecticut Avenue', 120, 8, 40, 100, 300, 450, 600, 50)
-stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100)
-state = Property('State Avenue', 140, 10, 50, 150, 450, 625, 750, 100)
-virginia = Property('Virginia Avenue', 160, 12, 60, 180, 500, 700, 900, 100)
-stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100)
-tennessee = Property('Tennessee Avenue', 180, 14, 70, 200, 550, 750, 950, 100)
-newYork = Property('New York Avenue', 200, 16, 80, 220, 600, 800, 1000, 100)
-kentucky = Property('Kentucky Avenue', 220, 18, 90, 250, 700, 875, 1050, 150)
-indiana = Property('Indiana Avenue', 220, 18, 90, 250, 700, 875, 1050, 150)
-illinois = Property('Illinois Avenue', 240, 20, 100, 300, 750, 925, 1100, 150)
-atlantic = Property('Atlantic Avenue', 260, 22, 110, 330, 800, 975, 1150, 150)
-vetnor = Property('Vetnor Avenue', 260, 22, 110, 330, 800, 975, 1150, 150)
-marvin = Property('Marvin Avenue', 280, 24, 120, 360, 850, 1025, 1200, 150)
-pacific = Property('Pacific Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200)
-northCarolina = Property('North Carolina Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200)
-pennsylvania = Property('Pennsylvania Avenue', 320, 28, 150, 450, 1000, 1200, 1400, 200)
-parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200)
-boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200)
+mediterranean = Property('Mediterranean Avenue', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1)
+baltic = Property('Baltic Avenue', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2)
+oriental = Property('Oriental Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1)
+vermont = Property('Vermont Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2)
+connecticut = Property('Connecticut Avenue', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3)
+stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1)
+state = Property('State Avenue', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2)
+virginia = Property('Virginia Avenue', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3)
+stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1)
+tennessee = Property('Tennessee Avenue', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2)
+newYork = Property('New York Avenue', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3)
+kentucky = Property('Kentucky Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1)
+indiana = Property('Indiana Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2)
+illinois = Property('Illinois Avenue', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3)
+atlantic = Property('Atlantic Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1)
+vetnor = Property('Vetnor Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2)
+marvin = Property('Marvin Avenue', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3)
+pacific = Property('Pacific Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1)
+northCarolina = Property('North Carolina Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2)
+pennsylvania = Property('Pennsylvania Avenue', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3)
+parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1)
+boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2)
 
 #instantiated railroads
 readingRail = Railroad('Reading Railroad')
@@ -212,6 +219,7 @@ chanceSide4 = CommunityChance('Community Chest Side 4')
 incomeTax = Tax('Income Tax', 200)
 luxuryTax = Tax('Luxury Tax', 100)
 
+############################  Board ############################################
 
 #putting each space into a list
 board = []
@@ -274,7 +282,7 @@ for element in board:
         isinstance(element, CommunityChance)):
         propertySet.remove(element)
         
-
+###########################  Houses ############################################
         
 #brown houses
 mediterraneanHouse = []
@@ -308,9 +316,9 @@ stateHouse = []
 for house in range(4):
     stateHouse.append((352, 437 + 12 * house))
     
-viriginiaHouse = []
+virginiaHouse = []
 for house in range(4):
-    stateHouse.append((352, 384.5 + 12 * house))
+    virginiaHouse.append((352, 384.5 + 12 * house))
 
 #orange houses    
 stJamesHouse = []
@@ -372,14 +380,6 @@ for house in range(4):
 boardwalkHouse = []
 for house in range(4):
     boardwalkHouse.append((845, 577 - 12 * house))
-    
-        
-coorSide1 = [(810, 628), (705, 628), (547.5, 628), (442.5, 628), (390, 628)]
-coorSide2 = [(320, 560),(320, 455),(320, 402.5),(320, 297.5),(320, 192.5), (320, 140)]
-coorSide3 = [(390, 70),(495, 70),(547.5, 70),(652.5,70),(705,70),(810, 70)]
-coorSide4 = [(878, 140),(878, 192.5),(878, 297.5),(878, 455), (878,560)]
-
-    
 
         
 housePosition = []
@@ -397,7 +397,7 @@ housePosition.append(None)
 housePosition.append(stCharlesHouse)
 housePosition.append(None)
 housePosition.append(stateHouse)
-housePosition.append(viriginiaHouse)
+housePosition.append(virginiaHouse)
 housePosition.append(None)
 housePosition.append(stJamesHouse)
 housePosition.append(None)
@@ -424,16 +424,17 @@ housePosition.append(parkPlaceHouse)
 housePosition.append(None)
 housePosition.append(boardwalkHouse)
 
-numHouse = [None, 0, None, 0, None, None, 0, None, 0, 0, None, 0, None, 0, 0, 
-            None, 0, None, 0, 0, None, 0, None, 0, 0, None, 0, 0, None, 0, 
-            None, 0, 0, None, 0, None, None, 0, None, 0]
+houses = dict()
+houses['brown'] = (0,0)
+houses['grey'] = (0,0,0)
+houses['pink'] = (0,0,0)
+houses['orange'] = (0,0,0)
+houses['red'] = (0,0,0)
+houses['yellow'] = (0,0,0)
+houses['green'] = (0,0,0)
+houses['blue'] = (0,0)
 
-
-
-
-
-
-
+########################  Splash Screen Setup  #################################  
 
 class SplashScreenMode(Mode):
     def appStarted(mode):
@@ -446,7 +447,6 @@ class SplashScreenMode(Mode):
         
     def timerFired(mode):
         mode.counter += 1
-        print(mode.counter)
         
     def redrawAll(mode, canvas):
         font = 'Arial 60 bold'
@@ -466,11 +466,15 @@ class SplashScreenMode(Mode):
             mode.app.setActiveMode(mode.app.helpMode)
         else:
             mode.app.setActiveMode(mode.app.gameMode)
+            
+##########################  Game Mode Setup  ###################################  
 
 class GameMode(Mode):
     def appStarted(mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
+        
+        mode.player1.colorBuild.append('grey')
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
@@ -502,6 +506,10 @@ class GameMode(Mode):
         #this is the roll dice button
         rollDice = ('rollDice.png')
         mode.roll = mode.loadImage(rollDice)
+        
+        #this is the buy house button
+        buyHouse = ('buyHouse.png')
+        mode.buyHouseButton = mode.loadImage(buyHouse)
         
         
         '''
@@ -579,6 +587,8 @@ class GameMode(Mode):
         
     def communityChance(mode):
         x = random.randint()
+
+#################################  Buying  #####################################  
         
     def buyProperty(mode):
         #player 1 turn
@@ -599,7 +609,64 @@ class GameMode(Mode):
                     propertySet.remove(space)
         mode.player1.doubleRent()
         mode.player2.doubleRent()
+        
+    def buyHouseConstraint(mode, property):
+        #player 1 turn
+        if mode.turnCounter % 2 == 0:
+            print(property.color)
+            print(mode.player1.colorBuild)
+            if (property.color in mode.player1.colorBuild):
+                if property.color == 'brown' or property.color == 'blue':
+                    a, b = houses[property.color]
+                    if property.numHouse == min(a,b):
+                        return True
+                    else:
+                        return False
+                else:
+                    a, b, c = houses[property.color]
+                    if property.numHouse == min(a,b,c):
+                        return True
+                    else:
+                        return False
+            return False
+        else:
+            if (property.color in mode.player2.colorBuild):
+                if property.color == 'brown' or property.color == 'blue':
+                    a, b = houses[property.color]
+                    if property.numHouse == min(a,b):
+                        return True
+                    else:
+                        return False
+                else:
+                    a, b, c = houses[property.color]
+                    if property.numHouse == min(a,b,c):
+                        return True
+                    else:
+                        return False
+            return False
+            
+    def buyHouse(mode, property):
+        if mode.buyHouseConstraint(property):
+            property.numHouse += 1
+            if property.color == 'brown' or property.color == 'blue':
+                a,b = houses[property.color]
+                if property.setRank == 1:
+                    houses[property.color] = (a+1,b)
+                else:
+                    houses[property.color] = (a, b+1)
+            else:
+                a,b,c = houses[property.color]
+                if property.setRank == 1:
+                    houses[property.color] = (a+1,b,c)
+                elif property.setRank == 2:
+                    houses[property.color] = (a,b+1,c)
+                else:
+                    houses[property.color] = (a,b,c+1)
+            print('it did not work')
+            
                     
+#########################  Rent Price Calculator  ##############################  
+
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property):
         if property.numHouse == 0:
@@ -647,6 +714,9 @@ class GameMode(Mode):
                 return railroad.r3
             elif mode.player2.numRailroads == 4:
                 return railroad.r4
+                
+###############################  Movement  #####################################  
+
     #this implements moving the player and tracking whether or not it 
     #passed or landed on go
     def didRollAndPassGo(mode, dice, doubleBool):
@@ -771,6 +841,7 @@ class GameMode(Mode):
         mode.player1.doubleRent()
         mode.player2.doubleRent()
         
+############################  Select Spaces  ###################################  
 
     def propertySelection(mode, x, y):
         for space in board:
@@ -851,15 +922,14 @@ class GameMode(Mode):
             y >= 560 - 26.25 and y <= 560 + 26.25):
             boardwalk.selected = True
 
-    def timerFired(mode):
-        pass
+###############################  User Input  ################################### 
 
     def mousePressed(mode, event):
-        #pressed buy button
+        #pressed buy property button
         if (event.x >= mode.width - 180 and event.x <= mode.width - 10 and 
             event.y >= 10 and event.y <= 50):
             mode.buyProperty()
-            print('you pressed the buy button')
+            print('you pressed the buy property button')
             
         #pressed roll dice button
         if (event.x >= mode.width - 136 and event.x <= mode.width - 10 and 
@@ -873,6 +943,16 @@ class GameMode(Mode):
             mode.endTurn()
             print('you pressed the end turn button')
             
+        #pressed buy house button
+        if (event.x >= mode.width - 154 and event.x <= mode.width - 10 and 
+            event.y >= 110 and event.y <= 150):
+            for space in board:
+                if isinstance(space, Property):
+                    if space.selected:
+                        selected = space
+            mode.buyHouse(selected)
+            print('you pressed the buyHouse button')
+            
         #property selection
         mode.propertySelection(event.x, event.y)
         for space in board:
@@ -883,6 +963,11 @@ class GameMode(Mode):
 
     def keyPressed(mode, event):
         pass
+        
+    def timerFired(mode):
+        pass
+        
+############################  Draw Functions  ################################## 
         
     def drawPlayer1Path(mode,canvas,x,y):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
@@ -942,12 +1027,17 @@ class GameMode(Mode):
         
         
     def drawHouse(mode, canvas):
+        space = 0
         for property in housePosition:
             if property != None:
+                counter = 0
                 for houseCoor in property:
-                    x, y = houseCoor
-                    canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
-                    
+                    if counter < board[space].numHouse:
+                        x, y = houseCoor
+                        canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
+                    counter += 1
+            space += 1
+            
     def drawPropArea(mode, canvas):
         for pair in coorSide1:
             x,y = pair
@@ -991,6 +1081,10 @@ class GameMode(Mode):
         #draw roll dice button
         canvas.create_image(mode.width - 73, 80, image = 
                             ImageTk.PhotoImage(mode.roll))
+                            
+        #draw buy house button
+        canvas.create_image(mode.width - 82, 130, image = 
+                            ImageTk.PhotoImage(mode.buyHouseButton))
         
         #draw players
         mode.drawPlayer1(canvas, mode.player1)
@@ -1003,7 +1097,7 @@ class GameMode(Mode):
         #finding coordinates for houses
         
         mode.drawHouse(canvas)
-        mode.drawPropArea(canvas)
+        #mode.drawPropArea(canvas)
         
         
         
@@ -1018,6 +1112,8 @@ class GameMode(Mode):
             mode.drawPlayer2Path(canvas,xcor,ycor)
         '''
 
+##############################  Help Mode Setup  ############################### 
+
 class HelpMode(Mode):
     def redrawAll(mode, canvas):
         font = 'Arial 26 bold'
@@ -1027,6 +1123,8 @@ class HelpMode(Mode):
 
     def keyPressed(mode, event):
         mode.app.setActiveMode(mode.app.gameMode)
+        
+############################  Modal App Setup  ################################# 
 
 class MyModalApp(ModalApp):
     def appStarted(app):
