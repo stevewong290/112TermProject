@@ -126,6 +126,8 @@ class Property(object):
         self.houseCost = houseCost
         self.double = False
         self.numHouse = 0
+        self.selected = False
+        
         
 class Railroad(object):
     def __init__(self, name):
@@ -272,15 +274,19 @@ for element in board:
         isinstance(element, CommunityChance)):
         propertySet.remove(element)
         
+
+        
 #brown houses
 mediterraneanHouse = []
 for house in range(4):
     mediterraneanHouse.append((791 + 12 * house, 595))
+
     
 balticHouse = []    
 for house in range(4):
     balticHouse.append((686 + 12 * house, 595))
-    
+ 
+#grey houses
 orientalHouse = []
 for house in range(4):
     orientalHouse.append((529.5 + 12 * house, 595))
@@ -292,7 +298,8 @@ for house in range(4):
 connecticutHouse = []
 for house in range(4):
     connecticutHouse.append((372 + 12 * house, 595))
-     
+
+#pink houses     
 stCharlesHouse = []
 for house in range(4):
     stCharlesHouse.append((352, 542 + 12 * house))
@@ -304,7 +311,8 @@ for house in range(4):
 viriginiaHouse = []
 for house in range(4):
     stateHouse.append((352, 384.5 + 12 * house))
-    
+
+#orange houses    
 stJamesHouse = []
 for house in range(4):
     stJamesHouse.append((352, 279.5 + 12 * house))
@@ -316,7 +324,8 @@ for house in range(4):
 newYorkHouse = []
 for house in range(4):
     newYorkHouse.append((352, 122 + 12 * house))
-    
+ 
+ #red houses   
 kentuckyHouse = []
 for house in range(4):
     kentuckyHouse.append((408 - 12 * house, 102))
@@ -328,7 +337,8 @@ for house in range(4):
 illinoisHouse = []
 for house in range(4):
     illinoisHouse.append((565.5 - 12 * house, 102))
-    
+
+#yellow houses    
 atlanticHouse = []
 for house in range(4):
     atlanticHouse.append((670.5 - 12 * house, 102))
@@ -340,7 +350,8 @@ for house in range(4):
 marvinHouse = []
 for house in range(4):
     marvinHouse.append((828 - 12 * house, 102))
-    
+ 
+#green houses   
 pacificHouse = []
 for house in range(4):
     pacificHouse.append((845, 157 - 12 * house))
@@ -352,7 +363,8 @@ for house in range(4):
 pennsylvaniaHouse = []
 for house in range(4):
     pennsylvaniaHouse.append((845, 314.5 - 12 * house))
-    
+
+#blue houses    
 parkPlaceHouse = []
 for house in range(4):
     parkPlaceHouse.append((845, 472 - 12 * house))
@@ -361,6 +373,11 @@ boardwalkHouse = []
 for house in range(4):
     boardwalkHouse.append((845, 577 - 12 * house))
     
+        
+coorSide1 = [(810, 628), (705, 628), (547.5, 628), (442.5, 628), (390, 628)]
+coorSide2 = [(320, 560),(320, 455),(320, 402.5),(320, 297.5),(320, 192.5), (320, 140)]
+coorSide3 = [(390, 70),(495, 70),(547.5, 70),(652.5,70),(705,70),(810, 70)]
+coorSide4 = [(878, 140),(878, 192.5),(878, 297.5),(878, 455), (878,560)]
 
     
 
@@ -580,6 +597,8 @@ class GameMode(Mode):
                     mode.player2.money -= space.cost
                     mode.player2.properties.append(space)
                     propertySet.remove(space)
+        mode.player1.doubleRent()
+        mode.player2.doubleRent()
                     
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property):
@@ -742,7 +761,8 @@ class GameMode(Mode):
             mode.didRollAndPassGo(diceTotal, double)
             
             mode.landOpponentOrTax()
-    
+            mode.player1.doubleRent()
+            mode.player2.doubleRent()
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
@@ -751,6 +771,85 @@ class GameMode(Mode):
         mode.player1.doubleRent()
         mode.player2.doubleRent()
         
+
+    def propertySelection(mode, x, y):
+        for space in board:
+            if isinstance(space,Property):
+                space.selected = False
+                
+        #selection from side 1
+        if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            mediterranean.selected = True
+        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            baltic.selected = True
+        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            oriental.selected = True
+        elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            vermont.selected = True
+        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            connecticut.selected = True
+        
+        #selection from side 2
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 560 - 26.25 and y <= 560 + 26.25):
+            stCharles.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 455 - 26.25 and y <= 455 + 26.25):
+            state.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
+            virginia.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+            stJames.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+            tennessee.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 140 - 26.25 and y <= 140 + 26.25):
+            newYork.selected = True
+       
+        #selection from side 3
+        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            kentucky.selected = True
+        elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            indiana.selected = True
+        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            illinois.selected = True
+        elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            atlantic.selected = True
+        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            vetnor.selected = True
+        elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            marvin.selected = True
+        
+        #selection from side 4
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 140 - 26.25 and y <= 140 + 26.25):
+            pacific.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+            northCarolina.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+            pennsylvania.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 455 - 26.25 and y <= 455 + 26.25):
+            parkPlace.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 560 - 26.25 and y <= 560 + 26.25):
+            boardwalk.selected = True
 
     def timerFired(mode):
         pass
@@ -769,10 +868,17 @@ class GameMode(Mode):
             mode.rollDice()
             
         #pressed end turn button
-        if (event.x >- mode.width - 138 and event.x <= mode.width - 10 and 
+        if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
             event.y >= mode.height - 50 and event.y <= mode.height - 10):
             mode.endTurn()
             print('you pressed the end turn button')
+            
+        #property selection
+        mode.propertySelection(event.x, event.y)
+        for space in board:
+            if isinstance(space, Property):
+                if space.selected == True:
+                    print(f'{space.name} is selected') 
             
 
     def keyPressed(mode, event):
@@ -841,6 +947,25 @@ class GameMode(Mode):
                 for houseCoor in property:
                     x, y = houseCoor
                     canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
+                    
+    def drawPropArea(mode, canvas):
+        for pair in coorSide1:
+            x,y = pair
+            canvas.create_rectangle(x - 26.25, y - (42.5), 
+                                    x + 26.25, y + (42.5), fill = 'red')
+                                    
+        for pair in coorSide2:
+            x,y = pair
+            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
+        
+        for pair in coorSide3:
+            x,y = pair
+            canvas.create_rectangle(x - 26.25, y - (42.5), 
+                                    x + 26.25, y + (42.5), fill = 'red')
+        
+        for pair in coorSide4:
+            x,y = pair
+            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
             
         
     
@@ -878,6 +1003,7 @@ class GameMode(Mode):
         #finding coordinates for houses
         
         mode.drawHouse(canvas)
+        mode.drawPropArea(canvas)
         
         
         
