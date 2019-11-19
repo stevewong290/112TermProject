@@ -272,17 +272,177 @@ for element in board:
         isinstance(element, CommunityChance)):
         propertySet.remove(element)
         
+#brown houses
+mediterraneanHouse = []
+for house in range(4):
+    mediterraneanHouse.append((791 + 12 * house, 595))
+    
+balticHouse = []    
+for house in range(4):
+    balticHouse.append((686 + 12 * house, 595))
+    
+orientalHouse = []
+for house in range(4):
+    orientalHouse.append((529.5 + 12 * house, 595))
+    
+vermontHouse = []
+for house in range(4):
+    vermontHouse.append((424.5 + 12 * house, 595))
+    
+connecticutHouse = []
+for house in range(4):
+    connecticutHouse.append((372 + 12 * house, 595))
+     
+stCharlesHouse = []
+for house in range(4):
+    stCharlesHouse.append((352, 542 + 12 * house))
+    
+stateHouse = []
+for house in range(4):
+    stateHouse.append((352, 437 + 12 * house))
+    
+viriginiaHouse = []
+for house in range(4):
+    stateHouse.append((352, 384.5 + 12 * house))
+    
+stJamesHouse = []
+for house in range(4):
+    stJamesHouse.append((352, 279.5 + 12 * house))
+    
+tennesseeHouse = []
+for house in range(4):
+    tennesseeHouse.append((352, 174.5 + 12 * house))
+    
+newYorkHouse = []
+for house in range(4):
+    newYorkHouse.append((352, 122 + 12 * house))
+    
+kentuckyHouse = []
+for house in range(4):
+    kentuckyHouse.append((408 - 12 * house, 102))
+    
+indianaHouse = []
+for house in range(4):
+    indianaHouse.append((513 - 12 * house, 102))
+    
+illinoisHouse = []
+for house in range(4):
+    illinoisHouse.append((565.5 - 12 * house, 102))
+    
+atlanticHouse = []
+for house in range(4):
+    atlanticHouse.append((670.5 - 12 * house, 102))
+    
+vetnorHouse = []
+for house in range(4):
+    vetnorHouse.append((723 - 12 * house, 102))
+    
+marvinHouse = []
+for house in range(4):
+    marvinHouse.append((828 - 12 * house, 102))
+    
+pacificHouse = []
+for house in range(4):
+    pacificHouse.append((845, 157 - 12 * house))
+    
+northCarolinaHouse = []
+for house in range(4):
+    northCarolinaHouse.append((845, 209.5 - 12 * house))
+    
+pennsylvaniaHouse = []
+for house in range(4):
+    pennsylvaniaHouse.append((845, 314.5 - 12 * house))
+    
+parkPlaceHouse = []
+for house in range(4):
+    parkPlaceHouse.append((845, 472 - 12 * house))
+    
+boardwalkHouse = []
+for house in range(4):
+    boardwalkHouse.append((845, 577 - 12 * house))
+    
+
+    
+
+        
+housePosition = []
+housePosition.append(None)
+housePosition.append(mediterraneanHouse)
+housePosition.append(None)
+housePosition.append(balticHouse)
+housePosition.append(None)
+housePosition.append(None)
+housePosition.append(orientalHouse)
+housePosition.append(None)
+housePosition.append(vermontHouse)
+housePosition.append(connecticutHouse)
+housePosition.append(None)
+housePosition.append(stCharlesHouse)
+housePosition.append(None)
+housePosition.append(stateHouse)
+housePosition.append(viriginiaHouse)
+housePosition.append(None)
+housePosition.append(stJamesHouse)
+housePosition.append(None)
+housePosition.append(tennesseeHouse)
+housePosition.append(newYorkHouse)
+housePosition.append(None)
+housePosition.append(kentuckyHouse)
+housePosition.append(None)
+housePosition.append(indianaHouse)
+housePosition.append(illinoisHouse)
+housePosition.append(None)
+housePosition.append(atlanticHouse)
+housePosition.append(vetnorHouse)
+housePosition.append(None)
+housePosition.append(marvinHouse)
+housePosition.append(None)
+housePosition.append(pacificHouse)
+housePosition.append(northCarolinaHouse)
+housePosition.append(None)
+housePosition.append(pennsylvaniaHouse)
+housePosition.append(None)
+housePosition.append(None)
+housePosition.append(parkPlaceHouse)
+housePosition.append(None)
+housePosition.append(boardwalkHouse)
+
+numHouse = [None, 0, None, 0, None, None, 0, None, 0, 0, None, 0, None, 0, 0, 
+            None, 0, None, 0, 0, None, 0, None, 0, 0, None, 0, 0, None, 0, 
+            None, 0, 0, None, 0, None, None, 0, None, 0]
+
+
+
 
 
 
 
 
 class SplashScreenMode(Mode):
+    def appStarted(mode):
+        mode.counter = 0
+        #this is for the background
+        background = 'splash2.png'
+        mode.background = mode.loadImage(background)
+        mode.background = mode.scaleImage(mode.background, .5)
+        mode.timerDelay = 1
+        
+    def timerFired(mode):
+        mode.counter += 1
+        print(mode.counter)
+        
     def redrawAll(mode, canvas):
-        font = 'Arial 26 bold'
-        canvas.create_text(mode.width/2, 150, text='This demos a ModalApp!', font=font)
-        canvas.create_text(mode.width/2, 200, text='This is a modal splash screen!', font=font)
-        canvas.create_text(mode.width/2, 250, text='Press any key for the game!', font=font)
+        font = 'Arial 60 bold'
+        font1 = 'Arial 24 bold'
+        canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
+        canvas.create_image(600, 250, image = ImageTk.PhotoImage(mode.background))
+        canvas.create_rectangle(mode.width / 2 - 166, 532, mode.width / 2 + 166, 568, 
+                                fill = 'white', outline = 'red', width = 2)
+        if (mode.counter // 8) % 2 == 0:
+            canvas.create_text(mode.width/2, 550, text='Press any key for the game!', 
+                               fill = 'red', font=font1)
+
+                           
 
     def keyPressed(mode, event):
         if (event.key == 'h'):
@@ -325,6 +485,7 @@ class GameMode(Mode):
         #this is the roll dice button
         rollDice = ('rollDice.png')
         mode.roll = mode.loadImage(rollDice)
+        
         
         '''
         #these are the pictures of the dices
@@ -654,6 +815,11 @@ class GameMode(Mode):
     def drawCommunityChance(mode, canvas):
         pass
         
+    #this draw function runs through the entire board and checks whether or not 
+    #it is a property; then it draws the number of houses there is. 
+
+                
+        
     
     '''    
     def drawDice(mode, canvas, twodice):
@@ -667,6 +833,15 @@ class GameMode(Mode):
             canvas.create_text(125, 170, text = 'Player 1')
         else:
             canvas.create_text(125, 170, text = 'Player 2')
+        
+        
+    def drawHouse(mode, canvas):
+        for property in housePosition:
+            if property != None:
+                for houseCoor in property:
+                    x, y = houseCoor
+                    canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
+            
         
     
 
@@ -700,6 +875,9 @@ class GameMode(Mode):
         mode.drawPlayer1Values(canvas, mode.player1)
         mode.drawPlayer2Values(canvas, mode.player2)
         
+        #finding coordinates for houses
+        
+        mode.drawHouse(canvas)
         
         
         
