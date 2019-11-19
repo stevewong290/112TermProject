@@ -2,6 +2,7 @@ from cmu_112_graphics import *
 from tkinter import *
 import random, math, copy, string, time
 
+verbose = True
 ############################  Class Setup  #####################################  
 
 
@@ -459,8 +460,6 @@ class SplashScreenMode(Mode):
             canvas.create_text(mode.width/2, 550, text='Press any key for the game!', 
                                fill = 'red', font=font1)
 
-                           
-
     def keyPressed(mode, event):
         if (event.key == 'h'):
             mode.app.setActiveMode(mode.app.helpMode)
@@ -473,8 +472,6 @@ class GameMode(Mode):
     def appStarted(mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
-        
-        mode.player1.colorBuild.append('grey')
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
