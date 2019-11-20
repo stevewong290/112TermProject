@@ -5,7 +5,8 @@ import random, math, copy, string, time
 verbose = True
 ############################  Class Setup  #####################################  
 
-
+#I got the structure of the code from the modal app from class
+#https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
 
 class Player(object):
     def __init__(self, name):
@@ -473,6 +474,9 @@ class GameMode(Mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
         
+        #showing that buying houses works
+        mode.player1.colorBuild.append('grey')
+        
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
         
@@ -644,22 +648,24 @@ class GameMode(Mode):
             
     def buyHouse(mode, property):
         if mode.buyHouseConstraint(property):
-            property.numHouse += 1
-            if property.color == 'brown' or property.color == 'blue':
-                a,b = houses[property.color]
-                if property.setRank == 1:
-                    houses[property.color] = (a+1,b)
+            if property.numHouse <= 4:
+                property.numHouse += 1
+                if property.color == 'brown' or property.color == 'blue':
+                    a,b = houses[property.color]
+                    if property.setRank == 1:
+                        houses[property.color] = (a+1,b)
+                    else:
+                        houses[property.color] = (a, b+1)
                 else:
-                    houses[property.color] = (a, b+1)
-            else:
-                a,b,c = houses[property.color]
-                if property.setRank == 1:
-                    houses[property.color] = (a+1,b,c)
-                elif property.setRank == 2:
-                    houses[property.color] = (a,b+1,c)
-                else:
-                    houses[property.color] = (a,b,c+1)
-            print('it did not work')
+                    a,b,c = houses[property.color]
+                    if property.setRank == 1:
+                        houses[property.color] = (a+1,b,c)
+                    elif property.setRank == 2:
+                        houses[property.color] = (a,b+1,c)
+                    else:
+                        houses[property.color] = (a,b,c+1)
+            print(houses['grey'])
+
             
                     
 #########################  Rent Price Calculator  ##############################  
@@ -943,11 +949,13 @@ class GameMode(Mode):
         #pressed buy house button
         if (event.x >= mode.width - 154 and event.x <= mode.width - 10 and 
             event.y >= 110 and event.y <= 150):
+            selected = None
             for space in board:
                 if isinstance(space, Property):
                     if space.selected:
                         selected = space
-            mode.buyHouse(selected)
+            if selected != None:
+                mode.buyHouse(selected)
             print('you pressed the buyHouse button')
             
         #property selection
@@ -1028,11 +1036,18 @@ class GameMode(Mode):
         for property in housePosition:
             if property != None:
                 counter = 0
-                for houseCoor in property:
-                    if counter < board[space].numHouse:
-                        x, y = houseCoor
-                        canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
-                    counter += 1
+                if board[space].numHouse == 5:
+                    x, y = property[1]
+                    canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
+                                            y + 4.5, fill = 'red')
+                else:
+                    for houseCoor in property:
+                        if counter < board[space].numHouse and counter < 4:
+                            x, y = houseCoor
+                            canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
+                        counter += 1
+                
+                    
             space += 1
             
     def drawPropArea(mode, canvas):
@@ -1105,18 +1120,40 @@ class GameMode(Mode):
             mode.drawPlayer1Path(canvas,xcor,ycor)
             
         for location in mode.player2Locations:
-            (xcor, ycor) = location
+            h(xcor, ycor) = location
             mode.drawPlayer2Path(canvas,xcor,ycor)
         '''
 
 ##############################  Help Mode Setup  ############################### 
 
 class HelpMode(Mode):
+    def appStarted(mode):
+        mode.counter = 0
+        #this is for the background
+        background = 'splash2.png'
+        mode.background = mode.loadImage(background)
+        mode.background = mode.scaleImage(mode.background, .5)
+        mode.timerDelay = 1
+        
+     
+        
+    def timerFired(mode):
+        mode.counter += 1
+        
     def redrawAll(mode, canvas):
-        font = 'Arial 26 bold'
-        canvas.create_text(mode.width/2, 150, text='This is the help screen!', font=font)
-        canvas.create_text(mode.width/2, 250, text='(Insert helpful message here)', font=font)
-        canvas.create_text(mode.width/2, 350, text='Press any key to return to the game!', font=font)
+        font = 'Arial 60 bold'
+        font1 = 'Arial 24 bold'
+        #background color
+        canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
+
+        canvas.create_text(mode.width/2, 250, text='(Rules will be put here)', font=font)
+       
+        canvas.create_rectangle(mode.width / 2 - 166, 532, mode.width / 2 + 166, 568, 
+                                fill = 'white', outline = 'red', width = 2)
+        if (mode.counter // 12) % 2 == 0:
+            canvas.create_text(mode.width/2, 550, text='Press any key for the game!', 
+                               fill = 'red', font=font1)
+ 
 
     def keyPressed(mode, event):
         mode.app.setActiveMode(mode.app.gameMode)
