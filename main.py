@@ -791,7 +791,7 @@ class GameMode(Mode):
                     rent = mode.rentPriceProperty(space)
                     mode.player1.money -= rent
                     mode.player2.money += rent
-                elif isinstance(space, Utility):
+                elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.player1.money -= rent
                     mode.player2.money += rent
@@ -810,7 +810,7 @@ class GameMode(Mode):
                     rent = mode.rentPriceProperty(space)
                     mode.player2.money -= rent
                     mode.player1.money += rent
-                elif isinstance(space, Utility):
+                elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.player2.money -= rent
                     mode.player1.money += rent
