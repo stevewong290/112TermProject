@@ -464,6 +464,8 @@ class SplashScreenMode(Mode):
     def keyPressed(mode, event):
         if (event.key == 'h'):
             mode.app.setActiveMode(mode.app.helpMode)
+        elif (event.key == 'a'):
+            mode.app.setActiveMode(mode.app.AIMode)
         else:
             mode.app.setActiveMode(mode.app.gameMode)
             
@@ -476,6 +478,16 @@ class GameMode(Mode):
         
         #showing that buying houses works
         mode.player1.colorBuild.append('grey')
+        mode.player1.properties.append(oriental)
+        mode.player1.properties.append(vermont)
+        mode.player1.properties.append(connecticut)
+        
+        
+        
+        mode.player2.colorBuild.append('green')
+        mode.player2.properties.append(pacific)
+        mode.player2.properties.append(northCarolina)
+        mode.player2.properties.append(pennsylvania)
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
@@ -656,6 +668,10 @@ class GameMode(Mode):
                         houses[property.color] = (a+1,b)
                     else:
                         houses[property.color] = (a, b+1)
+                    if property in mode.player1.properties:
+                        mode.player1.money -= property.houseCost
+                    else:
+                        mode.player2.money -= property.houseCost
                 else:
                     a,b,c = houses[property.color]
                     if property.setRank == 1:
@@ -664,6 +680,11 @@ class GameMode(Mode):
                         houses[property.color] = (a,b+1,c)
                     else:
                         houses[property.color] = (a,b,c+1)
+                    if property in mode.player1.properties:
+                        mode.player1.money -= property.houseCost
+                    else:
+                        mode.player2.money -= property.houseCost
+                    
             print(houses['grey'])
 
             
@@ -924,6 +945,7 @@ class GameMode(Mode):
         elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
             y >= 560 - 26.25 and y <= 560 + 26.25):
             boardwalk.selected = True
+        
 
 ###############################  User Input  ################################### 
 
@@ -1123,6 +1145,737 @@ class GameMode(Mode):
             h(xcor, ycor) = location
             mode.drawPlayer2Path(canvas,xcor,ycor)
         '''
+############################## AI Mode Setup ###################################
+
+class AIMode(Mode):
+    def appStarted(mode):
+        mode.player1 = Player('Player 1')
+        mode.computer = Player('Computer AI')
+        
+        #showing that buying houses works
+        mode.player1.colorBuild.append('grey')
+        mode.player1.properties.append(oriental)
+        mode.player1.properties.append(vermont)
+        mode.player1.properties.append(connecticut)
+        
+        #roll tracking in order to help calculate the rent for utilities
+        mode.prevRoll = 0
+        
+        #roll counter used to make sure the gameplay goes as it is supposed to
+        mode.rollCounter = 0
+        
+        #turn counter
+        #if divisible by 2 then it is player 1's turn
+        mode.turnCounter = 0
+        
+        #this is the monopoly logo we are uploading
+        logo = ('monopolyLogo.jpg')
+        mode.logo = mode.loadImage(logo)
+        mode.logo = mode.scaleImage(mode.logo, 0.06)
+        
+        #this is the board image that we are uploading
+        board = ('board.jpg')
+        mode.board = mode.loadImage(board)
+        
+        #this is the buy button that we are uploading
+        buyButton = ('buyProperty.png')
+        mode.buy = mode.loadImage(buyButton)
+        
+        #this is the end turn button
+        turnButton = ('endTurn.png')
+        mode.turn = mode.loadImage(turnButton)
+        
+        #this is the roll dice button
+        rollDice = ('rollDice.png')
+        mode.roll = mode.loadImage(rollDice)
+        
+        #this is the buy house button
+        buyHouse = ('buyHouse.png')
+        mode.buyHouseButton = mode.loadImage(buyHouse)
+        
+        
+        '''
+        #these are the pictures of the dices
+        dice1 = 
+        mode.dice1 = 
+        '''
+        
+        #THESE ARE THE POSSIBLE LOCATIONS OF PLAYER 1 (outer)
+        mode.player1Locations = []
+            
+        #pass go, this is where we start appending
+        mode.player1Locations.append((901.5,651.5))
+        
+        #go to bottom locations
+        for i in range(9):
+            mode.player1Locations.append((808.5 - 52.5 * i, 651.5))
+            
+        #jail
+        mode.player1Locations.append((298.5,651.5))
+        
+        #go to left locations
+        for i in range(9):
+            mode.player1Locations.append((298.5,561.25 - 52.5 * i))
+            
+        #free parking
+        mode.player1Locations.append((298.5,48.5))
+        
+        #top locations
+        for i in range(9):
+            mode.player1Locations.append((388.5 + 52.5 * i, 48.5))
+        
+        #go to jail location
+        mode.player1Locations.append((901.5,48.5))
+        
+        #right locations
+        for i in range(9):
+            mode.player1Locations.append((901.5,141.25 + 52.5 * i))
+        
+        #THESE ARE THE POSSIBLE LOCATIONS OF COMPUTER
+        mode.computerLocations = []
+        
+        #pass go, this is where we start appending
+        mode.computerLocations.append((876.5,626.5))
+        
+        #go to bottom locations
+        for i in range(9):
+            mode.computerLocations.append((808.5 - 52.5 * i, 626.5))
+            
+        #jail
+        mode.computerLocations.append((323.5,626.5))
+        
+        #go to left locations
+        for i in range(9):
+            mode.computerLocations.append((323.5,561.25 - 52.5 * i))
+            
+        #free parking
+        mode.computerLocations.append((323.5,73.5))
+        
+        #top locations
+        for i in range(9):
+            mode.computerLocations.append((388.5 + 52.5 * i, 73.5))
+        
+        #go to jail location
+        mode.computerLocations.append((876.5, 73.5))
+        
+        #right locations
+        for i in range(9):
+            mode.computerLocations.append((876.5,141.25 + 52.5 * i))
+        
+    def diceRoll(mode):
+        x = random.randint(1,6)
+        y = random.randint(1,6)
+        return (x,y)
+        
+    def communityChance(mode):
+        x = random.randint()
+
+#################################  AI Buying  ##################################
+        
+    def buyProperty(mode):
+        #player 1 turn
+        if mode.turnCounter % 2 == 0:
+            space = board[mode.player1.position % 40]
+            if space in propertySet: 
+                if mode.player1.money >= space.cost:
+                    mode.player1.money -= space.cost
+                    mode.player1.properties.append(space)
+                    propertySet.remove(space)
+        #computer turn
+        else:
+            space = board[mode.computer.position % 40]
+            if space in propertySet: 
+                if mode.computer.money >= space.cost:
+                    mode.computer.money -= space.cost
+                    mode.computer.properties.append(space)
+                    propertySet.remove(space)
+        mode.player1.doubleRent()
+        mode.computer.doubleRent()
+        
+    def buyHouseConstraint(mode, property):
+        #player 1 turn
+        if mode.turnCounter % 2 == 0:
+            print(property.color)
+            print(mode.player1.colorBuild)
+            if (property.color in mode.player1.colorBuild):
+                if property.color == 'brown' or property.color == 'blue':
+                    a, b = houses[property.color]
+                    if property.numHouse == min(a,b):
+                        return True
+                    else:
+                        return False
+                else:
+                    a, b, c = houses[property.color]
+                    if property.numHouse == min(a,b,c):
+                        return True
+                    else:
+                        return False
+            return False
+        else:
+            if (property.color in mode.computer.colorBuild):
+                if property.color == 'brown' or property.color == 'blue':
+                    a, b = houses[property.color]
+                    if property.numHouse == min(a,b):
+                        return True
+                    else:
+                        return False
+                else:
+                    a, b, c = houses[property.color]
+                    if property.numHouse == min(a,b,c):
+                        return True
+                    else:
+                        return False
+            return False
+            
+    def buyHouse(mode, property):
+        if mode.buyHouseConstraint(property):
+            if property.numHouse <= 4:
+                property.numHouse += 1
+                if property.color == 'brown' or property.color == 'blue':
+                    a,b = houses[property.color]
+                    if property.setRank == 1:
+                        houses[property.color] = (a+1,b)
+                    else:
+                        houses[property.color] = (a, b+1)
+                    if property in mode.player1.properties:
+                        mode.player1.money -= property.houseCost
+                    else:
+                        mode.computer.money -= property.houseCost
+                else:
+                    a,b,c = houses[property.color]
+                    if property.setRank == 1:
+                        houses[property.color] = (a+1,b,c)
+                    elif property.setRank == 2:
+                        houses[property.color] = (a,b+1,c)
+                    else:
+                        houses[property.color] = (a,b,c+1)
+                    if property in mode.player1.properties:
+                        mode.player1.money -= property.houseCost
+                    else:
+                        mode.computer.money -= property.houseCost
+            print(houses['grey'])
+
+            
+                    
+#########################  Rent Price Calculator  ##############################  
+
+    #this function takes in a property and returns how much to pay
+    def rentPriceProperty(mode, property):
+        if property.numHouse == 0:
+            if property.double:
+                return property.rent * 2
+            else:
+                return property.rent
+        elif property.numHouse == 1:
+            return property.h1
+        elif property.numHouse == 2:
+            return property.h2
+        elif property.numHouse == 3:
+            return property.h3
+        elif property.numHouse == 4:
+            return property.h4
+        elif property.numHouse == 5:
+            return property.hotel
+
+    #this function takes in a utility and returns how much to pay
+    def rentPriceUtility(mode, utility):
+        if utility.double:
+            return mode.prevRoll * 10
+        else:
+            return mode.prevRoll * 4
+    
+    #this function takes in a railroad and returns how much to pay
+    def rentPriceRailroad(mode, railroad):
+        if mode.turnCounter % 2 == 1:
+            mode.player1.numRail()
+            if mode.player1.numRailroads == 1:
+                return railroad.r1
+            elif mode.player1.numRailroads == 2:
+                return railroad.r2
+            elif mode.player1.numRailroads == 3:
+                return railroad.r3
+            elif mode.player1.numRailroads == 4:
+                return railroad.r4
+        else:
+            mode.computer.numRail()
+            if mode.computer.numRailroads == 1:
+                return railroad.r1
+            elif mode.computer.numRailroads == 2:
+                return railroad.r2
+            elif mode.computer.numRailroads == 3:
+                return railroad.r3
+            elif mode.computer.numRailroads == 4:
+                return railroad.r4
+                
+###############################  AI Movement  ##################################
+
+    #this implements moving the player and tracking whether or not it 
+    #passed or landed on go
+    def didRollAndPassGo(mode, dice, doubleBool):
+        if mode.turnCounter % 2 == 0:
+            if mode.moveForwardJail(doubleBool):
+                prev = mode.player1.position // 40
+                mode.player1.position += (dice)
+                mode.landOnJail()
+                newPos = mode.player1.position // 40
+                if mode.player1.position % 40 == 0:
+                    mode.player1.money += 400
+                elif prev != newPos:
+                    mode.player1.money += 200
+        else:
+            if mode.moveForwardJail(doubleBool):
+                prev = mode.computer.position // 40
+                mode.computer.position += (dice)
+                mode.landOnJail()
+                newPos = mode.computer.position // 40
+                if mode.computer.position % 40 == 0:
+                    mode.computer.money += 400
+                elif prev != newPos:
+                    mode.computer.money += 200
+                
+    #This is a function that returns a bool on whether or not the player can move
+    def moveForwardJail(mode, doubleBool):
+        if mode.turnCounter % 2 == 0:
+            if mode.player1.jailCounter == 3:
+                mode.player1.inJail = False
+                mode.player1.money -= 50
+                return True
+            elif not doubleBool and mode.player1.inJail:
+                mode.player1.jailCounter += 1
+                return False
+            elif doubleBool and mode.player1.inJail:
+                mode.player1.inJail = False
+                mode.player1.jailCounter = 0
+                return True
+        else:
+            if mode.computer.jailCounter == 3:
+                mode.computer.money -= 50
+                return True
+            elif not doubleBool and mode.computer.inJail:
+                mode.computer.jailCounter += 1
+                return False
+            elif doubleBool and mode.computer.inJail:
+                mode.computer.inJail = False
+                mode.computer.jailCounter = 0
+                return True
+        return True
+        
+    def landOnJail(mode):
+        if mode.turnCounter % 2 == 0:
+            if mode.player1.position % 40 == 30:
+                mode.player1.position -= 20
+                mode.player1.inJail = True
+        else:
+            if mode.computer.position % 40 == 30:
+                mode.computer.position -= 20
+                mode.computer.inJail = True
+            
+                
+    def landOpponentOrTax(mode):
+        if mode.turnCounter % 2 == 0:
+            #redefine location as space
+            space = board[mode.player1.position % 40]
+            if space in mode.computer.properties:
+                if isinstance(space, Property):
+                    rent = mode.rentPriceProperty(space)
+                    mode.player1.money -= rent
+                    mode.computer.money += rent
+                elif isinstance(space, Utilities):
+                    rent = mode.rentPriceUtility(space)
+                    mode.player1.money -= rent
+                    mode.computer.money += rent
+                elif isinstance(space, Railroad):
+                    rent = mode.rentPriceRailroad(space)
+                    mode.player1.money -= rent
+                    mode.computer.money += rent
+            elif isinstance(space, Tax):
+                mode.player1.money -= space.tax
+        else:
+            #redefine location as space
+            space = board[mode.computer.position % 40]
+            #if where you landed is owned by the opponent, pay rent
+            if space in mode.player1.properties:
+                if isinstance(space, Property):
+                    rent = mode.rentPriceProperty(space)
+                    mode.computer.money -= rent
+                    mode.player1.money += rent
+                elif isinstance(space, Utilities):
+                    rent = mode.rentPriceUtility(space)
+                    mode.computer.money -= rent
+                    mode.player1.money += rent
+                elif isinstance(space, Railroad):
+                    rent = mode.rentPriceRailroad(space)
+                    mode.computer.money -= rent
+                    mode.player1.money += rent
+            elif isinstance(space, Tax):
+                mode.computer.money -= space.tax
+   
+    def rollDice(mode):
+        if mode.rollCounter == 0:
+            mode.rollCounter += 1
+            dice1, dice2 = mode.diceRoll()
+            double = False
+            if dice1 == dice2:
+                double == True
+            #stores the previous dice in the app
+            mode.prevRoll = dice1 + dice2
+            diceTotal = dice1 + dice2
+            mode.didRollAndPassGo(diceTotal, double)
+            
+            mode.landOpponentOrTax()
+            mode.player1.doubleRent()
+            mode.computer.doubleRent()
+                    
+    def endTurn(mode):
+        if mode.rollCounter == 1:
+            mode.turnCounter += 1
+            mode.rollCounter = 0
+        mode.player1.doubleRent()
+        mode.computer.doubleRent()
+        
+############################  AI Select Spaces  ###################################  
+
+    def propertySelection(mode, x, y):
+        for space in board:
+            if isinstance(space,Property):
+                space.selected = False
+                
+        #selection from side 1
+        if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            mediterranean.selected = True
+        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            baltic.selected = True
+        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            oriental.selected = True
+        elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            vermont.selected = True
+        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+            y >= 628 - 42.5 and y <= 628 + 42.5):
+            connecticut.selected = True
+        
+        #selection from side 2
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 560 - 26.25 and y <= 560 + 26.25):
+            stCharles.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 455 - 26.25 and y <= 455 + 26.25):
+            state.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
+            virginia.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+            stJames.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+            tennessee.selected = True
+        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+            y >= 140 - 26.25 and y <= 140 + 26.25):
+            newYork.selected = True
+       
+        #selection from side 3
+        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            kentucky.selected = True
+        elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            indiana.selected = True
+        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            illinois.selected = True
+        elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            atlantic.selected = True
+        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            vetnor.selected = True
+        elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+            y >= 70 - 42.5 and y <= 70 + 42.5):
+            marvin.selected = True
+        
+        #selection from side 4
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 140 - 26.25 and y <= 140 + 26.25):
+            pacific.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+            northCarolina.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+            pennsylvania.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 455 - 26.25 and y <= 455 + 26.25):
+            parkPlace.selected = True
+        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+            y >= 560 - 26.25 and y <= 560 + 26.25):
+            boardwalk.selected = True
+            
+            
+#######################  Monopoly Aritifical Intelligence  #####################
+
+    def expectedValue(mode, space):
+        expectedValueResult = 0
+        #if where you landed is owned by the opponent, pay rent, so we can add 
+        #that to the expected value
+        if space in mode.player1.properties:
+            if isinstance(space, Property):
+                rent = mode.rentPriceProperty(space)
+                expectedValueResult -= rent
+            elif isinstance(space, Utilities):
+                rent = mode.rentPriceUtility(space)
+                expectedValueResult -= rent
+            elif isinstance(space, Railroad):
+                rent = mode.rentPriceRailroad(space)
+                expectedValueResult -= rent
+        elif isinstance(space, Tax):
+            expectedValueResult -= space.tax
+        return expectedValueResult
+        
+    def comboCalculator(mode, n,k):
+        return math.factorial(n) / ((math.factorial(k))*(math.factorial(n-k)))
+    
+
+    def probabilityCalculator(mode, n):
+        # n represents how many spaces
+        if n == 2 or n == 12:
+            return 1 / 6 * 1 / 6
+        elif n == 3 or n == 11:
+            return 2 * (1 / 6 * 1 / 6)
+        elif n == 4 or n == 10:
+            return 3 * (1 / 6 * 1 / 6)
+        elif n == 5 or n == 9:
+            return 4 * (1 / 6 * 1 / 6)
+        elif n == 6 or n == 8:
+            return 5 * (1 / 6 * 1 / 6)
+        elif n == 7:
+            return 6 * (1 / 6 * 1 / 6)
+            
+    def sumExpectedValue(mode):
+        sumExpectedValueResult = 0
+        for n in range(2,13):
+            space = board[(mode.computer.position + n) % 40]
+            sumExpectedValueResult += (mode.probabilityCalculator(n) * 
+                                       mode.expectedValue(space))
+        return sumExpectedValueResult
+        
+    def secondDepthSumExpectedValue(mode):
+        
+
+    
+    def monopolyAI(mode):
+        #list of things my AI needs to do 
+        #1. find the expected value change on the next 2 moves 
+        #2. find the critical money value held based ont he expected value change
+        #3. use the extra money either to buy properties the next 2 rounds or 
+        #   buy houses when possible
+        pass
+        
+
+###############################  User Input  ################################### 
+
+    def mousePressed(mode, event):
+        #pressed buy property button
+        if (event.x >= mode.width - 180 and event.x <= mode.width - 10 and 
+            event.y >= 10 and event.y <= 50):
+            mode.buyProperty()
+            print('you pressed the buy property button')
+            
+        #pressed roll dice button
+        if (event.x >= mode.width - 136 and event.x <= mode.width - 10 and 
+            event.y >= 60 and event.y <= 100):
+            print('you pressed the roll dice button')
+            mode.rollDice()
+            
+        #pressed end turn button
+        if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
+            event.y >= mode.height - 50 and event.y <= mode.height - 10):
+            mode.endTurn()
+            print('you pressed the end turn button')
+            
+        #pressed buy house button
+        if (event.x >= mode.width - 154 and event.x <= mode.width - 10 and 
+            event.y >= 110 and event.y <= 150):
+            selected = None
+            for space in board:
+                if isinstance(space, Property):
+                    if space.selected:
+                        selected = space
+            if selected != None:
+                mode.buyHouse(selected)
+            print('you pressed the buyHouse button')
+            
+        #property selection
+        mode.propertySelection(event.x, event.y)
+        for space in board:
+            if isinstance(space, Property):
+                if space.selected == True:
+                    print(f'{space.name} is selected') 
+            
+
+    def keyPressed(mode, event):
+        pass
+        
+    def timerFired(mode):
+        pass
+        
+############################  Draw Functions  ################################## 
+        
+    def drawPlayer1Path(mode,canvas,x,y):
+        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
+        
+    def drawComputerPath(mode,canvas,x,y):
+        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
+        
+    def drawPlayer1(mode, canvas, player1):
+        position = player1.position % 40
+        (x, y) = mode.player1Locations[position]
+        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
+        
+    def drawComputer(mode, canvas, computer):
+        position = computer.position % 40
+        (x, y) = mode.computerLocations[position]
+        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
+        
+    def drawPlayer1Values(mode, canvas, player1):
+        canvas.create_text(125,200,text = (
+                           f'player 1 money:{mode.player1.money}'))
+        canvas.create_text(125,220,text = 'properties')
+        counter = 0
+        for element in player1.properties:
+            canvas.create_text(125, 240 + (20 * counter), text = element.name)
+            counter += 1
+        
+    def drawComputerValues(mode, canvas, computer):
+        canvas.create_text(1075,200,text = (
+                           f'computer money:{mode.computer.money}'))
+        canvas.create_text(1075,220,text = 'properties')
+        counter = 0
+        for element in computer.properties:
+            canvas.create_text(1075, 240 + (20 * counter), text = element.name)
+            counter += 1
+            
+    def drawCommunityChance(mode, canvas):
+        pass
+        
+    #this draw function runs through the entire board and checks whether or not 
+    #it is a property; then it draws the number of houses there is. 
+
+                
+        
+    
+    '''    
+    def drawDice(mode, canvas, twodice):
+        (dice1, dice2) = twodice
+        if dice1 == 1:
+    '''
+    
+    def drawTurn(mode, canvas):
+        canvas.create_text(125, 150, text = 'Turn:')
+        if mode.turnCounter % 2 == 0:
+            canvas.create_text(125, 170, text = 'Player 1')
+        else:
+            canvas.create_text(125, 170, text = 'Player 2')
+        
+        
+    def drawHouse(mode, canvas):
+        space = 0
+        for property in housePosition:
+            if property != None:
+                counter = 0
+                if board[space].numHouse == 5:
+                    x, y = property[1]
+                    canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
+                                            y + 4.5, fill = 'red')
+                else:
+                    for houseCoor in property:
+                        if counter < board[space].numHouse and counter < 4:
+                            x, y = houseCoor
+                            canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
+                        counter += 1
+                
+                    
+            space += 1
+            
+    def drawPropArea(mode, canvas):
+        for pair in coorSide1:
+            x,y = pair
+            canvas.create_rectangle(x - 26.25, y - (42.5), 
+                                    x + 26.25, y + (42.5), fill = 'red')
+                                    
+        for pair in coorSide2:
+            x,y = pair
+            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
+        
+        for pair in coorSide3:
+            x,y = pair
+            canvas.create_rectangle(x - 26.25, y - (42.5), 
+                                    x + 26.25, y + (42.5), fill = 'red')
+        
+        for pair in coorSide4:
+            x,y = pair
+            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
+            
+        
+    
+
+    def redrawAll(mode, canvas):
+        #draw turn
+        mode.drawTurn(canvas)
+        
+        #draw logo
+        canvas.create_image(140, 65, image = ImageTk.PhotoImage(mode.logo))
+        
+        #draw board
+        canvas.create_image(mode.width / 2,mode.height / 2,
+                            image=ImageTk.PhotoImage(mode.board))
+        #draw buy button 
+        canvas.create_image(mode.width - 95, 30, image =
+                            ImageTk.PhotoImage(mode.buy))
+                            
+        #draw turn button
+        canvas.create_image(mode.width - 74, mode.height - 30, image = 
+                            ImageTk.PhotoImage(mode.turn))
+                            
+        #draw roll dice button
+        canvas.create_image(mode.width - 73, 80, image = 
+                            ImageTk.PhotoImage(mode.roll))
+                            
+        #draw buy house button
+        canvas.create_image(mode.width - 82, 130, image = 
+                            ImageTk.PhotoImage(mode.buyHouseButton))
+        
+        #draw players
+        mode.drawPlayer1(canvas, mode.player1)
+        mode.drawComputer(canvas, mode.computer)
+        
+        #draw players values
+        mode.drawPlayer1Values(canvas, mode.player1)
+        mode.drawComputerValues(canvas, mode.computer)
+        
+        #finding coordinates for houses
+        
+        mode.drawHouse(canvas)
+        #mode.drawPropArea(canvas)
+        
+        canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
+        
+        print(mode.sumExpectedValue())
+        
+        
+        '''
+        #help find player location on the board
+        for location in mode.player1Locations:
+            (xcor, ycor) = location
+            mode.drawPlayer1Path(canvas,xcor,ycor)
+            
+        for location in mode.computerLocations:
+            h(xcor, ycor) = location
+            mode.drawcomputerPath(canvas,xcor,ycor)
+        '''
 
 ##############################  Help Mode Setup  ############################### 
 
@@ -1165,6 +1918,7 @@ class MyModalApp(ModalApp):
         app.splashScreenMode = SplashScreenMode()
         app.gameMode = GameMode()
         app.helpMode = HelpMode()
+        app.AIMode = AIMode()
         app.setActiveMode(app.splashScreenMode)
         app.timerDelay = 50
 
