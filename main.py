@@ -11,7 +11,7 @@ verbose = True
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 10000
+        self.money = 1500
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -173,6 +173,7 @@ class Utilities(object):
         self.double = False
 
 ############################  Board Setup  #####################################     
+
 
 
 #################################  Spaces  #####################################
@@ -1185,7 +1186,7 @@ class AIMode(Mode):
         mode.computer.properties.append(stJames)
         mode.computer.properties.append(tennessee)
         mode.computer.properties.append(newYork)
-        '''
+        ''' 
         
         
         #roll tracking in order to help calculate the rent for utilities
@@ -1223,7 +1224,8 @@ class AIMode(Mode):
         buyHouse = ('buyHouse.png')
         mode.buyHouseButton = mode.loadImage(buyHouse)
         
-        
+        #this is announcementsa
+        mode.announcements = ['hi','hello']
         '''
         #these are the pictures of the dices
         dice1 = 
@@ -1311,6 +1313,11 @@ class AIMode(Mode):
                     mode.player1.money -= space.cost
                     mode.player1.properties.append(space)
                     propertySet.remove(space)
+                if len(mode.announcements) == 5:
+                    mode.announcements = mode.announcements[1:]
+                    mode.announcements.append(f'Player 1 bought {space.name}')
+                elif len(mode.announcements) < 5:
+                    mode.announcements.append(f'Player 1 bought {space.name}')
         #computer turn
         else:
             space = board[mode.computer.position % 40]
@@ -1319,6 +1326,11 @@ class AIMode(Mode):
                     mode.computer.money -= space.cost
                     mode.computer.properties.append(space)
                     propertySet.remove(space)
+                if len(mode.announcements) == 5:
+                    mode.announcements = mode.announcements[1:]
+                    mode.announcements.append(f'Computer bought {space.name}')
+                elif len(mode.announcements) < 5:
+                    mode.announcements.append(f'Computer bought {space.name}')
         mode.player1.doubleRent()
         mode.computer.doubleRent()
         
@@ -1383,6 +1395,18 @@ class AIMode(Mode):
                         mode.player1.money -= property.houseCost
                     else:
                         mode.computer.money -= property.houseCost
+                if len(mode.announcements) < 5:
+                    if mode.turnCounter % 2 == 0:
+                        mode.announcements.append('Player 1 bought a house')
+                    else:
+                        mode.announcements.append('Computer bought a house')
+                elif len(mode.announcements) == 5:
+                    mode.announcements = mode.announcements[1:]
+                    if mode.turnCounter % 2 == 0:
+                        mode.announcements.append('Player 1 bought a house')
+                    else:
+                        mode.announcements.append('Computer bought a house')
+                        
             #print(houses['grey'])
 
             
@@ -1520,7 +1544,12 @@ class AIMode(Mode):
                     mode.computer.money += rent
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
-            print(mode.player1.properties)
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                mode.announcements.append(f'Player 1 landed on {space.name}')
+            elif len(mode.announcements) < 5:
+                mode.announcements.append(f'Player 1 landed on {space.name}')
+
         else:
             #redefine location as space
             space = board[mode.computer.position % 40]
@@ -1540,11 +1569,27 @@ class AIMode(Mode):
                     mode.player1.money += rent
             elif isinstance(space, Tax):
                 mode.computer.money -= space.tax
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                mode.announcements.append(f'Computer landed on {space.name}')
+            elif len(mode.announcements) < 5:
+                mode.announcements.append(f'Computer landed on {space.name}')
    
     def rollDice(mode):
         if mode.rollCounter == 0:
             mode.rollCounter += 1
             dice1, dice2 = mode.diceRoll()
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if mode.turnCounter % 2 == 0:
+                    mode.announcements.append('Player 1 rolled the dice')
+                else:
+                    mode.announcements.append('Computer rolled the dice')
+            elif len(mode.announcements) < 5:
+                if mode.turnCounter % 2 == 0:
+                    mode.announcements.append('Player 1 rolled the dice')
+                else:
+                    mode.announcements.append('Computer rolled the dice')
             double = False
             if dice1 == dice2:
                 double == True
@@ -1552,17 +1597,29 @@ class AIMode(Mode):
             mode.prevRoll = dice1 + dice2
             diceTotal = dice1 + dice2
             mode.didRollAndPassGo(diceTotal, double)
-            
             mode.landOpponentOrTax()
             mode.player1.doubleRent()
             mode.computer.doubleRent()
+            
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if mode.turnCounter % 2 == 1:
+                    mode.announcements.append('Player 1 ended their turn')
+                else:
+                    mode.announcements.append('Computer ended their turn')
+            elif len(mode.announcements) < 5:
+                if mode.turnCounter % 2 == 1:
+                    mode.announcements.append('Player 1 ended their turn')
+                else:
+                    mode.announcements.append('Computer ended their turn')
         mode.player1.doubleRent()
         mode.computer.doubleRent()
+        
         
 ############################  AI Select Spaces  ###################################  
 
@@ -1793,7 +1850,7 @@ class AIMode(Mode):
     def timerFired(mode):
         pass
         
-############################  Draw Functions  ################################## 
+############################  AI Draw Functions  ###############################
         
     def drawPlayer1Path(mode,canvas,x,y):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
@@ -1901,6 +1958,12 @@ class AIMode(Mode):
             x,y = pair
             canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
             
+    def drawAnnouncements(mode, canvas):
+        counter = 0
+        canvas.create_text(150, 280, text = 'Announcements:')
+        for message in mode.announcements:
+            canvas.create_text(150, 300 + 20 * counter, text = message)
+            counter += 1
         
     
 
@@ -1944,6 +2007,7 @@ class AIMode(Mode):
         #mode.drawPropArea(canvas)
         
         canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
+        mode.drawAnnouncements(canvas)
         
         #print(mode.secondDepthSumExpectedValue())
         #print(mode.sumExpectedValue(baltic))
