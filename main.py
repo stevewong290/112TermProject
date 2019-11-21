@@ -11,25 +11,26 @@ verbose = True
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 1500
+        self.money = 10000
         self.position = 0
         self.properties = []
         self.numRailroads = 0
         self.inJail = False
         self.jailCounter = 0
-        self.colorBuild = []
+        self.colorBuild = set()
+        self.critMoney = 0
 
     def numRail(self):
         counter = 0
         for property in self.properties:
-            if ininstance(property, Railroad):
+            if isinstance(property, Railroad):
                 counter += 1
         self.numRailroads = counter
     
     def doubleRent(self):
         #brown properties
         if mediterranean in self.properties and baltic in self.properties:
-            self.colorBuild.append('brown')
+            self.colorBuild.add('brown')
             mediterranean.double = True
             baltic.double = True
         else:
@@ -38,7 +39,7 @@ class Player(object):
         #grey properties
         if (oriental in self.properties and vermont in self.properties and 
               connecticut in self.properties):
-            self.colorBuild.append('grey')
+            self.colorBuild.add('grey')
             oriental.double = True
             vermont.double = True
             connecticut.double = True
@@ -49,7 +50,7 @@ class Player(object):
         #pink properties
         if (stCharles in self.properties and state in self.properties and 
             virginia in self.properties):
-            self.colorBuild.append('pink')
+            self.colorBuild.add('pink')
             stCharles.double = True
             state.double = True
             virginia.double = True
@@ -60,7 +61,7 @@ class Player(object):
         #orange properties
         if (stJames in self.properties and tennessee in self.properties and 
             newYork in self.properties):
-            self.colorBuild.append('orange')
+            self.colorBuild.add('orange')
             stJames.double = True
             tennessee.double = True
             newYork.double = True
@@ -71,7 +72,7 @@ class Player(object):
         #red properties
         if (kentucky in self.properties and indiana in self.properties and 
             illinois in self.properties):
-            self.colorBuild.append('red')
+            self.colorBuild.add('red')
             kentucky.double = True
             indiana.double = True
             illinois.double = True
@@ -82,7 +83,7 @@ class Player(object):
         #yellow properties
         if (atlantic in self.properties and vetnor in self.properties and 
             marvin in self.properties):
-            self.colorBuild.append('yellow')
+            self.colorBuild.add('yellow')
             atlantic.double = True
             vetnor.double = True
             marvin.double = True
@@ -93,7 +94,7 @@ class Player(object):
         #green properties
         if (pacific in self.properties and northCarolina in self.properties and 
             pennsylvania in self.properties):
-            self.colorBuild.append('green')
+            self.colorBuild.add('green')
             pacific.double = True
             northCarolina.double = True
             pennsylvania.double = True
@@ -103,7 +104,7 @@ class Player(object):
             pennsylvania.double = False
         #blue properties
         if (parkPlace in self.properties and boardwalk in self.properties):
-            self.colorBuild.append('blue')
+            self.colorBuild.add('blue')
             parkPlace.double = True
             boardwalk.double = True
         else:
@@ -135,6 +136,12 @@ class Property(object):
         self.selected = False
         self.color = color
         self.setRank = setRank
+        
+    def __str__(self):
+        return self.name
+        
+    def __repr__(self):
+        return self.name
         
         
 class Railroad(object):
@@ -477,14 +484,14 @@ class GameMode(Mode):
         mode.player2 = Player('Player 2')
         
         #showing that buying houses works
-        mode.player1.colorBuild.append('grey')
+        mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
         mode.player1.properties.append(vermont)
         mode.player1.properties.append(connecticut)
         
         
         
-        mode.player2.colorBuild.append('green')
+        mode.player2.colorBuild.add('green')
         mode.player2.properties.append(pacific)
         mode.player2.properties.append(northCarolina)
         mode.player2.properties.append(pennsylvania)
@@ -626,8 +633,8 @@ class GameMode(Mode):
     def buyHouseConstraint(mode, property):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            print(property.color)
-            print(mode.player1.colorBuild)
+            #print(property.color)
+            #print(mode.player1.colorBuild)
             if (property.color in mode.player1.colorBuild):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
@@ -685,7 +692,7 @@ class GameMode(Mode):
                     else:
                         mode.player2.money -= property.houseCost
                     
-            print(houses['grey'])
+            #print(houses['grey'])
 
             
                     
@@ -1145,18 +1152,41 @@ class GameMode(Mode):
             h(xcor, ycor) = location
             mode.drawPlayer2Path(canvas,xcor,ycor)
         '''
+################################################################################
+################################################################################
 ############################## AI Mode Setup ###################################
+################################################################################
+################################################################################
+
 
 class AIMode(Mode):
     def appStarted(mode):
         mode.player1 = Player('Player 1')
         mode.computer = Player('Computer AI')
         
+        '''
         #showing that buying houses works
-        mode.player1.colorBuild.append('grey')
+        mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
         mode.player1.properties.append(vermont)
         mode.player1.properties.append(connecticut)
+        
+        mode.computer.colorBuild.add('green')
+        mode.computer.properties.append(pacific)
+        mode.computer.properties.append(northCarolina)
+        mode.computer.properties.append(pennsylvania)
+        
+        mode.computer.colorBuild.add('yellow')
+        mode.computer.properties.append(atlantic)
+        mode.computer.properties.append(vetnor)
+        mode.computer.properties.append(marvin)
+        
+        mode.computer.colorBuild.add('orange')
+        mode.computer.properties.append(stJames)
+        mode.computer.properties.append(tennessee)
+        mode.computer.properties.append(newYork)
+        '''
+        
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
@@ -1295,8 +1325,8 @@ class AIMode(Mode):
     def buyHouseConstraint(mode, property):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            print(property.color)
-            print(mode.player1.colorBuild)
+            #print(property.color)
+            #print(mode.player1.colorBuild)
             if (property.color in mode.player1.colorBuild):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
@@ -1353,7 +1383,7 @@ class AIMode(Mode):
                         mode.player1.money -= property.houseCost
                     else:
                         mode.computer.money -= property.houseCost
-            print(houses['grey'])
+            #print(houses['grey'])
 
             
                     
@@ -1490,6 +1520,7 @@ class AIMode(Mode):
                     mode.computer.money += rent
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
+            print(mode.player1.properties)
         else:
             #redefine location as space
             space = board[mode.computer.position % 40]
@@ -1654,17 +1685,39 @@ class AIMode(Mode):
         elif n == 7:
             return 6 * (1 / 6 * 1 / 6)
             
-    def sumExpectedValue(mode):
+    def sumExpectedValue(mode, position):
         sumExpectedValueResult = 0
         for n in range(2,13):
-            space = board[(mode.computer.position + n) % 40]
+            space = board[(position + n) % 40]
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
         return sumExpectedValueResult
         
     def secondDepthSumExpectedValue(mode):
+        sumSecondExpectedValue = 0
+        for n in range(2,13):
+            space = board[(mode.computer.position + n) % 40]
+            position = mode.computer.position + n
+            sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
+                        (mode.expectedValue(space) + mode.sumExpectedValue(position)))
+            #print(space.name)
+            #print(f'expected val: {mode.expectedValue(space)}')
+            #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
+            #print(f'Second Depth:{sumSecondExpectedValue}')
+        return sumSecondExpectedValue
         
-
+    def AIBuyHouse(mode, color):
+        houseBuild = []
+        for space in board:
+            if isinstance(space, Property):
+                if space.color == color:
+                    houseBuild.append(space)
+        print(f'houseBuild: {houseBuild}')
+        for i in range(5):
+            for space in houseBuild:
+                if (mode.computer.money - mode.computer.critMoney > houseBuild[0].houseCost):
+                    mode.buyHouse(space)
+                    print(space.color)
     
     def monopolyAI(mode):
         #list of things my AI needs to do 
@@ -1672,7 +1725,24 @@ class AIMode(Mode):
         #2. find the critical money value held based ont he expected value change
         #3. use the extra money either to buy properties the next 2 rounds or 
         #   buy houses when possible
-        pass
+        mode.rollDice()
+        mode.computer.critMoney = mode.secondDepthSumExpectedValue()
+        if mode.computer.money > mode.computer.critMoney:
+            #buy property if you can and have extra money
+            space = board[mode.computer.position % 40]
+            if ((isinstance(space, Property) or isinstance(space, Utilities) or 
+                 isinstance(space, Railroad)) and 
+                 mode.computer.money - mode.computer.critMoney > space.cost):
+                mode.buyProperty()
+            
+            #buy houses if you can and have extra money
+            print(mode.computer.colorBuild)
+            for element in mode.computer.colorBuild:
+                print(element)
+                mode.AIBuyHouse(element)
+        mode.endTurn()
+        print(f'AI Turn Counter: {mode.turnCounter}')
+            
         
 
 ###############################  User Input  ################################### 
@@ -1694,6 +1764,7 @@ class AIMode(Mode):
         if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
             event.y >= mode.height - 50 and event.y <= mode.height - 10):
             mode.endTurn()
+            mode.monopolyAI()
             print('you pressed the end turn button')
             
         #pressed buy house button
@@ -1782,23 +1853,34 @@ class AIMode(Mode):
         
         
     def drawHouse(mode, canvas):
-        space = 0
+        spaceIndex = 0
         for property in housePosition:
             if property != None:
                 counter = 0
-                if board[space].numHouse == 5:
+                if board[spaceIndex].numHouse == 5:
+                    space = board[spaceIndex]
                     x, y = property[1]
-                    canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
-                                            y + 4.5, fill = 'red')
+                    if space.color == 'brown' or space.color == 'grey':
+                        canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
+                                                y + 4.5, fill = 'red')
+                    elif space.color == 'pink' or space.color == 'orange':
+                        canvas.create_rectangle(x - 4.5, y - 4.5, x + 4.5, 
+                                                y + 16.5, fill = 'red')
+                    elif space.color == 'red' or space.color == 'yellow':
+                        canvas.create_rectangle(x - 16.5, y - 4.5, x + 4.5, 
+                                                y + 4.5, fill = 'red')
+                    elif space.color == 'green' or space.color == 'blue':
+                        canvas.create_rectangle(x - 4.5, y - 16.5, x + 4.5, 
+                                                y + 4.5, fill = 'red')
                 else:
                     for houseCoor in property:
-                        if counter < board[space].numHouse and counter < 4:
+                        if counter < board[spaceIndex].numHouse and counter < 4:
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
                 
                     
-            space += 1
+            spaceIndex += 1
             
     def drawPropArea(mode, canvas):
         for pair in coorSide1:
@@ -1863,7 +1945,8 @@ class AIMode(Mode):
         
         canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
         
-        print(mode.sumExpectedValue())
+        #print(mode.secondDepthSumExpectedValue())
+        #print(mode.sumExpectedValue(baltic))
         
         
         '''
