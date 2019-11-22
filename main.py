@@ -997,7 +997,8 @@ class GameMode(Mode):
             
 
     def keyPressed(mode, event):
-        pass
+        if event.key == 'h':
+            mode.app.setActiveMode(mode.app.helpMode)
         
     def timerFired(mode):
         pass
@@ -1845,7 +1846,8 @@ class AIMode(Mode):
             
 
     def keyPressed(mode, event):
-        pass
+        if event.key == 'h':
+            mode.app.setActiveMode(mode.app.helpMode)
         
     def timerFired(mode):
         pass
