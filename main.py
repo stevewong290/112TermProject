@@ -3,6 +3,7 @@ from tkinter import *
 import random, math, copy, string, time
 
 verbose = True
+fill = '#D5EFB5'
 ############################  Class Setup  #####################################  
 
 #I got the structure of the code from the modal app from class
@@ -192,34 +193,34 @@ class Utilities(object):
 
 #################################  Spaces  #####################################
 #instantiated properties        
-mediterranean = Property('Mediterranean Avenue', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
-baltic = Property('Baltic Avenue', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
-oriental = Property('Oriental Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
-vermont = Property('Vermont Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
-connecticut = Property('Connecticut Avenue', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
 stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
-state = Property('State Avenue', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
-virginia = Property('Virginia Avenue', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
 stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
-tennessee = Property('Tennessee Avenue', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
-newYork = Property('New York Avenue', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
-kentucky = Property('Kentucky Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
-indiana = Property('Indiana Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
-illinois = Property('Illinois Avenue', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
-atlantic = Property('Atlantic Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
-vetnor = Property('Vetnor Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
-marvin = Property('Marvin Avenue', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
-pacific = Property('Pacific Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
-northCarolina = Property('North Carolina Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
-pennsylvania = Property('Pennsylvania Avenue', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+marvin = Property('Marvin Ave', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
 parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
 boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
 
 #instantiated railroads
-readingRail = Railroad('Reading Railroad', 23)
-pennsylvaniaRail = Railroad('Pennsylvania Railroad', 24)
-boRail= Railroad('B & O Railroad', 25)
-shortRail = Railroad('Short Line', 26)
+readingRail = Railroad('Reading R.R.', 23)
+pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
+boRail= Railroad('B & O R.R.', 25)
+shortRail = Railroad('Short Line R.R.', 26)
 
 #instantiated utilities
 electric = Utilities('Electric Company', 150, 27)
@@ -1240,6 +1241,22 @@ class AIMode(Mode):
         buyHouse = ('buyHouse.png')
         mode.buyHouseButton = mode.loadImage(buyHouse)
         
+        #these are the die
+        mode.diceOne = mode.loadImage('dice1.png')
+        mode.diceOne = mode.scaleImage(mode.diceOne,.3)
+        mode.diceTwo = mode.loadImage('dice2.png')
+        mode.diceTwo = mode.scaleImage(mode.diceTwo,.3)
+        mode.diceThree = mode.loadImage('dice3.png')
+        mode.diceThree = mode.scaleImage(mode.diceThree,.3)
+        mode.diceFour = mode.loadImage('dice4.png')
+        mode.diceFour = mode.scaleImage(mode.diceFour,.3)
+        mode.diceFive = mode.loadImage('dice5.png')
+        mode.diceFive = mode.scaleImage(mode.diceFive,.3)
+        mode.diceSix = mode.loadImage('dice6.png')
+        mode.diceSix = mode.scaleImage(mode.diceSix,.3)
+        
+        
+        
         #this is announcementsa
         mode.announcements = ['hi','hello']
         '''
@@ -1564,7 +1581,14 @@ class AIMode(Mode):
                 mode.player1.money -= space.tax
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                mode.announcements.append(f'Player 1 landed on {space.name}')
+                if isinstance(space, CommunityChance):
+                    if (space.name == communitySide1 or space.name == communitySide2 or 
+                        space.name == communitySide4):
+                        mode.announcements.append(f'Player 1 landed on Community Chest')
+                    else:
+                        mode.announcements.append('Player 1 landed on Chance')
+                else:
+                    mode.announcements.append(f'Player 1 landed on {space.name}')
             elif len(mode.announcements) < 5:
                 mode.announcements.append(f'Player 1 landed on {space.name}')
 
@@ -1589,7 +1613,14 @@ class AIMode(Mode):
                 mode.computer.money -= space.tax
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                mode.announcements.append(f'Computer landed on {space.name}')
+                if isinstance(space, CommunityChance):
+                    if (space.name == communitySide1 or space.name == communitySide2 or 
+                        space.name == communitySide4):
+                        mode.announcements.append(f'Computer landed on Community Chest')
+                    else:
+                        mode.announcements.append('Computer landed on Chance')
+                else:
+                    mode.announcements.append(f'Computer landed on {space.name}')
             elif len(mode.announcements) < 5:
                 mode.announcements.append(f'Computer landed on {space.name}')
    
@@ -1893,12 +1924,12 @@ class AIMode(Mode):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
-        canvas.create_text(125,200,text = (
+        canvas.create_text(1075,500,text = (
                            f'player 1 money:{mode.player1.money}'))
-        canvas.create_text(125,220,text = 'properties')
+        canvas.create_text(1075,520,text = 'properties')
         counter = 0
         for element in player1.properties:
-            canvas.create_text(125, 240 + (20 * counter), text = element.name)
+            canvas.create_text(1075, 540 + (20 * counter), text = element.name)
             counter += 1
         
     def drawComputerValues(mode, canvas, computer):
@@ -1922,40 +1953,40 @@ class AIMode(Mode):
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
         if dice1 == 1:
-            canvas.create_text(200,400, text = '1')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
-            canvas.create_text(200,400, text = '2')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice1 == 3:
-            canvas.create_text(200,400, text = '3')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice1 == 4:
-            canvas.create_text(200,400, text = '4')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice1 == 5:
-            canvas.create_text(200,400, text = '5')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice1 == 6:
-            canvas.create_text(200,400, text = '6')
+            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceSix))
         if dice2 == 1:
-            canvas.create_text(210,400, text = '1')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice2 == 2:
-            canvas.create_text(210,400, text = '2')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice2 == 3:
-            canvas.create_text(210,400, text = '3')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice2 == 4:
-            canvas.create_text(210,400, text = '4')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice2 == 5:
-            canvas.create_text(210,400, text = '5')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice2 == 6:
-            canvas.create_text(210,400, text = '6')
+            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceSix))
         
         
         
         
     def drawTurn(mode, canvas):
-        canvas.create_rectangle()
-        canvas.create_text(125, 150, text = 'Turn:')
+        canvas.create_rectangle(50, 130, 230, 170, fill = fill)
+        canvas.create_text(90, 150, text = 'Turn:', font = 'Arial 22')
         if mode.turnCounter % 2 == 0:
-            canvas.create_text(125, 170, text = 'Player 1')
+            canvas.create_text(180, 150, text = 'Player 1', font = 'Arial 20')
         else:
-            canvas.create_text(125, 170, text = 'Player 2')
+            canvas.create_text(180, 150, text = 'Computer', font = 'Arial 20a')
         
         
     def drawHouse(mode, canvas):
@@ -2009,9 +2040,10 @@ class AIMode(Mode):
             
     def drawAnnouncements(mode, canvas):
         counter = 0
-        canvas.create_text(150, 500, text = 'Announcements:')
+        canvas.create_rectangle(10, 188, 270, 330, fill = fill)
+        canvas.create_text(140, 200, text = 'Announcements:', font = 'Arial, 18')
         for message in mode.announcements:
-            canvas.create_text(150, 520 + 20 * counter, text = message)
+            canvas.create_text(140, 230 + 20 * counter, text = message)
             counter += 1
         
     
