@@ -118,10 +118,21 @@ class Player(object):
             electric.double = False
             water.double = False
             
+    def propertySort(self):
+        for i in range(len(self.properties)):
+            minPosition = i
+            for j in range(i+1, len(self.properties)):
+                if self.properties[minPosition].rank > self.properties[j].rank:
+                    minPosition = j
+            #swap
+            temp = self.properties[i]
+            self.properties[i] = self.properties[minPosition]
+            self.properties[minPosition] = temp
+            
             
             
 class Property(object):
-    def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost, color, setRank):
+    def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost, color, setRank, rank):
         self.name = name
         self.cost = cost
         self.rent = rent
@@ -136,6 +147,7 @@ class Property(object):
         self.selected = False
         self.color = color
         self.setRank = setRank
+        self.rank = rank
         
     def __str__(self):
         return self.name
@@ -145,13 +157,14 @@ class Property(object):
         
         
 class Railroad(object):
-    def __init__(self, name):
+    def __init__(self, name, rank):
         self.name = name
         self.cost = 200
         self.r1 = 25
         self.r2 = 50
         self.r3 = 100
         self.r4 = 200
+        self.rank = rank
         
 class CommunityChance(object):
     def __init__(self, name):
@@ -167,10 +180,11 @@ class Tax(object):
         self.tax = tax
         
 class Utilities(object):
-    def __init__(self, name, cost):
+    def __init__(self, name, cost, rank):
         self.name = name
         self.cost = cost
         self.double = False
+        self.rank = rank
 
 ############################  Board Setup  #####################################     
 
@@ -178,38 +192,38 @@ class Utilities(object):
 
 #################################  Spaces  #####################################
 #instantiated properties        
-mediterranean = Property('Mediterranean Avenue', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1)
-baltic = Property('Baltic Avenue', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2)
-oriental = Property('Oriental Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1)
-vermont = Property('Vermont Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2)
-connecticut = Property('Connecticut Avenue', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3)
-stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1)
-state = Property('State Avenue', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2)
-virginia = Property('Virginia Avenue', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3)
-stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1)
-tennessee = Property('Tennessee Avenue', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2)
-newYork = Property('New York Avenue', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3)
-kentucky = Property('Kentucky Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1)
-indiana = Property('Indiana Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2)
-illinois = Property('Illinois Avenue', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3)
-atlantic = Property('Atlantic Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1)
-vetnor = Property('Vetnor Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2)
-marvin = Property('Marvin Avenue', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3)
-pacific = Property('Pacific Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1)
-northCarolina = Property('North Carolina Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2)
-pennsylvania = Property('Pennsylvania Avenue', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3)
-parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1)
-boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2)
+mediterranean = Property('Mediterranean Avenue', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+baltic = Property('Baltic Avenue', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+oriental = Property('Oriental Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+vermont = Property('Vermont Avenue', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+connecticut = Property('Connecticut Avenue', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
+state = Property('State Avenue', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+virginia = Property('Virginia Avenue', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
+tennessee = Property('Tennessee Avenue', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+newYork = Property('New York Avenue', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+kentucky = Property('Kentucky Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+indiana = Property('Indiana Avenue', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+illinois = Property('Illinois Avenue', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+atlantic = Property('Atlantic Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+vetnor = Property('Vetnor Avenue', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+marvin = Property('Marvin Avenue', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+pacific = Property('Pacific Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+northCarolina = Property('North Carolina Avenue', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+pennsylvania = Property('Pennsylvania Avenue', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
+boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
 
 #instantiated railroads
-readingRail = Railroad('Reading Railroad')
-pennsylvaniaRail = Railroad('Pennsylvania Railroad')
-boRail= Railroad('B & O Railroad')
-shortRail = Railroad('Short Line')
+readingRail = Railroad('Reading Railroad', 23)
+pennsylvaniaRail = Railroad('Pennsylvania Railroad', 24)
+boRail= Railroad('B & O Railroad', 25)
+shortRail = Railroad('Short Line', 26)
 
 #instantiated utilities
-electric = Utilities('Electric Company', 150)
-water = Utilities('Water Works', 150)
+electric = Utilities('Electric Company', 150, 27)
+water = Utilities('Water Works', 150, 28)
 
 #instantiated corner spaces
 passGo = CornerSpace('Pass Go')
@@ -1189,6 +1203,7 @@ class AIMode(Mode):
         mode.computer.properties.append(newYork)
         ''' 
         
+        mode.dice = (1,1)
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
@@ -1333,7 +1348,9 @@ class AIMode(Mode):
                 elif len(mode.announcements) < 5:
                     mode.announcements.append(f'Computer bought {space.name}')
         mode.player1.doubleRent()
+        mode.player1.propertySort()
         mode.computer.doubleRent()
+        mode.computer.propertySort()
         
     def buyHouseConstraint(mode, property):
         #player 1 turn
@@ -1596,11 +1613,14 @@ class AIMode(Mode):
                 double == True
             #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
+            mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
             mode.didRollAndPassGo(diceTotal, double)
             mode.landOpponentOrTax()
             mode.player1.doubleRent()
+            mode.player1.propertySort()
             mode.computer.doubleRent()
+            mode.computer.propertySort()
             
                     
     def endTurn(mode):
@@ -1619,7 +1639,9 @@ class AIMode(Mode):
                 else:
                     mode.announcements.append('Computer ended their turn')
         mode.player1.doubleRent()
+        mode.player1.propertySort()
         mode.computer.doubleRent()
+        mode.computer.propertySort()
         
         
 ############################  AI Select Spaces  ###################################  
@@ -1891,19 +1913,44 @@ class AIMode(Mode):
     def drawCommunityChance(mode, canvas):
         pass
         
-    #this draw function runs through the entire board and checks whether or not 
-    #it is a property; then it draws the number of houses there is. 
+    
 
                 
         
     
-    '''    
-    def drawDice(mode, canvas, twodice):
-        (dice1, dice2) = twodice
+     
+    def drawDice(mode, canvas):
+        (dice1, dice2) = mode.dice
         if dice1 == 1:
-    '''
-    
+            canvas.create_text(200,400, text = '1')
+        elif dice1 == 2:
+            canvas.create_text(200,400, text = '2')
+        elif dice1 == 3:
+            canvas.create_text(200,400, text = '3')
+        elif dice1 == 4:
+            canvas.create_text(200,400, text = '4')
+        elif dice1 == 5:
+            canvas.create_text(200,400, text = '5')
+        elif dice1 == 6:
+            canvas.create_text(200,400, text = '6')
+        if dice2 == 1:
+            canvas.create_text(210,400, text = '1')
+        elif dice2 == 2:
+            canvas.create_text(210,400, text = '2')
+        elif dice2 == 3:
+            canvas.create_text(210,400, text = '3')
+        elif dice2 == 4:
+            canvas.create_text(210,400, text = '4')
+        elif dice2 == 5:
+            canvas.create_text(210,400, text = '5')
+        elif dice2 == 6:
+            canvas.create_text(210,400, text = '6')
+        
+        
+        
+        
     def drawTurn(mode, canvas):
+        canvas.create_rectangle()
         canvas.create_text(125, 150, text = 'Turn:')
         if mode.turnCounter % 2 == 0:
             canvas.create_text(125, 170, text = 'Player 1')
@@ -1962,9 +2009,9 @@ class AIMode(Mode):
             
     def drawAnnouncements(mode, canvas):
         counter = 0
-        canvas.create_text(150, 280, text = 'Announcements:')
+        canvas.create_text(150, 500, text = 'Announcements:')
         for message in mode.announcements:
-            canvas.create_text(150, 300 + 20 * counter, text = message)
+            canvas.create_text(150, 520 + 20 * counter, text = message)
             counter += 1
         
     
@@ -2010,6 +2057,8 @@ class AIMode(Mode):
         
         canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
         mode.drawAnnouncements(canvas)
+        
+        mode.drawDice(canvas)
         
         #print(mode.secondDepthSumExpectedValue())
         #print(mode.sumExpectedValue(baltic))
