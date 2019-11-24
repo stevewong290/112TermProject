@@ -1670,6 +1670,18 @@ class AIMode(Mode):
             mode.player1.propertySort()
             mode.computer.doubleRent()
             mode.computer.propertySort()
+        
+        '''
+        print(mode.withinRange(0, 38)) #True
+        print(mode.withinRange(0, 28)) #True
+        print(mode.withinRange(12, 0)) #True
+        print(mode.withinRange(6, 37)) #True
+        print(mode.withinRange(6, 34)) #True
+        print(mode.withinRange(6, 33)) #False
+        print(mode.withinRange(2,0))   #True
+        print(mode.withinRange(4, 32)) #True
+        print(mode.withinRange(4, 31)) #False
+        '''
             
                     
     def endTurn(mode):
@@ -1799,40 +1811,27 @@ class AIMode(Mode):
         return math.factorial(n) / ((math.factorial(k))*(math.factorial(n-k)))
         
     #this function checks whether the positions a and b are within range of 
-    #one move
+    #one move, returns an ordered pair of boolean and distance
     #we can let a represent the position of the target space and b represent the 
     #position of the opponent
     def withinRange(mode, a, b):
         if a >= 12 and a < 40:
             if b >= a - 12 and b <= a - 2:
-                return True
+                return (True, a - b)
             else:
-                return False
+                return (False, (a - b) % 40)
         elif a < 12 and a >= 2:
-            if b >= 
-        elif a == 11:
             if b >= 0 and b <= a - 2:
-                return True
-            elif b == 39:
-                return True
+                return (True, a - b)
+            elif b <= 39 and b >= (a - 12) % 40:
+                return (True, a + 40 - b) 
             else:
-                return False
-        elif a == 10:
-            if b >= 0 and b <= a - 2:
-                return True
-            elif b == 38 or b == 39:
-                return True
+                return (False, a - b % 40)
+        elif a == 1 or a == 0:
+            if b <= (a - 2) % 40 and b >= (a - 12)  % 40:
+                return (True, a + 40 - b)
             else:
-                return False
-        elif a == 9:
-            if b >= 0 and b <= a -2:
-                return True
-            elif b >= 37 and b <= 39:
-                return True
-            else:
-                return False
-        elif a == 8:
-            
+                return (False, a - b % 40)
     
 
     def probabilityCalculator(mode, n):
@@ -1856,6 +1855,16 @@ class AIMode(Mode):
             posValue = (position + n) % 40
             space = board[posValue]
             opponentPosValue = mode.player1.position % 40
+            boolRange, range = mode.withinRange(posValue, opponentPosValue)
+            if (isinstance(space, Property) or isinstance(space, Utilities) or 
+                isinstance(space, Railroad)) and (space in propertySet):
+                #if the space we are looking at is both unowned and a space where rent needs to be paid,
+                #we assume that the opponent will buy it and therefore will require us to have some money
+                #we now have to check whether or not it will complete a set, and if it does complete a set
+                #we assume the worst case and the opponent will buy the maxnumber of houses
+                if boolRange:
+                    sumExpectedValuePotential += (mode.probabilityCalculator(range) * 
+                                                space.rent)
             
             
             
