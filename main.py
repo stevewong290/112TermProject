@@ -1184,7 +1184,7 @@ class AIMode(Mode):
         mode.player1 = Player('Player 1')
         mode.computer = Player('Computer AI')
         
-        
+        '''
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
@@ -1218,7 +1218,7 @@ class AIMode(Mode):
         propertySet.remove(tennessee)
         propertySet.remove(newYork)
         propertySet.remove(pennsylvania)
-        
+        '''
         
         
         mode.dice = (1,1)
@@ -1275,7 +1275,8 @@ class AIMode(Mode):
         
         
         #this is announcementsa
-        mode.announcements = ['hi','hello']
+        mode.announcements = []
+        
         '''
         #these are the pictures of the dices
         dice1 = 
@@ -1840,7 +1841,7 @@ class AIMode(Mode):
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
-        print(f'houseBuild: {houseBuild}')
+        #print(f'houseBuild: {houseBuild}')
         for i in range(5):
             for space in houseBuild:
                 if (mode.computer.money - mode.computer.critMoney > houseBuild[0].houseCost):
@@ -1864,9 +1865,9 @@ class AIMode(Mode):
                 mode.buyProperty()
             
             #buy houses if you can and have extra money
-            print(mode.computer.colorBuild)
+            #print(mode.computer.colorBuild)
             for element in mode.computer.colorBuild:
-                print(element)
+                #print(element)
                 mode.AIBuyHouse(element)
         mode.endTurn()
         print(f'AI Turn Counter: {mode.turnCounter}')
@@ -1941,55 +1942,55 @@ class AIMode(Mode):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
-        canvas.create_text(1075,500,text = (
-                           f'player 1 money:{mode.player1.money}'))
-        canvas.create_text(1075,520,text = 'properties')
+        canvas.create_rectangle(930,10,1190, 345)
+        canvas.create_rectangle(940, 20, 1180, 60)
+        canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
+        canvas.create_text(1060, 80, text = (f'Money: ${player1.money}'))
+        canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,100, text = 'Houses:', anchor = 'w')
         counter = 0
-        #circleCounter = 0
         r = 4
-        #print(player1.properties)
         for element in player1.properties:
-            #print(element.numHouse)
-            canvas.create_text(940, 540 + (20 * counter), text = element.name, anchor = 'w')
+            canvas.create_text(950, 130 + (18 * counter), text = element.name, anchor = 'w')
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
-                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
                                         fill = 'red')
                     elif circleCounter <= element.numHouse - 1:
-                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
                                         fill = 'green')
                     else:
-                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter))
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter))
             counter += 1
         
     def drawComputerValues(mode, canvas, computer):
-        canvas.create_text(1075,200,text = (
-                           f'player 1 money:{mode.computer.money}'))
-        canvas.create_text(1075,220,text = 'properties')
+        canvas.create_rectangle(930, 355, 1190, 690)
+        canvas.create_rectangle(940, 365, 1180, 405)
+        canvas.create_text(1060,385,text = (f'Computer'), font = 'Arial, 18')
+        canvas.create_text(1060, 425, text = (f'Money: ${computer.money}'))
+        canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,445, text = 'Houses:', anchor = 'w')
         counter = 0
-        #circleCounter = 0
         r = 4
-        #print(computer.properties)
         for element in computer.properties:
-            #print(element.numHouse)
-            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
+            canvas.create_text(950, 475 + (18 * counter), text = element.name, anchor = 'w')
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
-                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
                                         fill = 'red')
                     elif circleCounter <= element.numHouse - 1:
-                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
                                         fill = 'green')
                     else:
-                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
-                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter))
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter))
             counter += 1
         '''
         canvas.create_text(1075,200,text = (
