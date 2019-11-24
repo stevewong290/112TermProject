@@ -239,9 +239,9 @@ goToJail = CornerSpace('Go To Jail')
 communitySide1 = CommunityChance('Community Chest Side 1')
 communitySide2 = CommunityChance('Community Chest Side 2')
 communitySide4 = CommunityChance('Community Chest Side 4')
-chanceSide1 = CommunityChance('Community Chest Side 1')
-chanceSide3 = CommunityChance('Community Chest Side 3')
-chanceSide4 = CommunityChance('Community Chest Side 4')
+chanceSide1 = CommunityChance('Chance Side 1')
+chanceSide3 = CommunityChance('Chance Side 3')
+chanceSide4 = CommunityChance('Chance Side 4')
 
 #instantiated tax space
 incomeTax = Tax('Income Tax', 200)
@@ -1600,8 +1600,8 @@ class AIMode(Mode):
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if isinstance(space, CommunityChance):
-                    if (space.name == communitySide1 or space.name == communitySide2 or 
-                        space.name == communitySide4):
+                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                        space.name == 'Community Chest Side 4'):
                         mode.announcements.append(f'Player 1 landed on Community Chest')
                     else:
                         mode.announcements.append('Player 1 landed on Chance')
@@ -1632,8 +1632,8 @@ class AIMode(Mode):
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if isinstance(space, CommunityChance):
-                    if (space.name == communitySide1 or space.name == communitySide2 or 
-                        space.name == communitySide4):
+                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                        space.name == 'Community Chest Side 4'):
                         mode.announcements.append(f'Computer landed on Community Chest')
                     else:
                         mode.announcements.append('Computer landed on Chance')
