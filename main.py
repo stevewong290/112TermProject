@@ -2,6 +2,9 @@ from cmu_112_graphics import *
 from tkinter import *
 import random, math, copy, string, time
 
+#I got the cmu 112 graphics from the class notes 
+#https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
+
 verbose = True
 fill = '#D5EFB5'
 ############################  Class Setup  #####################################  
@@ -1181,7 +1184,7 @@ class AIMode(Mode):
         mode.player1 = Player('Player 1')
         mode.computer = Player('Computer AI')
         
-        '''
+        
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
@@ -1202,7 +1205,21 @@ class AIMode(Mode):
         mode.computer.properties.append(stJames)
         mode.computer.properties.append(tennessee)
         mode.computer.properties.append(newYork)
-        ''' 
+        
+        propertySet.remove(oriental)
+        propertySet.remove(vermont)
+        propertySet.remove(connecticut)
+        propertySet.remove(pacific)
+        propertySet.remove(northCarolina)
+        propertySet.remove(atlantic)
+        propertySet.remove(vetnor)
+        propertySet.remove(marvin)
+        propertySet.remove(stJames)
+        propertySet.remove(tennessee)
+        propertySet.remove(newYork)
+        propertySet.remove(pennsylvania)
+        
+        
         
         mode.dice = (1,1)
         
@@ -1860,27 +1877,27 @@ class AIMode(Mode):
 
     def mousePressed(mode, event):
         #pressed buy property button
-        if (event.x >= mode.width - 180 and event.x <= mode.width - 10 and 
-            event.y >= 10 and event.y <= 50):
+        if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
+            event.y >= 490 and event.y <= 530):
             mode.buyProperty()
             print('you pressed the buy property button')
             
         #pressed roll dice button
-        if (event.x >= mode.width - 136 and event.x <= mode.width - 10 and 
-            event.y >= 60 and event.y <= 100):
+        if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
+            event.y >= 420 and event.y <= 460):
             print('you pressed the roll dice button')
             mode.rollDice()
             
         #pressed end turn button
-        if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
-            event.y >= mode.height - 50 and event.y <= mode.height - 10):
+        if (event.x >= 140-64 and event.x <= 140 + 64 and 
+            event.y >= 630 and event.y <= 670):
             mode.endTurn()
             mode.monopolyAI()
             print('you pressed the end turn button')
             
         #pressed buy house button
-        if (event.x >= mode.width - 154 and event.x <= mode.width - 10 and 
-            event.y >= 110 and event.y <= 150):
+        if (event.x >= 140-72 and event.x <= 140+72 and 
+            event.y >= 560 and event.y <= 600):
             selected = None
             for space in board:
                 if isinstance(space, Property):
@@ -1928,19 +1945,61 @@ class AIMode(Mode):
                            f'player 1 money:{mode.player1.money}'))
         canvas.create_text(1075,520,text = 'properties')
         counter = 0
+        #circleCounter = 0
+        r = 4
+        #print(player1.properties)
         for element in player1.properties:
-            canvas.create_text(1075, 540 + (20 * counter), text = element.name)
+            #print(element.numHouse)
+            canvas.create_text(940, 540 + (20 * counter), text = element.name, anchor = 'w')
+            if isinstance(element, Property):
+                for circleCounter in range(5):
+                    if circleCounter == element.numHouse - 1 and circleCounter == 4:
+                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter),
+                                        fill = 'red')
+                    elif circleCounter <= element.numHouse - 1:
+                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter),
+                                        fill = 'green')
+                    else:
+                        canvas.create_oval(1080-r + (20 * circleCounter),540 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 540 + r + (20 * counter))
             counter += 1
         
     def drawComputerValues(mode, canvas, computer):
+        canvas.create_text(1075,200,text = (
+                           f'player 1 money:{mode.computer.money}'))
+        canvas.create_text(1075,220,text = 'properties')
+        counter = 0
+        #circleCounter = 0
+        r = 4
+        #print(computer.properties)
+        for element in computer.properties:
+            #print(element.numHouse)
+            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
+            if isinstance(element, Property):
+                for circleCounter in range(5):
+                    if circleCounter == element.numHouse - 1 and circleCounter == 4:
+                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter),
+                                        fill = 'red')
+                    elif circleCounter <= element.numHouse - 1:
+                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter),
+                                        fill = 'green')
+                    else:
+                        canvas.create_oval(1080-r + (20 * circleCounter),240 - r + (20 * counter), 
+                                        1080 + r + (20 * circleCounter), 240 + r + (20 * counter))
+            counter += 1
+        '''
         canvas.create_text(1075,200,text = (
                            f'computer money:{mode.computer.money}'))
         canvas.create_text(1075,220,text = 'properties')
         counter = 0
         for element in computer.properties:
-            canvas.create_text(1075, 240 + (20 * counter), text = element.name)
+            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
             counter += 1
-            
+        a'''   
     def drawCommunityChance(mode, canvas):
         pass
         
@@ -1952,41 +2011,43 @@ class AIMode(Mode):
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
+        canvas.create_rectangle(20, 410, 125, 470, fill = fill)
+        #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceOne))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceTwo))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice1 == 3:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceThree))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice1 == 4:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceFour))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice1 == 5:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceFive))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice1 == 6:
-            canvas.create_image(200,400, image = ImageTk.PhotoImage(mode.diceSix))
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceSix))
         if dice2 == 1:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceOne))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice2 == 2:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceTwo))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice2 == 3:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceThree))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice2 == 4:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceFour))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice2 == 5:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceFive))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice2 == 6:
-            canvas.create_image(240,400, image = ImageTk.PhotoImage(mode.diceSix))
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceSix))
         
         
         
         
     def drawTurn(mode, canvas):
-        canvas.create_rectangle(50, 130, 230, 170, fill = fill)
-        canvas.create_text(90, 150, text = 'Turn:', font = 'Arial 22')
+        canvas.create_rectangle(50, 140, 230, 180, fill = fill)
+        canvas.create_text(90, 160, text = 'Turn:', font = 'Arial 22')
         if mode.turnCounter % 2 == 0:
-            canvas.create_text(180, 150, text = 'Player 1', font = 'Arial 20')
+            canvas.create_text(180, 160, text = 'Player 1', font = 'Arial 20')
         else:
-            canvas.create_text(180, 150, text = 'Computer', font = 'Arial 20a')
+            canvas.create_text(180, 160, text = 'Computer', font = 'Arial 20')
         
         
     def drawHouse(mode, canvas):
@@ -2040,10 +2101,10 @@ class AIMode(Mode):
             
     def drawAnnouncements(mode, canvas):
         counter = 0
-        canvas.create_rectangle(10, 188, 270, 330, fill = fill)
-        canvas.create_text(140, 200, text = 'Announcements:', font = 'Arial, 18')
+        canvas.create_rectangle(10, 210, 270, 380, fill = fill)
+        canvas.create_text(140, 230, text = 'Announcements:', font = 'Arial, 20')
         for message in mode.announcements:
-            canvas.create_text(140, 230 + 20 * counter, text = message)
+            canvas.create_text(140, 260 + 25 * counter, text = message, font = 'Arial 16')
             counter += 1
         
     
@@ -2058,20 +2119,21 @@ class AIMode(Mode):
         #draw board
         canvas.create_image(mode.width / 2,mode.height / 2,
                             image=ImageTk.PhotoImage(mode.board))
-        #draw buy button 
-        canvas.create_image(mode.width - 95, 30, image =
+                            
+        #draw buy property button 
+        canvas.create_image(140, 510, image =
                             ImageTk.PhotoImage(mode.buy))
                             
-        #draw turn button
-        canvas.create_image(mode.width - 74, mode.height - 30, image = 
+        #draw end turn button
+        canvas.create_image(140, 650, image = 
                             ImageTk.PhotoImage(mode.turn))
                             
         #draw roll dice button
-        canvas.create_image(mode.width - 73, 80, image = 
+        canvas.create_image(205, 440, image = 
                             ImageTk.PhotoImage(mode.roll))
                             
         #draw buy house button
-        canvas.create_image(mode.width - 82, 130, image = 
+        canvas.create_image(140, 580, image = 
                             ImageTk.PhotoImage(mode.buyHouseButton))
         
         #draw players
@@ -2117,7 +2179,6 @@ class HelpMode(Mode):
         mode.background = mode.loadImage(background)
         mode.background = mode.scaleImage(mode.background, .5)
         mode.timerDelay = 1
-        
      
         
     def timerFired(mode):
