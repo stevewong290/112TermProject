@@ -1797,6 +1797,42 @@ class AIMode(Mode):
         
     def comboCalculator(mode, n,k):
         return math.factorial(n) / ((math.factorial(k))*(math.factorial(n-k)))
+        
+    #this function checks whether the positions a and b are within range of 
+    #one move
+    #we can let a represent the position of the target space and b represent the 
+    #position of the opponent
+    def withinRange(mode, a, b):
+        if a >= 12 and a < 40:
+            if b >= a - 12 and b <= a - 2:
+                return True
+            else:
+                return False
+        elif a < 12 and a >= 2:
+            if b >= 
+        elif a == 11:
+            if b >= 0 and b <= a - 2:
+                return True
+            elif b == 39:
+                return True
+            else:
+                return False
+        elif a == 10:
+            if b >= 0 and b <= a - 2:
+                return True
+            elif b == 38 or b == 39:
+                return True
+            else:
+                return False
+        elif a == 9:
+            if b >= 0 and b <= a -2:
+                return True
+            elif b >= 37 and b <= 39:
+                return True
+            else:
+                return False
+        elif a == 8:
+            
     
 
     def probabilityCalculator(mode, n):
@@ -1813,6 +1849,15 @@ class AIMode(Mode):
             return 5 * (1 / 6 * 1 / 6)
         elif n == 7:
             return 6 * (1 / 6 * 1 / 6)
+            
+    def potentialLossFromOpponent(mode, position):
+        sumExpectedValuePotential = 0
+        for n in range(2,13):
+            posValue = (position + n) % 40
+            space = board[posValue]
+            opponentPosValue = mode.player1.position % 40
+            
+            
             
     def sumExpectedValue(mode, position):
         sumExpectedValueResult = 0
