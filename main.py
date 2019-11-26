@@ -7,6 +7,7 @@ import random, math, copy, string, time
 
 verbose = True
 fill = '#D5EFB5'
+winner = None
 ############################  Class Setup  #####################################  
 
 #I got the structure of the code from the modal app from class
@@ -15,7 +16,7 @@ fill = '#D5EFB5'
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 1500
+        self.money = 500
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -147,7 +148,7 @@ class Property(object):
         self.hotel = hotel
         self.houseCost = houseCost
         self.double = False
-        self.numHouse = 0
+        self.numHouse = 5
         self.selected = False
         self.color = color
         self.setRank = setRank
@@ -1670,6 +1671,13 @@ class AIMode(Mode):
             mode.player1.propertySort()
             mode.computer.doubleRent()
             mode.computer.propertySort()
+            mode.checkEndGame()
+            
+            '''
+            mode.player1.properties.append(oriental)
+            mode.player1.properties.append(vermont)
+            print(mode.rentIfAcquired(connecticut))
+            '''
         
         '''
         print(mode.withinRange(0, 38)) #True
@@ -1682,7 +1690,14 @@ class AIMode(Mode):
         print(mode.withinRange(4, 32)) #True
         print(mode.withinRange(4, 31)) #False
         '''
-            
+    def checkEndGame(mode):
+        global winner
+        if mode.player1.money < 0:
+            winner = mode.computer
+            mode.app.setActiveMode(mode.app.gameOverMode)
+        elif mode.computer.money < 0:
+            winner = mode.player1
+            mode.app.setActiveMode(mode.app.gameOverMode)
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
@@ -1703,6 +1718,7 @@ class AIMode(Mode):
         mode.player1.propertySort()
         mode.computer.doubleRent()
         mode.computer.propertySort()
+        mode.checkEndGame()
         
         
 ############################  AI Select Spaces  ###################################  
@@ -1848,6 +1864,107 @@ class AIMode(Mode):
             return 5 * (1 / 6 * 1 / 6)
         elif n == 7:
             return 6 * (1 / 6 * 1 / 6)
+    
+    def rentHomeCalculator(mode, space, num):
+        if num == 1:
+            return space.h1
+        elif num == 2:
+            return space.h2
+        elif num == 3:
+            return space.h3
+        elif num == 4:
+            return space.h4
+        elif num == 5:
+            return space.hotel
+            
+    def rentAcquiredProperty(mode, space):
+        color = space.color
+        counter = 0
+        player1Potential = mode.player1.money
+        for prop in mode.player1.properties:
+            if isinstance(prop, Property) and prop.color == color:
+                counter += 1
+        if color == 'blue' or color == 'brown':
+            if player1Potential >= space.cost:
+                player1Potential -= space.cost
+                if counter == 1:
+                    houses = player1Potential // space.houseCost
+                    if houses >= 10:
+                        return space.hotel
+                    elif houses % 2 == 1:
+                        boughtHouse = houses // 2 + 1
+                        return mode.rentHomeCalculator(space, boughtHouse)
+                    else:
+                        boughtHouse == houses // 2
+                        if boughtHouse == 0:
+                            return space.rent * 2
+                        else:
+                            return mode.rentHomeCalculator(space, boughtHouse)
+                else:
+                    return space.rent
+            return 0
+        else:
+            if player1Potential >= space.cost:
+                player1Potential -= space.cost
+                if counter == 2:
+                    houses = player1Potential // space.houseCost
+                    if houses >= 10:
+                        return space.hotel
+                    elif houses % 3 == 1 or houses % 3 == 2:
+                        boughtHouse = houses // 2 + 1
+                        return mode.rentHomeCalculator(space, boughtHouse)
+                    else:
+                        boughtHouse = houses // 2
+                        if boughtHouse == 0:
+                            return space.rent * 2
+                        else:
+                            return mode.rentHomeCalculator(space, boughtHouse)
+                else:
+                    return space.rent
+            return 0
+    
+    def rentAcquiredUtilities(mode, space, range):
+        counter = 0
+        for prop in mode.player1.properties:
+            if isinstance(prop, Utilities):
+                counter += 1
+        player1Potential = mode.player1.money
+        if player1Potential >= space.cost:
+            player1Potential -= space.cost
+            if counter == 1:
+                return 10 * range
+            else:
+                return 4 * range
+        return 0
+        
+    def rentAcquiredRailroad(mode, space):
+        counter = 0
+        for prop in mode.player1.properties:
+            if isinstance(prop, Railroad):
+                counter += 1
+        player1Potential = mode.player1.money
+        if player1Potential >= space.cost:
+            player1Potential -= space.cost
+            if counter == 1:
+                return 50
+            elif counter == 2:
+                return 100
+            elif counter == 3:
+                return 200
+            else:
+                return 25
+        return 0
+            
+    def rentIfAcquired(mode, space, range):
+        if isinstance(space,Property):
+            return mode.rentAcquiredProperty(space)
+        elif isinstance(space, Utilities):
+            return mode.rentAcquiredUtilities(space, range)
+        elif isinstance(space, Railroad):
+            return mode.rentAcquiredRailroad(space)
+        
+        
+                        
             
     def potentialLossFromOpponent(mode, position):
         sumExpectedValuePotential = 0
@@ -1855,7 +1972,7 @@ class AIMode(Mode):
             posValue = (position + n) % 40
             space = board[posValue]
             opponentPosValue = mode.player1.position % 40
-            boolRange, range = mode.withinRange(posValue, opponentPosValue)
+            boolRange, distance = mode.withinRange(posValue, opponentPosValue)
             if (isinstance(space, Property) or isinstance(space, Utilities) or 
                 isinstance(space, Railroad)) and (space in propertySet):
                 #if the space we are looking at is both unowned and a space where rent needs to be paid,
@@ -1863,10 +1980,11 @@ class AIMode(Mode):
                 #we now have to check whether or not it will complete a set, and if it does complete a set
                 #we assume the worst case and the opponent will buy the maxnumber of houses
                 if boolRange:
-                    sumExpectedValuePotential += (mode.probabilityCalculator(range) * 
-                                                space.rent)
-            
-            
+                    print(space.name)
+                    sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
+                                                  mode.rentIfAcquired(space, distance))
+        return sumExpectedValuePotential
+                
             
     def sumExpectedValue(mode, position):
         sumExpectedValueResult = 0
@@ -1874,6 +1992,7 @@ class AIMode(Mode):
             space = board[(position + n) % 40]
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
+        sumExpectedValueResult -= mode.potentialLossFromOpponent(position)
         return sumExpectedValueResult
         
     def secondDepthSumExpectedValue(mode):
@@ -1997,7 +2116,7 @@ class AIMode(Mode):
         
     def drawPlayer1Values(mode, canvas, player1):
         canvas.create_rectangle(930,10,1190, 345)
-        canvas.create_rectangle(940, 20, 1180, 60)
+        canvas.create_rectangle(940, 20, 1180, 60, fill = fill)
         canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
         canvas.create_text(1060, 80, text = (f'Money: ${player1.money}'))
         canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
@@ -2023,7 +2142,7 @@ class AIMode(Mode):
         
     def drawComputerValues(mode, canvas, computer):
         canvas.create_rectangle(930, 355, 1190, 690)
-        canvas.create_rectangle(940, 365, 1180, 405)
+        canvas.create_rectangle(940, 365, 1180, 405, fill = fill)
         canvas.create_text(1060,385,text = (f'Computer'), font = 'Arial, 18')
         canvas.create_text(1060, 425, text = (f'Money: ${computer.money}'))
         canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
@@ -2257,6 +2376,17 @@ class HelpMode(Mode):
     def keyPressed(mode, event):
         mode.app.setActiveMode(mode.app.gameMode)
         
+############################  Game Over Mode  ##################################
+
+class GameOverMode(Mode):
+    def appStarted(mode):
+        mode.gameOver = True
+        
+    def redrawAll(mode,canvas):
+        global winner
+        canvas.create_rectangle(0,0,mode.width, mode.height, fill = fill)
+        canvas.create_text(mode.width / 2, mode.height / 2, text = f'{winner.name} Wins!', font = 'Arial 40')
+        
 ############################  Modal App Setup  ################################# 
 
 class MyModalApp(ModalApp):
@@ -2264,6 +2394,7 @@ class MyModalApp(ModalApp):
         app.splashScreenMode = SplashScreenMode()
         app.gameMode = GameMode()
         app.helpMode = HelpMode()
+        app.gameOverMode = GameOverMode()
         app.AIMode = AIMode()
         app.setActiveMode(app.splashScreenMode)
         app.timerDelay = 50
