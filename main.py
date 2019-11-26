@@ -16,7 +16,7 @@ winner = None
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 500
+        self.money = 1500
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -148,7 +148,7 @@ class Property(object):
         self.hotel = hotel
         self.houseCost = houseCost
         self.double = False
-        self.numHouse = 5
+        self.numHouse = 0
         self.selected = False
         self.color = color
         self.setRank = setRank
@@ -482,10 +482,18 @@ class SplashScreenMode(Mode):
         font1 = 'Arial 24 bold'
         canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
         canvas.create_image(600, 250, image = ImageTk.PhotoImage(mode.background))
-        canvas.create_rectangle(mode.width / 2 - 166, 532, mode.width / 2 + 166, 568, 
+        canvas.create_rectangle(mode.width / 2 - 166, 382, mode.width / 2 + 166, 418, 
+                                fill = 'white', outline = 'red', width = 2)
+        canvas.create_rectangle(mode.width / 2 - 236, 482, mode.width / 2 + 236, 518, 
+                                fill = 'white', outline = 'red', width = 2)
+        canvas.create_rectangle(mode.width / 2 - 186, 582, mode.width / 2 + 186, 618, 
                                 fill = 'white', outline = 'red', width = 2)
         if (mode.counter // 8) % 2 == 0:
-            canvas.create_text(mode.width/2, 550, text='Press any key for the game!', 
+            canvas.create_text(mode.width/2, 400, text="Press  'a'  for the AI Mode!", 
+                               fill = 'red', font=font1)
+            canvas.create_text(mode.width/2, 500, text="Press 'space' for the Two Player Mode!", 
+                               fill = 'red', font=font1)
+            canvas.create_text(mode.width/2, 600, text="Press 'h' for the Instructions!", 
                                fill = 'red', font=font1)
 
     def keyPressed(mode, event):
@@ -493,7 +501,7 @@ class SplashScreenMode(Mode):
             mode.app.setActiveMode(mode.app.helpMode)
         elif (event.key == 'a'):
             mode.app.setActiveMode(mode.app.AIMode)
-        else:
+        elif event.key == 'S pace':
             mode.app.setActiveMode(mode.app.gameMode)
             
 ##########################  Game Mode Setup  ###################################  
@@ -1714,12 +1722,13 @@ class AIMode(Mode):
                     mode.announcements.append('Player 1 ended their turn')
                 else:
                     mode.announcements.append('Computer ended their turn')
-        mode.player1.doubleRent()
-        mode.player1.propertySort()
-        mode.computer.doubleRent()
-        mode.computer.propertySort()
-        mode.checkEndGame()
-        
+            mode.player1.doubleRent()
+            mode.player1.propertySort()
+            mode.computer.doubleRent()
+            mode.computer.propertySort()
+            mode.checkEndGame()
+            mode.monopolyAI()
+            
         
 ############################  AI Select Spaces  ###################################  
 
@@ -2066,7 +2075,6 @@ class AIMode(Mode):
         if (event.x >= 140-64 and event.x <= 140 + 64 and 
             event.y >= 630 and event.y <= 670):
             mode.endTurn()
-            mode.monopolyAI()
             print('you pressed the end turn button')
             
         #pressed buy house button
