@@ -501,7 +501,7 @@ class SplashScreenMode(Mode):
             mode.app.setActiveMode(mode.app.helpMode)
         elif (event.key == 'a'):
             mode.app.setActiveMode(mode.app.AIMode)
-        elif event.key == 'S pace':
+        elif event.key == 'Space':
             mode.app.setActiveMode(mode.app.gameMode)
             
 ##########################  Game Mode Setup  ###################################  
@@ -511,18 +511,44 @@ class GameMode(Mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
         
+        '''
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
         mode.player1.properties.append(vermont)
         mode.player1.properties.append(connecticut)
         
-        
-        
         mode.player2.colorBuild.add('green')
         mode.player2.properties.append(pacific)
         mode.player2.properties.append(northCarolina)
         mode.player2.properties.append(pennsylvania)
+        
+        mode.player2.colorBuild.add('yellow')
+        mode.player2.properties.append(atlantic)
+        mode.player2.properties.append(vetnor)
+        mode.player2.properties.append(marvin)
+        
+        mode.player2.colorBuild.add('orange')
+        mode.player2.properties.append(stJames)
+        mode.player2.properties.append(tennessee)
+        mode.player2.properties.append(newYork)
+        
+        propertySet.remove(oriental)
+        propertySet.remove(vermont)
+        propertySet.remove(connecticut)
+        propertySet.remove(pacific)
+        propertySet.remove(northCarolina)
+        propertySet.remove(atlantic)
+        propertySet.remove(vetnor)
+        propertySet.remove(marvin)
+        propertySet.remove(stJames)
+        propertySet.remove(tennessee)
+        propertySet.remove(newYork)
+        propertySet.remove(pennsylvania)
+        '''
+        
+        
+        mode.dice = (1,1)
         
         #roll tracking in order to help calculate the rent for utilities
         mode.prevRoll = 0
@@ -559,6 +585,24 @@ class GameMode(Mode):
         buyHouse = ('buyHouse.png')
         mode.buyHouseButton = mode.loadImage(buyHouse)
         
+        #these are the die
+        mode.diceOne = mode.loadImage('dice1.png')
+        mode.diceOne = mode.scaleImage(mode.diceOne,.3)
+        mode.diceTwo = mode.loadImage('dice2.png')
+        mode.diceTwo = mode.scaleImage(mode.diceTwo,.3)
+        mode.diceThree = mode.loadImage('dice3.png')
+        mode.diceThree = mode.scaleImage(mode.diceThree,.3)
+        mode.diceFour = mode.loadImage('dice4.png')
+        mode.diceFour = mode.scaleImage(mode.diceFour,.3)
+        mode.diceFive = mode.loadImage('dice5.png')
+        mode.diceFive = mode.scaleImage(mode.diceFive,.3)
+        mode.diceSix = mode.loadImage('dice6.png')
+        mode.diceSix = mode.scaleImage(mode.diceSix,.3)
+        
+        
+        
+        #this is announcementsa
+        mode.announcements = []
         
         '''
         #these are the pictures of the dices
@@ -597,7 +641,7 @@ class GameMode(Mode):
         for i in range(9):
             mode.player1Locations.append((901.5,141.25 + 52.5 * i))
         
-        #THESE ARE THE POSSIBLE LOCATIONS OF PLAYER 2
+        #THESE ARE THE POSSIBLE LOCATIONS OF player2
         mode.player2Locations = []
         
         #pass go, this is where we start appending
@@ -647,6 +691,11 @@ class GameMode(Mode):
                     mode.player1.money -= space.cost
                     mode.player1.properties.append(space)
                     propertySet.remove(space)
+                    if len(mode.announcements) == 5:
+                        mode.announcements = mode.announcements[1:]
+                        mode.announcements.append(f'Player 1 bought {space.name}')
+                    elif len(mode.announcements) < 5:
+                        mode.announcements.append(f'Player 1 bought {space.name}')
         #player 2 turn
         else:
             space = board[mode.player2.position % 40]
@@ -655,8 +704,15 @@ class GameMode(Mode):
                     mode.player2.money -= space.cost
                     mode.player2.properties.append(space)
                     propertySet.remove(space)
+                    if len(mode.announcements) == 5:
+                        mode.announcements = mode.announcements[1:]
+                        mode.announcements.append(f'Player 2 bought {space.name}')
+                    elif len(mode.announcements) < 5:
+                        mode.announcements.append(f'Player 2 bought {space.name}')
         mode.player1.doubleRent()
+        mode.player1.propertySort()
         mode.player2.doubleRent()
+        mode.player2.propertySort()
         
     def buyHouseConstraint(mode, property):
         #player 1 turn
@@ -719,6 +775,17 @@ class GameMode(Mode):
                         mode.player1.money -= property.houseCost
                     else:
                         mode.player2.money -= property.houseCost
+                if len(mode.announcements) < 5:
+                    if mode.turnCounter % 2 == 0:
+                        mode.announcements.append('Player 1 bought a house')
+                    else:
+                        mode.announcements.append('Player 2 bought a house')
+                elif len(mode.announcements) == 5:
+                    mode.announcements = mode.announcements[1:]
+                    if mode.turnCounter % 2 == 0:
+                        mode.announcements.append('Player 1 bought a house')
+                    else:
+                        mode.announcements.append('Player 2 bought a house')
                     
             #print(houses['grey'])
 
@@ -857,6 +924,18 @@ class GameMode(Mode):
                     mode.player2.money += rent
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if isinstance(space, CommunityChance):
+                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                        space.name == 'Community Chest Side 4'):
+                        mode.announcements.append(f'Player 1 landed on Community Chest')
+                    else:
+                        mode.announcements.append('Player 1 landed on Chance')
+                else:
+                    mode.announcements.append(f'Player 1 landed on {space.name}')
+            elif len(mode.announcements) < 5:
+                mode.announcements.append(f'Player 1 landed on {space.name}')
         else:
             #redefine location as space
             space = board[mode.player2.position % 40]
@@ -876,29 +955,87 @@ class GameMode(Mode):
                     mode.player1.money += rent
             elif isinstance(space, Tax):
                 mode.player2.money -= space.tax
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if isinstance(space, CommunityChance):
+                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                        space.name == 'Community Chest Side 4'):
+                        mode.announcements.append(f'Player 2 landed on Community Chest')
+                    else:
+                        mode.announcements.append('Player 2 landed on Chance')
+                else:
+                    mode.announcements.append(f'Player 2 landed on {space.name}')
+            elif len(mode.announcements) < 5:
+                mode.announcements.append(f'Player 2 landed on {space.name}')
    
     def rollDice(mode):
         if mode.rollCounter == 0:
             mode.rollCounter += 1
             dice1, dice2 = mode.diceRoll()
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if mode.turnCounter % 2 == 0:
+                    mode.announcements.append('Player 1 rolled the dice')
+                else:
+                    mode.announcements.append('Player 2 rolled the dice')
+            elif len(mode.announcements) < 5:
+                if mode.turnCounter % 2 == 0:
+                    mode.announcements.append('Player 1 rolled the dice')
+                else:
+                    mode.announcements.append('Player 2 rolled the dice')
             double = False
             if dice1 == dice2:
                 double == True
             #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
+            mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
             mode.didRollAndPassGo(diceTotal, double)
-            
             mode.landOpponentOrTax()
             mode.player1.doubleRent()
+            mode.player1.propertySort()
             mode.player2.doubleRent()
-                    
+            mode.player2.propertySort()
+            mode.checkEndGame()
+     
+    '''
     def endTurn(mode):
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
         mode.player1.doubleRent()
         mode.player2.doubleRent()
+    '''
+        
+    def checkEndGame(mode):
+        global winner
+        if mode.player1.money < 0:
+            winner = mode.player2
+            mode.app.setActiveMode(mode.app.gameOverMode)
+        elif mode.player2.money < 0:
+            winner = mode.player1
+            mode.app.setActiveMode(mode.app.gameOverMode)
+                    
+    def endTurn(mode):
+        if mode.rollCounter == 1:
+            mode.turnCounter += 1
+            mode.rollCounter = 0
+            if len(mode.announcements) == 5:
+                mode.announcements = mode.announcements[1:]
+                if mode.turnCounter % 2 == 1:
+                    mode.announcements.append('Player 1 ended their turn')
+                else:
+                    mode.announcements.append('Player 2 ended their turn')
+            elif len(mode.announcements) < 5:
+                if mode.turnCounter % 2 == 1:
+                    mode.announcements.append('Player 1 ended their turn')
+                else:
+                    mode.announcements.append('Player 2 ended their turn')
+            mode.player1.doubleRent()
+            mode.player1.propertySort()
+            mode.player2.doubleRent()
+            mode.player2.propertySort()
+            mode.checkEndGame()
         
 ############################  Select Spaces  ###################################  
 
@@ -986,26 +1123,26 @@ class GameMode(Mode):
 
     def mousePressed(mode, event):
         #pressed buy property button
-        if (event.x >= mode.width - 180 and event.x <= mode.width - 10 and 
-            event.y >= 10 and event.y <= 50):
+        if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
+            event.y >= 490 and event.y <= 530):
             mode.buyProperty()
             print('you pressed the buy property button')
             
         #pressed roll dice button
-        if (event.x >= mode.width - 136 and event.x <= mode.width - 10 and 
-            event.y >= 60 and event.y <= 100):
+        if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
+            event.y >= 420 and event.y <= 460):
             print('you pressed the roll dice button')
             mode.rollDice()
             
         #pressed end turn button
-        if (event.x >= mode.width - 138 and event.x <= mode.width - 10 and 
-            event.y >= mode.height - 50 and event.y <= mode.height - 10):
+        if (event.x >= 140-64 and event.x <= 140 + 64 and 
+            event.y >= 630 and event.y <= 670):
             mode.endTurn()
             print('you pressed the end turn button')
             
         #pressed buy house button
-        if (event.x >= mode.width - 154 and event.x <= mode.width - 10 and 
-            event.y >= 110 and event.y <= 150):
+        if (event.x >= 140-72 and event.x <= 140+72 and 
+            event.y >= 560 and event.y <= 600):
             selected = None
             for space in board:
                 if isinstance(space, Property):
@@ -1049,64 +1186,144 @@ class GameMode(Mode):
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
-        canvas.create_text(125,200,text = (
-                           f'player 1 money:{mode.player1.money}'))
-        canvas.create_text(125,220,text = 'properties')
+        canvas.create_rectangle(930,10,1190, 345)
+        canvas.create_rectangle(940, 20, 1180, 60, fill = fill)
+        canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
+        canvas.create_text(1060, 80, text = (f'Money: ${player1.money}'))
+        canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,100, text = 'Houses:', anchor = 'w')
         counter = 0
+        r = 4
         for element in player1.properties:
-            canvas.create_text(125, 240 + (20 * counter), text = element.name)
+            canvas.create_text(950, 130 + (18 * counter), text = element.name, anchor = 'w')
+            if isinstance(element, Property):
+                for circleCounter in range(5):
+                    if circleCounter == element.numHouse - 1 and circleCounter == 4:
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
+                                        fill = 'red')
+                    elif circleCounter <= element.numHouse - 1:
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
+                                        fill = 'green')
+                    else:
+                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter))
             counter += 1
         
     def drawPlayer2Values(mode, canvas, player2):
+        canvas.create_rectangle(930, 355, 1190, 690)
+        canvas.create_rectangle(940, 365, 1180, 405, fill = fill)
+        canvas.create_text(1060,385,text = (f'Player 2'), font = 'Arial, 18')
+        canvas.create_text(1060, 425, text = (f'Money: ${player2.money}'))
+        canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,445, text = 'Houses:', anchor = 'w')
+        counter = 0
+        r = 4
+        for element in player2.properties:
+            canvas.create_text(950, 475 + (18 * counter), text = element.name, anchor = 'w')
+            if isinstance(element, Property):
+                for circleCounter in range(5):
+                    if circleCounter == element.numHouse - 1 and circleCounter == 4:
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
+                                        fill = 'red')
+                    elif circleCounter <= element.numHouse - 1:
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
+                                        fill = 'green')
+                    else:
+                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter))
+            counter += 1
+        '''
         canvas.create_text(1075,200,text = (
-                           f'player 2 money:{mode.player2.money}'))
+                           f'computer money:{mode.computer.money}'))
         canvas.create_text(1075,220,text = 'properties')
         counter = 0
-        for element in player2.properties:
-            canvas.create_text(1075, 240 + (20 * counter), text = element.name)
+        for element in computer.properties:
+            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
             counter += 1
-            
+        a'''   
     def drawCommunityChance(mode, canvas):
         pass
         
-    #this draw function runs through the entire board and checks whether or not 
-    #it is a property; then it draws the number of houses there is. 
+    
 
                 
         
     
-    '''    
-    def drawDice(mode, canvas, twodice):
-        (dice1, dice2) = twodice
+     
+    def drawDice(mode, canvas):
+        (dice1, dice2) = mode.dice
+        canvas.create_rectangle(20, 410, 125, 470, fill = fill)
+        #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
-    '''
-    
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceOne))
+        elif dice1 == 2:
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceTwo))
+        elif dice1 == 3:
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceThree))
+        elif dice1 == 4:
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFour))
+        elif dice1 == 5:
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFive))
+        elif dice1 == 6:
+            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceSix))
+        if dice2 == 1:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceOne))
+        elif dice2 == 2:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceTwo))
+        elif dice2 == 3:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceThree))
+        elif dice2 == 4:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFour))
+        elif dice2 == 5:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFive))
+        elif dice2 == 6:
+            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceSix))
+        
+        
+        
+        
     def drawTurn(mode, canvas):
-        canvas.create_text(125, 150, text = 'Turn:')
+        canvas.create_rectangle(50, 140, 230, 180, fill = fill)
+        canvas.create_text(90, 160, text = 'Turn:', font = 'Arial 22')
         if mode.turnCounter % 2 == 0:
-            canvas.create_text(125, 170, text = 'Player 1')
+            canvas.create_text(180, 160, text = 'Player 1', font = 'Arial 20')
         else:
-            canvas.create_text(125, 170, text = 'Player 2')
+            canvas.create_text(180, 160, text = 'Player 2', font = 'Arial 20')
         
         
     def drawHouse(mode, canvas):
-        space = 0
+        spaceIndex = 0
         for property in housePosition:
             if property != None:
                 counter = 0
-                if board[space].numHouse == 5:
+                if board[spaceIndex].numHouse == 5:
+                    space = board[spaceIndex]
                     x, y = property[1]
-                    canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
-                                            y + 4.5, fill = 'red')
+                    if space.color == 'brown' or space.color == 'grey':
+                        canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
+                                                y + 4.5, fill = 'red')
+                    elif space.color == 'pink' or space.color == 'orange':
+                        canvas.create_rectangle(x - 4.5, y - 4.5, x + 4.5, 
+                                                y + 16.5, fill = 'red')
+                    elif space.color == 'red' or space.color == 'yellow':
+                        canvas.create_rectangle(x - 16.5, y - 4.5, x + 4.5, 
+                                                y + 4.5, fill = 'red')
+                    elif space.color == 'green' or space.color == 'blue':
+                        canvas.create_rectangle(x - 4.5, y - 16.5, x + 4.5, 
+                                                y + 4.5, fill = 'red')
                 else:
                     for houseCoor in property:
-                        if counter < board[space].numHouse and counter < 4:
+                        if counter < board[spaceIndex].numHouse and counter < 4:
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
                 
                     
-            space += 1
+            spaceIndex += 1
             
     def drawPropArea(mode, canvas):
         for pair in coorSide1:
@@ -1127,6 +1344,13 @@ class GameMode(Mode):
             x,y = pair
             canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
             
+    def drawAnnouncements(mode, canvas):
+        counter = 0
+        canvas.create_rectangle(10, 210, 270, 380, fill = fill)
+        canvas.create_text(140, 230, text = 'Announcements:', font = 'Arial, 20')
+        for message in mode.announcements:
+            canvas.create_text(140, 260 + 25 * counter, text = message, font = 'Arial 16')
+            counter += 1
         
     
 
@@ -1140,20 +1364,21 @@ class GameMode(Mode):
         #draw board
         canvas.create_image(mode.width / 2,mode.height / 2,
                             image=ImageTk.PhotoImage(mode.board))
-        #draw buy button 
-        canvas.create_image(mode.width - 95, 30, image =
+                            
+        #draw buy property button 
+        canvas.create_image(140, 510, image =
                             ImageTk.PhotoImage(mode.buy))
                             
-        #draw turn button
-        canvas.create_image(mode.width - 74, mode.height - 30, image = 
+        #draw end turn button
+        canvas.create_image(140, 650, image = 
                             ImageTk.PhotoImage(mode.turn))
                             
         #draw roll dice button
-        canvas.create_image(mode.width - 73, 80, image = 
+        canvas.create_image(205, 440, image = 
                             ImageTk.PhotoImage(mode.roll))
                             
         #draw buy house button
-        canvas.create_image(mode.width - 82, 130, image = 
+        canvas.create_image(140, 580, image = 
                             ImageTk.PhotoImage(mode.buyHouseButton))
         
         #draw players
@@ -1169,6 +1394,14 @@ class GameMode(Mode):
         mode.drawHouse(canvas)
         #mode.drawPropArea(canvas)
         
+        #canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', 
+        #                   font = 'Arial 50 bold')
+        mode.drawAnnouncements(canvas)
+        
+        mode.drawDice(canvas)
+        
+        #print(mode.secondDepthSumExpectedValue())
+        #print(mode.sumExpectedValue(baltic))
         
         
         '''
@@ -1177,9 +1410,9 @@ class GameMode(Mode):
             (xcor, ycor) = location
             mode.drawPlayer1Path(canvas,xcor,ycor)
             
-        for location in mode.player2Locations:
+        for location in mode.computerLocations:
             h(xcor, ycor) = location
-            mode.drawPlayer2Path(canvas,xcor,ycor)
+            mode.drawcomputerPath(canvas,xcor,ycor)
         '''
 ################################################################################
 ################################################################################
@@ -1373,11 +1606,11 @@ class AIMode(Mode):
                     mode.player1.money -= space.cost
                     mode.player1.properties.append(space)
                     propertySet.remove(space)
-                if len(mode.announcements) == 5:
-                    mode.announcements = mode.announcements[1:]
-                    mode.announcements.append(f'Player 1 bought {space.name}')
-                elif len(mode.announcements) < 5:
-                    mode.announcements.append(f'Player 1 bought {space.name}')
+                    if len(mode.announcements) == 5:
+                        mode.announcements = mode.announcements[1:]
+                        mode.announcements.append(f'Player 1 bought {space.name}')
+                    elif len(mode.announcements) < 5:
+                        mode.announcements.append(f'Player 1 bought {space.name}')
         #computer turn
         else:
             space = board[mode.computer.position % 40]
@@ -1386,11 +1619,11 @@ class AIMode(Mode):
                     mode.computer.money -= space.cost
                     mode.computer.properties.append(space)
                     propertySet.remove(space)
-                if len(mode.announcements) == 5:
-                    mode.announcements = mode.announcements[1:]
-                    mode.announcements.append(f'Computer bought {space.name}')
-                elif len(mode.announcements) < 5:
-                    mode.announcements.append(f'Computer bought {space.name}')
+                    if len(mode.announcements) == 5:
+                        mode.announcements = mode.announcements[1:]
+                        mode.announcements.append(f'Computer bought {space.name}')
+                    elif len(mode.announcements) < 5:
+                        mode.announcements.append(f'Computer bought {space.name}')
         mode.player1.doubleRent()
         mode.player1.propertySort()
         mode.computer.doubleRent()
@@ -1727,8 +1960,8 @@ class AIMode(Mode):
             mode.computer.doubleRent()
             mode.computer.propertySort()
             mode.checkEndGame()
-            mode.monopolyAI()
-            
+            if mode.turnCounter % 2 == 1:
+                mode.monopolyAI()
         
 ############################  AI Select Spaces  ###################################  
 
