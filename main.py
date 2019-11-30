@@ -1425,6 +1425,14 @@ class AIMode(Mode):
     def appStarted(mode):
         mode.player1 = Player('Player 1')
         mode.computer = Player('Computer AI')
+        mode.turnCompletedPlayer1 = True
+        mode.turnCompletedComputer = True
+        mode.oldPositionPlayer1 = 0
+        mode.tempPositionPlayer1 = 0
+        mode.oldPositionComputer = 0
+        mode.tempPositionComputer = 0
+        mode.counterDrawPlayer1 = 0
+        mode.counterDrawComputer = 0
         
         '''
         #showing that buying houses works
@@ -1762,8 +1770,11 @@ class AIMode(Mode):
     #passed or landed on go
     def didRollAndPassGo(mode, dice, doubleBool):
         if mode.turnCounter % 2 == 0:
+            mode.turnCompletedPlayer1 = False
             if mode.moveForwardJail(doubleBool):
                 prev = mode.player1.position // 40
+                mode.oldPositionPlayer1 = mode.player1.position % 40
+                mode.tempPositionPlayer1 = mode.oldPositionPlayer1
                 mode.player1.position += (dice)
                 mode.landOnJail()
                 newPos = mode.player1.position // 40
@@ -1772,8 +1783,11 @@ class AIMode(Mode):
                 elif prev != newPos:
                     mode.player1.money += 200
         else:
+            mode.turnCompletedComputer = False
             if mode.moveForwardJail(doubleBool):
                 prev = mode.computer.position // 40
+                mode.oldPositionComputer = mode.computer.position % 40
+                mode.tempPositionComputer = mode.oldPositionComputer
                 mode.computer.position += (dice)
                 mode.landOnJail()
                 newPos = mode.computer.position // 40
@@ -1886,6 +1900,8 @@ class AIMode(Mode):
    
     def rollDice(mode):
         if mode.rollCounter == 0:
+            mode.counterDrawPlayer1 = 1
+            mode.counterDrawComputer = 1
             mode.rollCounter += 1
             dice1, dice2 = mode.diceRoll()
             if len(mode.announcements) == 5:
@@ -2204,9 +2220,6 @@ class AIMode(Mode):
             return mode.rentAcquiredUtilities(space, range)
         elif isinstance(space, Railroad):
             return mode.rentAcquiredRailroad(space)
-        
-        
-                        
             
     def potentialLossFromOpponent(mode, position):
         sumExpectedValuePotential = 0
@@ -2294,25 +2307,29 @@ class AIMode(Mode):
     def mousePressed(mode, event):
         #pressed buy property button
         if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
-            event.y >= 490 and event.y <= 530):
+            event.y >= 490 and event.y <= 530 
+            and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             mode.buyProperty()
             print('you pressed the buy property button')
             
         #pressed roll dice button
         if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
-            event.y >= 420 and event.y <= 460):
+            event.y >= 420 and event.y <= 460
+            and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             print('you pressed the roll dice button')
             mode.rollDice()
             
         #pressed end turn button
         if (event.x >= 140-64 and event.x <= 140 + 64 and 
-            event.y >= 630 and event.y <= 670):
+            event.y >= 630 and event.y <= 670
+            and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             mode.endTurn()
             print('you pressed the end turn button')
             
         #pressed buy house button
         if (event.x >= 140-72 and event.x <= 140+72 and 
-            event.y >= 560 and event.y <= 600):
+            event.y >= 560 and event.y <= 600
+            and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             selected = None
             for space in board:
                 if isinstance(space, Property):
@@ -2335,8 +2352,14 @@ class AIMode(Mode):
             mode.app.setActiveMode(mode.app.helpMode)
         
     def timerFired(mode):
-        pass
-        
+        mode.counterDrawPlayer1 += 1
+        mode.counterDrawComputer += 1
+        '''
+        if mode.turnCounter % 2 == 1:
+            mode.counterDrawPlayer1 += 1
+        else:
+            mode.counterDrawComputer += 1
+        '''
 ############################  AI Draw Functions  ###############################
         
     def drawPlayer1Path(mode,canvas,x,y):
@@ -2347,12 +2370,23 @@ class AIMode(Mode):
         
     def drawPlayer1(mode, canvas, player1):
         position = player1.position % 40
-        (x, y) = mode.player1Locations[position]
+        if mode.tempPositionPlayer1 % 40 == position:
+            mode.turnCompletedPlayer1 = True
+        if mode.counterDrawPlayer1 % 4 == 0 and not mode.turnCompletedPlayer1:
+            mode.tempPositionPlayer1 += 1
+        (x, y) = mode.player1Locations[mode.tempPositionPlayer1 % 40]
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
+        #print(f'temp: {mode.tempPositionPlayer1}')
+        #print(f'position: {position}')
+        #print(f'counterDrawPlayer: {mode.counterDrawPlayer}')
         
     def drawComputer(mode, canvas, computer):
         position = computer.position % 40
-        (x, y) = mode.computerLocations[position]
+        if mode.tempPositionComputer % 40 == position:
+            mode.turnCompletedComputer = True
+        if mode.counterDrawComputer % 4 == 0 and not mode.turnCompletedComputer:
+            mode.tempPositionComputer += 1
+        (x, y) = mode.computerLocations[mode.tempPositionComputer % 40]
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
@@ -2491,10 +2525,8 @@ class AIMode(Mode):
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
-                
-                    
             spaceIndex += 1
-            
+
     def drawPropArea(mode, canvas):
         for pair in coorSide1:
             x,y = pair
@@ -2605,7 +2637,18 @@ class HelpMode(Mode):
         #background color
         canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
 
-        canvas.create_text(mode.width/2, 250, text='(Rules will be put here)', font=font)
+        #left side rule book
+        canvas.create_rectangle(50,50,mode.width / 2 - 50, mode.height - 50, fill = 'white')
+        #the actual words, skip by 20 pixels, 30 lines, start at 90, 53 characters per line
+        canvas.create_text(mode.width / 4, 75, text = 'Monopoly Rules', font = 'Arial 24')
+        
+        canvas.create_text(70, 120, text = '12345678901234567890123456789012345678901234567890', anchor = 'w')
+        
+        
+        #right side rule book
+        canvas.create_rectangle(mode.width / 2 + 50,50,mode.width - 50, mode.height - 50, fill = 'white')
+        
+        #canvas.create_text(mode.width/2, 250, text='(Rules will be put here)', font=font)
        
         canvas.create_rectangle(mode.width / 2 - 166, 532, mode.width / 2 + 166, 568, 
                                 fill = 'white', outline = 'red', width = 2)
