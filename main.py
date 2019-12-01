@@ -1433,14 +1433,16 @@ class AIMode(Mode):
         mode.tempPositionComputer = 0
         mode.counterDrawPlayer1 = 0
         mode.counterDrawComputer = 0
+        mode.nextSelected = False
         
-        '''
+        
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
         mode.player1.properties.append(oriental)
         mode.player1.properties.append(vermont)
         mode.player1.properties.append(connecticut)
         
+        '''
         mode.computer.colorBuild.add('green')
         mode.computer.properties.append(pacific)
         mode.computer.properties.append(northCarolina)
@@ -1455,10 +1457,12 @@ class AIMode(Mode):
         mode.computer.properties.append(stJames)
         mode.computer.properties.append(tennessee)
         mode.computer.properties.append(newYork)
-        
+        '''
         propertySet.remove(oriental)
         propertySet.remove(vermont)
         propertySet.remove(connecticut)
+        
+        '''
         propertySet.remove(pacific)
         propertySet.remove(northCarolina)
         propertySet.remove(atlantic)
@@ -1982,84 +1986,94 @@ class AIMode(Mode):
 ############################  AI Select Spaces  ###################################  
 
     def propertySelection(mode, x, y):
-        for space in board:
-            if isinstance(space,Property):
-                space.selected = False
-                
-        #selection from side 1
-        if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            mediterranean.selected = True
-        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            baltic.selected = True
-        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            oriental.selected = True
-        elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            vermont.selected = True
-        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            connecticut.selected = True
-        
-        #selection from side 2
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 560 - 26.25 and y <= 560 + 26.25):
-            stCharles.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 455 - 26.25 and y <= 455 + 26.25):
-            state.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
-            virginia.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-            stJames.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-            tennessee.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 140 - 26.25 and y <= 140 + 26.25):
-            newYork.selected = True
-       
-        #selection from side 3
-        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            kentucky.selected = True
-        elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            indiana.selected = True
-        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            illinois.selected = True
-        elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            atlantic.selected = True
-        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            vetnor.selected = True
-        elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            marvin.selected = True
-        
-        #selection from side 4
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 140 - 26.25 and y <= 140 + 26.25):
-            pacific.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-            northCarolina.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-            pennsylvania.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 455 - 26.25 and y <= 455 + 26.25):
-            parkPlace.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 560 - 26.25 and y <= 560 + 26.25):
-            boardwalk.selected = True
+        print(mode.nextSelected)
+        if mode.nextSelected:
+            for space in board:
+                if isinstance(space,Property):
+                    space.selected = False
+                    
+            #selection from side 1
+            if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                mediterranean.selected = True
+            elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                baltic.selected = True
+            elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                oriental.selected = True
+            elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                vermont.selected = True
+            elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                connecticut.selected = True
             
+            #selection from side 2
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 560 - 26.25 and y <= 560 + 26.25):
+                stCharles.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 455 - 26.25 and y <= 455 + 26.25):
+                state.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
+                virginia.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+                stJames.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+                tennessee.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 140 - 26.25 and y <= 140 + 26.25):
+                newYork.selected = True
+        
+            #selection from side 3
+            elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                kentucky.selected = True
+            elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                indiana.selected = True
+            elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                illinois.selected = True
+            elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                atlantic.selected = True
+            elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                vetnor.selected = True
+            elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                marvin.selected = True
+            
+            #selection from side 4
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 140 - 26.25 and y <= 140 + 26.25):
+                pacific.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+                northCarolina.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+                pennsylvania.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 455 - 26.25 and y <= 455 + 26.25):
+                parkPlace.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 560 - 26.25 and y <= 560 + 26.25):
+                boardwalk.selected = True
+               
+            selected = None
+            for space in board:
+                if isinstance(space, Property):
+                    if space.selected:
+                        selected = space
+            if selected != None:
+                mode.buyHouse(selected)
+            mode.nextSelected = False
             
 #######################  Monopoly Aritifical Intelligence  #####################
 
@@ -2330,13 +2344,8 @@ class AIMode(Mode):
         if (event.x >= 140-72 and event.x <= 140+72 and 
             event.y >= 560 and event.y <= 600
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
-            selected = None
-            for space in board:
-                if isinstance(space, Property):
-                    if space.selected:
-                        selected = space
-            if selected != None:
-                mode.buyHouse(selected)
+    
+            mode.nextSelected = True
             print('you pressed the buyHouse button')
             
         #property selection
