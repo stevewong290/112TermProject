@@ -1434,7 +1434,7 @@ class AIMode(Mode):
         mode.counterDrawPlayer1 = 0
         mode.counterDrawComputer = 0
         mode.nextSelected = False
-        
+        mode.selectionCounter = 0
         
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
@@ -2073,7 +2073,9 @@ class AIMode(Mode):
                         selected = space
             if selected != None:
                 mode.buyHouse(selected)
-            mode.nextSelected = False
+            if mode.selectionCounter == 2:
+                mode.selectionCounter = 0
+                mode.nextSelected = False
             
 #######################  Monopoly Aritifical Intelligence  #####################
 
@@ -2319,6 +2321,7 @@ class AIMode(Mode):
 ###############################  User Input  ################################### 
 
     def mousePressed(mode, event):
+        mode.selectionCounter += 1
         #pressed buy property button
         if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
             event.y >= 490 and event.y <= 530 
