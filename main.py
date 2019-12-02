@@ -175,6 +175,21 @@ class CommunityChance(object):
     def __init__(self, name):
         self.name = name
 
+class CommunityChanceCardMoney(CommunityChance):
+    def __init__(self, name, action, message):
+        super().__init__(name)
+        self.action = action
+        self.message = message
+        
+class CommunityChanceCardMovement(CommunityChance):
+    def __init__(self, name, action, message):
+        super().__init__(name)
+        self.action = action
+        self.message = message
+        
+
+        
+
 class CornerSpace(object):
     def __init__(self, name):
         self.name = name
@@ -192,6 +207,18 @@ class Utilities(object):
         self.rank = rank
 
 ############################  Board Setup  #####################################     
+
+######################## Community Chest and Chance Cards ######################
+
+communityChance1 = CommunityChanceCardMoney('1', 50, 'CMU overcharged you, collect $50 refund')
+communityChance2 = CommunityChanceCardMoney('2', -15, 'Purchased a meal at ABP, pay $15')
+communityChance3 = CommunityChanceCardMoney('3', 100, 'You won Hack112, collect $100')
+communityChance4 = CommunityChanceCardMoney('4', -200, 'Cheated on 112 HW, pay $200')
+communityChance5 = CommunityChanceCardMoney('5', 150, 'Won the lototery, collect $150')
+communityChance6 = CommunityChanceCardMoney('6', -250, 'Tuition is due, pay $250')
+
+
+
 
 
 
@@ -1598,14 +1625,16 @@ class AIMode(Mode):
         #right locations
         for i in range(9):
             mode.computerLocations.append((876.5,141.25 + 52.5 * i))
+            
+        mode.communityChance = []
+        
         
     def diceRoll(mode):
         x = random.randint(1,6)
         y = random.randint(1,6)
         return (x,y)
         
-    def communityChance(mode):
-        x = random.randint()
+        
 
 #################################  AI Buying  ##################################
         
@@ -1836,6 +1865,14 @@ class AIMode(Mode):
             if mode.computer.position % 40 == 30:
                 mode.computer.position -= 20
                 mode.computer.inJail = True
+                
+    def landOnCommunityChance(mode):
+        #player 1
+        if mode.turnCounter % 2 == 0:
+            
+        #player 2
+        else:
+            
             
                 
     def landOpponentOrTax(mode):
@@ -2073,9 +2110,11 @@ class AIMode(Mode):
                         selected = space
             if selected != None:
                 mode.buyHouse(selected)
-            if mode.selectionCounter == 2:
-                mode.selectionCounter = 0
-                mode.nextSelected = False
+           
+        print(mode.selectionCounter)
+        if mode.selectionCounter >= 1:
+            mode.selectionCounter = 0
+            mode.nextSelected = False
             
 #######################  Monopoly Aritifical Intelligence  #####################
 
@@ -2347,7 +2386,8 @@ class AIMode(Mode):
         if (event.x >= 140-72 and event.x <= 140+72 and 
             event.y >= 560 and event.y <= 600
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
-    
+            
+            mode.selectionCounter = 0
             mode.nextSelected = True
             print('you pressed the buyHouse button')
             
