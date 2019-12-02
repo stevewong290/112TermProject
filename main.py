@@ -24,6 +24,7 @@ class Player(object):
         self.jailCounter = 0
         self.colorBuild = set()
         self.critMoney = 0
+        self.lastTransaction = '$0'
 
     def numRail(self):
         counter = 0
@@ -217,8 +218,30 @@ communityChance4 = CommunityChanceCardMoney('4', -200, 'Cheated on 112 HW, pay $
 communityChance5 = CommunityChanceCardMoney('5', 150, 'Won the lototery, collect $150')
 communityChance6 = CommunityChanceCardMoney('6', -250, 'Tuition is due, pay $250')
 
+communityChance7 = CommunityChanceCardMovement('7', -3, 'Move back 3 spaces')
+communityChance8 = CommunityChanceCardMovement('8', 0, 'Advance to the nearest Railroad')
+communityChance9 = CommunityChanceCardMovement('9', 0, 'Advance to the nearest Utility')
+communityChance10 = CommunityChanceCardMovement('10', 0, 'Advance to the Illinois Ave')
+communityChance11 = CommunityChanceCardMovement('11', 0, 'Advance to the Boardwalk')
+communityChance12 = CommunityChanceCardMovement('12', 0, 'Advance to the St. Charles')
 
+communityChanceList = []
+communityChanceList.append(communityChance1)
+communityChanceList.append(communityChance2)
+communityChanceList.append(communityChance3)
+communityChanceList.append(communityChance4)
+communityChanceList.append(communityChance5)
+communityChanceList.append(communityChance6)
+communityChanceList.append(communityChance7)
+communityChanceList.append(communityChance8)
+communityChanceList.append(communityChance9)
+communityChanceList.append(communityChance10)
+communityChanceList.append(communityChance11)
+communityChanceList.append(communityChance12)
 
+random.shuffle(communityChanceList)
+
+print(communityChanceList[0])
 
 
 
@@ -1813,8 +1836,10 @@ class AIMode(Mode):
                 newPos = mode.player1.position // 40
                 if mode.player1.position % 40 == 0:
                     mode.player1.money += 400
+                    mode.player1.lastTransaction = f'+$400'
                 elif prev != newPos:
                     mode.player1.money += 200
+                    mode.player1.lastTransaction = f'+$200'
         else:
             mode.turnCompletedComputer = False
             if mode.moveForwardJail(doubleBool):
@@ -1826,8 +1851,10 @@ class AIMode(Mode):
                 newPos = mode.computer.position // 40
                 if mode.computer.position % 40 == 0:
                     mode.computer.money += 400
+                    mode.computer.lastTransaction = f'+$400'
                 elif prev != newPos:
                     mode.computer.money += 200
+                    mode.computer.lastTransaction = f'+$200'
                 
     #This is a function that returns a bool on whether or not the player can move
     def moveForwardJail(mode, doubleBool):
@@ -1835,6 +1862,7 @@ class AIMode(Mode):
             if mode.player1.jailCounter == 3:
                 mode.player1.inJail = False
                 mode.player1.money -= 50
+                mode.player1.lastTransaction = f'-$50'
                 return True
             elif not doubleBool and mode.player1.inJail:
                 mode.player1.jailCounter += 1
@@ -1846,6 +1874,7 @@ class AIMode(Mode):
         else:
             if mode.computer.jailCounter == 3:
                 mode.computer.money -= 50
+                mode.computer.lastTransaction = f'-$50'
                 return True
             elif not doubleBool and mode.computer.inJail:
                 mode.computer.jailCounter += 1
@@ -1867,12 +1896,34 @@ class AIMode(Mode):
                 mode.computer.inJail = True
                 
     def landOnCommunityChance(mode):
+        if len(communityChanceList) == 0:
+            #add back all the cards
+            communityChanceList.append(communityChance1)
+            communityChanceList.append(communityChance2)
+            communityChanceList.append(communityChance3)
+            communityChanceList.append(communityChance4)
+            communityChanceList.append(communityChance5)
+            communityChanceList.append(communityChance6)
+            communityChanceList.append(communityChance7)
+            communityChanceList.append(communityChance8)
+            communityChanceList.append(communityChance9)
+            communityChanceList.append(communityChance10)
+            communityChanceList.append(communityChance11)
+            communityChanceList.append(communityChance12)
+            #shuffle the cards
+            random.shuffle(communityChanceList)
+            
+        currCommunityChance = communityChanceList.pop(0)
         #player 1
         if mode.turnCounter % 2 == 0:
-            
-        #player 2
+            if isinstance(currCommunityChance, CommunityChanceCardMoney):
+                pass
+                
+            elif isinstance(currCommunityChance, CommunityChanceCardMovement):
+                pass
+        #computer
         else:
-            
+            pass
             
                 
     def landOpponentOrTax(mode):
@@ -1883,17 +1934,24 @@ class AIMode(Mode):
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.computer.money += rent
+                    mode.computer.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.computer.money += rent
+                    mode.computer.lastTransaction = f'+${rent}'
                 elif isinstance(space, Railroad):
                     rent = mode.rentPriceRailroad(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.computer.money += rent
+                    mode.computer.lastTransaction = f'+${rent}'
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
+                mode.player1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if isinstance(space, CommunityChance):
@@ -1915,17 +1973,24 @@ class AIMode(Mode):
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space)
                     mode.computer.money -= rent
+                    mode.computer.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.computer.money -= rent
+                    mode.computer.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Railroad):
                     rent = mode.rentPriceRailroad(space)
                     mode.computer.money -= rent
+                    mode.computer.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
             elif isinstance(space, Tax):
                 mode.computer.money -= space.tax
+                mode.computer.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if isinstance(space, CommunityChance):
@@ -1941,6 +2006,8 @@ class AIMode(Mode):
    
     def rollDice(mode):
         if mode.rollCounter == 0:
+            mode.player1.lastTransaction = '$0'
+            mode.computer.lastTransaction = '$0'
             mode.counterDrawPlayer1 = 1
             mode.counterDrawComputer = 1
             mode.rollCounter += 1
@@ -2445,7 +2512,9 @@ class AIMode(Mode):
         canvas.create_rectangle(930,10,1190, 345)
         canvas.create_rectangle(940, 20, 1180, 60, fill = fill)
         canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
-        canvas.create_text(1060, 80, text = (f'Money: ${player1.money}'))
+        canvas.create_text(940, 80, text = (f'Money: ${player1.money}'), anchor = 'w')
+        canvas.create_text(1066, 80, text = (f'Last Trans: {player1.lastTransaction}'), 
+                           anchor = 'w')
         canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
         canvas.create_text(1076,100, text = 'Houses:', anchor = 'w')
         counter = 0
@@ -2471,7 +2540,9 @@ class AIMode(Mode):
         canvas.create_rectangle(930, 355, 1190, 690)
         canvas.create_rectangle(940, 365, 1180, 405, fill = fill)
         canvas.create_text(1060,385,text = (f'Computer'), font = 'Arial, 18')
-        canvas.create_text(1060, 425, text = (f'Money: ${computer.money}'))
+        canvas.create_text(940, 425, text = (f'Money: ${computer.money}'), anchor = 'w')
+        canvas.create_text(1066, 425, text = (f'Last Trans: {computer.lastTransaction}'), 
+                           anchor = 'w')
         canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
         canvas.create_text(1076,445, text = 'Houses:', anchor = 'w')
         counter = 0
