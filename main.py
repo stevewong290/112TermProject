@@ -263,7 +263,7 @@ indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 
 illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
 atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
 vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
-marvin = Property('Marvin Ave', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
 pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
 northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
 pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
@@ -1668,6 +1668,7 @@ class AIMode(Mode):
             if space in propertySet: 
                 if mode.player1.money >= space.cost:
                     mode.player1.money -= space.cost
+                    mode.player1.lastTransaction = f'-${space.cost}'
                     mode.player1.properties.append(space)
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
@@ -1681,6 +1682,7 @@ class AIMode(Mode):
             if space in propertySet: 
                 if mode.computer.money >= space.cost:
                     mode.computer.money -= space.cost
+                    mode.computer.lastTransaction = f'-${space.cost}'
                     mode.computer.properties.append(space)
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
@@ -1740,8 +1742,10 @@ class AIMode(Mode):
                         houses[property.color] = (a, b+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
+                        mode.player1.lastTransaction = f'-${property.houseCost}'
                     else:
                         mode.computer.money -= property.houseCost
+                        mode.computer.lastTransaction = f'-${property.houseCost}'
                 else:
                     a,b,c = houses[property.color]
                     if property.setRank == 1:
@@ -1752,8 +1756,10 @@ class AIMode(Mode):
                         houses[property.color] = (a,b,c+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
+                        mode.player1.lastTransaction = f'-${property.houseCost}'
                     else:
                         mode.computer.money -= property.houseCost
+                        mode.computer.lastTransaction = f'-${property.houseCost}'
                 if len(mode.announcements) < 5:
                     if mode.turnCounter % 2 == 0:
                         mode.announcements.append('Player 1 bought a house')
