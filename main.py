@@ -1040,13 +1040,16 @@ class GameMode(Mode):
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
-            mode.didRollAndPassGo(diceTotal, double)
-            mode.landOpponentOrTax()
-            mode.player1.doubleRent()
-            mode.player1.propertySort()
-            mode.player2.doubleRent()
-            mode.player2.propertySort()
-            mode.checkEndGame()
+            mode.actionsAfterRoll(diceTotal, double)
+            
+    def actionsAfterRoll(mode, diceTotal, double):
+        mode.didRollAndPassGo(diceTotal, double)
+        mode.landOpponentOrTax()
+        mode.player1.doubleRent()
+        mode.player1.propertySort()
+        mode.player2.doubleRent()
+        mode.player2.propertySort()
+        mode.checkEndGame()
      
     '''
     def endTurn(mode):
@@ -1485,6 +1488,8 @@ class AIMode(Mode):
         mode.counterDrawComputer = 0
         mode.nextSelected = False
         mode.selectionCounter = 0
+        mode.communityChanceMessage = ''
+        mode.animationSkip = False
         
         #showing that buying houses works
         mode.player1.colorBuild.add('grey')
@@ -1839,6 +1844,8 @@ class AIMode(Mode):
                 mode.tempPositionPlayer1 = mode.oldPositionPlayer1
                 mode.player1.position += (dice)
                 mode.landOnJail()
+                if mode.animationSkip:
+                    mode.tempPositionPlayer1 += dice
                 newPos = mode.player1.position // 40
                 if mode.player1.position % 40 == 0:
                     mode.player1.money += 400
@@ -1854,6 +1861,8 @@ class AIMode(Mode):
                 mode.tempPositionComputer = mode.oldPositionComputer
                 mode.computer.position += (dice)
                 mode.landOnJail()
+                if mode.animationSkip:
+                    mode.tempPositionComputer += dice
                 newPos = mode.computer.position // 40
                 if mode.computer.position % 40 == 0:
                     mode.computer.money += 400
@@ -1892,44 +1901,92 @@ class AIMode(Mode):
         return True
         
     def landOnJail(mode):
+        
         if mode.turnCounter % 2 == 0:
             if mode.player1.position % 40 == 30:
                 mode.player1.position -= 20
                 mode.player1.inJail = True
+                mode.animationSkip = True
         else:
             if mode.computer.position % 40 == 30:
                 mode.computer.position -= 20
                 mode.computer.inJail = True
+                mode.animationSkip = True
+                
+    def reshuffleCommunictyChance(mode):
+        #add back all the cards
+        communityChanceList.append(communityChance1)
+        communityChanceList.append(communityChance2)
+        communityChanceList.append(communityChance3)
+        communityChanceList.append(communityChance4)
+        communityChanceList.append(communityChance5)
+        communityChanceList.append(communityChance6)
+        communityChanceList.append(communityChance7)
+        communityChanceList.append(communityChance8)
+        communityChanceList.append(communityChance9)
+        communityChanceList.append(communityChance10)
+        communityChanceList.append(communityChance11)
+        communityChanceList.append(communityChance12)
+        #shuffle the cards
+        random.shuffle(communityChanceList)
+        
+    def moveAction(mode, communityChanceCard, player):
+        #move back 3 spaces
+        if communityChanceCard.name == '7':
+            player.position -= 3
+        #Advance to the nearest Railroad
+        elif communityChanceCard.name == '8':
+            pass
+        #Advance to the nearest Utility
+        elif communityChanceCard.name == '9':
+            pass
+        #Advance to the Illinois Ave
+        elif communityChanceCard.name == '10':
+            if player.position % 40 > 24:
+                player.money += 200
+            player.position = 24
+            mode.communityChanceMessage = 'Advance to the Illinois Ave'
+        #Advance to the Boardwalk
+        elif communityChanceCard.name == '11':
+            player.position = 39
+            mode.communityChanceMessage = 'Advance to the Boardwalk'
+        #Advance to the St. Charles
+        elif communityChanceCard.name == '12':
+            if player.position % 40 > 11:
+                player.money += 200
+            player.position = 11
+            mode.communityChanceMessage = 'Advance to the St. Charles Place'
                 
     def landOnCommunityChance(mode):
         if len(communityChanceList) == 0:
-            #add back all the cards
-            communityChanceList.append(communityChance1)
-            communityChanceList.append(communityChance2)
-            communityChanceList.append(communityChance3)
-            communityChanceList.append(communityChance4)
-            communityChanceList.append(communityChance5)
-            communityChanceList.append(communityChance6)
-            communityChanceList.append(communityChance7)
-            communityChanceList.append(communityChance8)
-            communityChanceList.append(communityChance9)
-            communityChanceList.append(communityChance10)
-            communityChanceList.append(communityChance11)
-            communityChanceList.append(communityChance12)
-            #shuffle the cards
-            random.shuffle(communityChanceList)
-            
+            mode.reshuffleCommunictyChance()
         currCommunityChance = communityChanceList.pop(0)
         #player 1
         if mode.turnCounter % 2 == 0:
             if isinstance(currCommunityChance, CommunityChanceCardMoney):
-                pass
-                
+                mode.player1.money += currCommunityChance.action
+                if currCommunityChance.action > 0:
+                    mode.player1.lastTransaction = f'+${currCommunityChance.action}'
+                else:
+                    mode.player1.lastTransaction = f'-${currCommunityChance.action}'
+                mode.communityChanceMessage = currCommunityChance.message
+                print('money action player 1')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
-                pass
+                mode.moveAction(currCommunityChance, mode.player1)
+                print('move action player 1')
         #computer
         else:
-            pass
+            if isinstance(currCommunityChance, CommunityChanceCardMoney):
+                mode.computer.money += currCommunityChance.action
+                if currCommunityChance.action > 0:
+                    mode.computer.lastTransaction = f'+${currCommunityChance.action}'
+                else:
+                    mode.computer.lastTransaction = f'-${currCommunityChance.action}'
+                mode.communityChanceMessage = currCommunityChance.message
+                print('money action computer')
+            elif isinstance(currCommunityChance, CommunityChanceCardMovement):
+                mode.moveAction(currCommunityChance, mode.computer)
+                print('move action computer')
             
                 
     def landOpponentOrTax(mode):
@@ -1960,16 +2017,16 @@ class AIMode(Mode):
                 mode.player1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                if isinstance(space, CommunityChance):
-                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
-                        space.name == 'Community Chest Side 4'):
-                        mode.announcements.append(f'Player 1 landed on Community Chest')
-                    else:
-                        mode.announcements.append('Player 1 landed on Chance')
+            if isinstance(space, CommunityChance):
+                if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                    space.name == 'Community Chest Side 4'):
+                    mode.announcements.append(f'Player 1 landed on Community Chest')
                 else:
-                    mode.announcements.append(f'Player 1 landed on {space.name}')
-            elif len(mode.announcements) < 5:
+                    mode.announcements.append('Player 1 landed on Chance')
+                mode.landOnCommunityChance()
+            else:
                 mode.announcements.append(f'Player 1 landed on {space.name}')
+            
 
         else:
             #redefine location as space
@@ -1999,16 +2056,16 @@ class AIMode(Mode):
                 mode.computer.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                if isinstance(space, CommunityChance):
-                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
-                        space.name == 'Community Chest Side 4'):
-                        mode.announcements.append(f'Computer landed on Community Chest')
-                    else:
-                        mode.announcements.append('Computer landed on Chance')
+            if isinstance(space, CommunityChance):
+                if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                    space.name == 'Community Chest Side 4'):
+                    mode.announcements.append(f'Computer landed on Community Chest')
                 else:
-                    mode.announcements.append(f'Computer landed on {space.name}')
-            elif len(mode.announcements) < 5:
+                    mode.announcements.append('Computer landed on Chance')
+                mode.landOnCommunityChance()
+            else:
                 mode.announcements.append(f'Computer landed on {space.name}')
+
    
     def rollDice(mode):
         if mode.rollCounter == 0:
@@ -2036,6 +2093,8 @@ class AIMode(Mode):
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
+            mode.actionsAfterRoll(diceTotal, double)
+            '''
             mode.didRollAndPassGo(diceTotal, double)
             mode.landOpponentOrTax()
             mode.player1.doubleRent()
@@ -2043,12 +2102,16 @@ class AIMode(Mode):
             mode.computer.doubleRent()
             mode.computer.propertySort()
             mode.checkEndGame()
+            '''
             
-            '''
-            mode.player1.properties.append(oriental)
-            mode.player1.properties.append(vermont)
-            print(mode.rentIfAcquired(connecticut))
-            '''
+    def actionsAfterRoll(mode, diceTotal, double):
+        mode.didRollAndPassGo(diceTotal, double)
+        mode.landOpponentOrTax()
+        mode.player1.doubleRent()
+        mode.player1.propertySort()
+        mode.computer.doubleRent()
+        mode.computer.propertySort()
+        mode.checkEndGame()
         
         '''
         print(mode.withinRange(0, 38)) #True
@@ -2096,7 +2159,7 @@ class AIMode(Mode):
 ############################  AI Select Spaces  ###################################  
 
     def propertySelection(mode, x, y):
-        print(mode.nextSelected)
+        #print(mode.nextSelected)
         if mode.nextSelected:
             for space in board:
                 if isinstance(space,Property):
@@ -2184,7 +2247,7 @@ class AIMode(Mode):
             if selected != None:
                 mode.buyHouse(selected)
            
-        print(mode.selectionCounter)
+        #print(mode.selectionCounter)
         if mode.selectionCounter >= 1:
             mode.selectionCounter = 0
             mode.nextSelected = False
@@ -2363,7 +2426,7 @@ class AIMode(Mode):
                 #we now have to check whether or not it will complete a set, and if it does complete a set
                 #we assume the worst case and the opponent will buy the maxnumber of houses
                 if boolRange:
-                    print(space.name)
+                    #print(space.name)
                     sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
                                                   mode.rentIfAcquired(space, distance))
         return sumExpectedValuePotential
@@ -2402,7 +2465,7 @@ class AIMode(Mode):
             for space in houseBuild:
                 if (mode.computer.money - mode.computer.critMoney > houseBuild[0].houseCost):
                     mode.buyHouse(space)
-                    print(space.color)
+                    #print(space.color)
     
     def monopolyAI(mode):
         #list of things my AI needs to do 
@@ -2447,12 +2510,14 @@ class AIMode(Mode):
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             print('you pressed the roll dice button')
             mode.rollDice()
+            mode.communityChanceMessage = ''
             
         #pressed end turn button
         if (event.x >= 140-64 and event.x <= 140 + 64 and 
             event.y >= 630 and event.y <= 670
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             mode.endTurn()
+            mode.animationSkip = False
             print('you pressed the end turn button')
             
         #pressed buy house button
@@ -2682,6 +2747,11 @@ class AIMode(Mode):
         for message in mode.announcements:
             canvas.create_text(140, 260 + 25 * counter, text = message, font = 'Arial 16')
             counter += 1
+            
+    def drawCommunityChanceMessage(mode, canvas):
+        canvas.create_rectangle(215, 675, 920, 708, fill = fill)
+        canvas.create_text(225, 691.5, text = 'Community Chest or Chance Message:' ,anchor = 'w')
+        canvas.create_text(480, 691.5, text = f'{mode.communityChanceMessage}', anchor = 'w')
         
     
 
@@ -2693,7 +2763,7 @@ class AIMode(Mode):
         canvas.create_image(140, 65, image = ImageTk.PhotoImage(mode.logo))
         
         #draw board
-        canvas.create_image(mode.width / 2,mode.height / 2,
+        canvas.create_image(600, 350,
                             image=ImageTk.PhotoImage(mode.board))
                             
         #draw buy property button 
@@ -2729,6 +2799,8 @@ class AIMode(Mode):
         mode.drawAnnouncements(canvas)
         
         mode.drawDice(canvas)
+        
+        mode.drawCommunityChanceMessage(canvas)
         
         #print(mode.secondDepthSumExpectedValue())
         #print(mode.sumExpectedValue(baltic))
@@ -2812,4 +2884,4 @@ class MyModalApp(ModalApp):
         app.setActiveMode(app.splashScreenMode)
         app.timerDelay = 50
 
-app = MyModalApp(width=1200, height=700)
+app = MyModalApp(width=1200, height=714)
