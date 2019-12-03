@@ -1968,8 +1968,10 @@ class AIMode(Mode):
                 if currCommunityChance.action > 0:
                     mode.player1.lastTransaction = f'+${currCommunityChance.action}'
                 else:
-                    mode.player1.lastTransaction = f'-${currCommunityChance.action}'
+                    absValAction = currCommunityChance.action * -1
+                    mode.player1.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
+                print(currCommunityChance.message)
                 print('money action player 1')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.player1)
@@ -1983,6 +1985,7 @@ class AIMode(Mode):
                 else:
                     mode.computer.lastTransaction = f'-${currCommunityChance.action}'
                 mode.communityChanceMessage = currCommunityChance.message
+                print(currCommunityChance.message)
                 print('money action computer')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.computer)
@@ -2509,8 +2512,8 @@ class AIMode(Mode):
             event.y >= 420 and event.y <= 460
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
             print('you pressed the roll dice button')
-            mode.rollDice()
             mode.communityChanceMessage = ''
+            mode.rollDice()
             
         #pressed end turn button
         if (event.x >= 140-64 and event.x <= 140 + 64 and 
