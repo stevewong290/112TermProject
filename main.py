@@ -17,10 +17,10 @@ class Player(object):
     def __init__(self, name):
         self.name = name
         self.money = 1500
-        self.position = 0
+        self.position = 10
         self.properties = []
         self.numRailroads = 0
-        self.inJail = False
+        self.inJail = True
         self.jailCounter = 0
         self.colorBuild = set()
         self.critMoney = 0
@@ -50,7 +50,7 @@ class Player(object):
         #grey properties
         if (oriental in self.properties and vermont in self.properties and 
               connecticut in self.properties):
-            print('ran')
+            #print('ran')
             self.colorBuild.add('grey')
             oriental.double = True
             #(board[6]).double = True
@@ -2023,6 +2023,7 @@ class AIMode(Mode):
         #Advance to the nearest Utility
         elif communityChanceCard.name == '9':
             mode.communityChanceMessage = 'Advance to the nearest Utility'
+            mode.nearestUtility(player)
         #Advance to the Illinois Ave
         elif communityChanceCard.name == '10':
             if player.position % 40 > 24:
@@ -2179,7 +2180,9 @@ class AIMode(Mode):
                     mode.announcements.append('Computer rolled the dice')
             double = False
             if dice1 == dice2:
-                double == True
+                double = True
+            #print(dice1, dice2)
+            #print(f'roll doubes? {double}')
             #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
@@ -2527,6 +2530,8 @@ class AIMode(Mode):
         sumExpectedValueResult = 0
         for n in range(2,13):
             space = board[(position + n) % 40]
+            if mode.expectedValue(space) >= 50:
+                sumExpectedValueResult += mode.expectedValue(space)
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
         sumExpectedValueResult -= mode.potentialLossFromOpponent(position)
