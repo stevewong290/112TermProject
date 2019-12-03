@@ -16,7 +16,7 @@ winner = None
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 1500
+        self.money = 0
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -1705,7 +1705,7 @@ class AIMode(Mode):
         if mode.turnCounter % 2 == 0:
             #print(property.color)
             #print(mode.player1.colorBuild)
-            if (property.color in mode.player1.colorBuild):
+            if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
                     if property.numHouse == min(a,b):
@@ -1720,7 +1720,7 @@ class AIMode(Mode):
                         return False
             return False
         else:
-            if (property.color in mode.computer.colorBuild):
+            if (property.color in mode.computer.colorBuild and mode.computer.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
                     if property.numHouse == min(a,b):
