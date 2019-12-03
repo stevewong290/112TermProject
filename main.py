@@ -16,7 +16,7 @@ winner = None
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 0
+        self.money = 1500
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -25,6 +25,7 @@ class Player(object):
         self.colorBuild = set()
         self.critMoney = 0
         self.lastTransaction = '$0'
+        self.utilDouble = False
 
     def numRail(self):
         counter = 0
@@ -38,92 +39,138 @@ class Player(object):
         if mediterranean in self.properties and baltic in self.properties:
             self.colorBuild.add('brown')
             mediterranean.double = True
+            #(board[1]).double = True
             baltic.double = True
+            #(board[3]).double = True
         else:
             mediterranean.double = False
+            #(board[1]).double = False
             baltic.double = False
+            #(board[3]).double = False
         #grey properties
         if (oriental in self.properties and vermont in self.properties and 
               connecticut in self.properties):
+            print('ran')
             self.colorBuild.add('grey')
             oriental.double = True
+            #(board[6]).double = True
             vermont.double = True
+            #(board[8]).double = True
             connecticut.double = True
+            #(board[9]).double = True
         else:
             oriental.double = False
+            #(board[6]).double = False
             vermont.double = False
+            #(board[8]).double = False
             connecticut.double = False
+            #(board[9]).double = False
         #pink properties
         if (stCharles in self.properties and state in self.properties and 
             virginia in self.properties):
             self.colorBuild.add('pink')
             stCharles.double = True
+            #(board[11]).double = True
             state.double = True
+            #(board[13]).double = True
             virginia.double = True
+            #(board[14]).double = True
         else:
             stCharles.double = False
+            #(board[11]).double = False
             state.double = False
+            #(board[13]).double = False
             virginia.double = False
+            #(board[14]).double = False
         #orange properties
         if (stJames in self.properties and tennessee in self.properties and 
             newYork in self.properties):
             self.colorBuild.add('orange')
             stJames.double = True
+            #(board[16]).double = True
             tennessee.double = True
+            #(board[17]).double = True
             newYork.double = True
+            #(board[19]).double = True
         else:
             stJames.double = False
+            #(board[16]).double = False
             tennessee.double = False
+            #(board[17]).double = False
             newYork.double = False
+            #(board[19]).double = False
         #red properties
         if (kentucky in self.properties and indiana in self.properties and 
             illinois in self.properties):
             self.colorBuild.add('red')
             kentucky.double = True
+            #(board[21]) = True
             indiana.double = True
+            #(board[23]) = True
             illinois.double = True
+            #(board[24]) = True
         else:
             kentucky.double = False
+            #(board[21]) = False
             indiana.double = False
+            #(board[23]) = False
             illinois.double = False
+            #(board[24]) = False
         #yellow properties
         if (atlantic in self.properties and vetnor in self.properties and 
             marvin in self.properties):
             self.colorBuild.add('yellow')
             atlantic.double = True
+            #(board[26]).double = True
             vetnor.double = True
+            #(board[27]).double = True
             marvin.double = True
+            #(board[29]).double = True
         else:
             atlantic.double = False
+            #(board[26]).double = False
             vetnor.double = False
+            #(board[27]).double = False
             marvin.double = False
+            #(board[29]).double = False
         #green properties
         if (pacific in self.properties and northCarolina in self.properties and 
             pennsylvania in self.properties):
             self.colorBuild.add('green')
             pacific.double = True
+            #(board[31]).double = True
             northCarolina.double = True
+            #(board[32]).double = True
             pennsylvania.double = True
+            #(board[34]).double = True
         else:
             pacific.double = False
+            #(board[31]).double = False
             northCarolina.double = False
+            #(board[32]).double = False
             pennsylvania.double = False
+            #(board[34]).double = False
         #blue properties
         if (parkPlace in self.properties and boardwalk in self.properties):
             self.colorBuild.add('blue')
             parkPlace.double = True
+            #(board[37]).double = True
             boardwalk.double = True
+            #(board[39]).double = True
         else:
             parkPlace.double = False
+            #(board[37]).double = False
             boardwalk.double = False
+            #(board[39]).double = False
         #utilities
         if (electric in self.properties and water in self.properties):
             electric.double = True
             water.double = True
+            self.utilDouble = True
         else:
             electric.double = False
             water.double = False
-            
+            self.utilDouble = False
     def propertySort(self):
         for i in range(len(self.properties)):
             minPosition = i
@@ -215,7 +262,7 @@ communityChance1 = CommunityChanceCardMoney('1', 50, 'CMU overcharged you, colle
 communityChance2 = CommunityChanceCardMoney('2', -15, 'Purchased a meal at ABP, pay $15')
 communityChance3 = CommunityChanceCardMoney('3', 100, 'You won Hack112, collect $100')
 communityChance4 = CommunityChanceCardMoney('4', -200, 'Cheated on 112 HW, pay $200')
-communityChance5 = CommunityChanceCardMoney('5', 150, 'Won the lototery, collect $150')
+communityChance5 = CommunityChanceCardMoney('5', 150, 'Won the lottery, collect $150')
 communityChance6 = CommunityChanceCardMoney('6', -250, 'Tuition is due, pay $250')
 
 communityChance7 = CommunityChanceCardMovement('7', -3, 'Move back 3 spaces')
@@ -846,6 +893,7 @@ class GameMode(Mode):
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property):
         if property.numHouse == 0:
+            print(property.double)
             if property.double:
                 return property.rent * 2
             else:
@@ -1496,6 +1544,10 @@ class AIMode(Mode):
         mode.player1.properties.append(oriental)
         mode.player1.properties.append(vermont)
         mode.player1.properties.append(connecticut)
+        mode.player1.doubleRent()
+        
+        for space in mode.player1.properties:
+            print(f'{space.name}: {space.double}')
         
         '''
         mode.computer.colorBuild.add('green')
@@ -1784,10 +1836,19 @@ class AIMode(Mode):
 #########################  Rent Price Calculator  ##############################  
 
     #this function takes in a property and returns how much to pay
-    def rentPriceProperty(mode, property):
+    def rentPriceProperty(mode, property, player):
+        mode.player1.doubleRent()
+        mode.computer.doubleRent()
+        '''
+        for i in range(len(mode.player1.properties)):
+            print(f'{mode.player1.properties[i].name}: {mode.player1.properties[i].double}')
+            if givenProp == mode.player1.properties[i]:
+                property = mode.player1.properties[i]
+                print(f'{property.name}: {property.double}')
+        '''
         if property.numHouse == 0:
-            if property.double:
-                return property.rent * 2
+            if property.color in player.colorBuild:
+                return (property.rent * 2)
             else:
                 return property.rent
         elif property.numHouse == 1:
@@ -1802,8 +1863,10 @@ class AIMode(Mode):
             return property.hotel
 
     #this function takes in a utility and returns how much to pay
-    def rentPriceUtility(mode, utility):
-        if utility.double:
+    def rentPriceUtility(mode, utility, player):
+        mode.player1.doubleRent()
+        mode.computer.doubleRent()
+        if player.utilDouble: 
             return mode.prevRoll * 10
         else:
             return mode.prevRoll * 4
@@ -1913,7 +1976,7 @@ class AIMode(Mode):
                 mode.computer.inJail = True
                 mode.animationSkip = True
                 
-    def reshuffleCommunictyChance(mode):
+    def reshuffleCommunityChance(mode):
         #add back all the cards
         communityChanceList.append(communityChance1)
         communityChanceList.append(communityChance2)
@@ -1930,16 +1993,36 @@ class AIMode(Mode):
         #shuffle the cards
         random.shuffle(communityChanceList)
         
+    def nearestRailroad(mode, player):
+        curPos = player.position % 40
+        if curPos > 5 and curPos < 15:
+            player.position = 15
+        elif curPos > 15 and curPos < 25:
+            player.position = 25
+        elif curPos > 25 and curPos < 35:
+            player.position = 35
+        elif curPos < 5 or curPos > 35:
+            player.position = 5
+            
+    def nearestUtility(mode, player):
+        curPos = player.position % 40
+        if curPos > 12 and curPos < 28:
+            player.position = 28
+        else:
+            player.position = 12
+        
     def moveAction(mode, communityChanceCard, player):
         #move back 3 spaces
         if communityChanceCard.name == '7':
             player.position -= 3
+            mode.communityChanceMessage = 'Move back 3 spaces'
         #Advance to the nearest Railroad
         elif communityChanceCard.name == '8':
-            pass
+            mode.communityChanceMessage = 'Advance to the nearest Railroad'
+            mode.nearestRailroad(player)
         #Advance to the nearest Utility
         elif communityChanceCard.name == '9':
-            pass
+            mode.communityChanceMessage = 'Advance to the nearest Utility'
         #Advance to the Illinois Ave
         elif communityChanceCard.name == '10':
             if player.position % 40 > 24:
@@ -1983,7 +2066,8 @@ class AIMode(Mode):
                 if currCommunityChance.action > 0:
                     mode.computer.lastTransaction = f'+${currCommunityChance.action}'
                 else:
-                    mode.computer.lastTransaction = f'-${currCommunityChance.action}'
+                    absValAction = currCommunityChance.action * -1
+                    mode.computer.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
                 print(currCommunityChance.message)
                 print('money action computer')
@@ -1998,13 +2082,14 @@ class AIMode(Mode):
             space = board[mode.player1.position % 40]
             if space in mode.computer.properties:
                 if isinstance(space, Property):
-                    rent = mode.rentPriceProperty(space)
+                    rent = mode.rentPriceProperty(space, mode.computer)
+                    print(space.double)
                     mode.player1.money -= rent
                     mode.player1.lastTransaction = f'-${rent}'
                     mode.computer.money += rent
                     mode.computer.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
-                    rent = mode.rentPriceUtility(space)
+                    rent = mode.rentPriceUtility(space, mode.computer)
                     mode.player1.money -= rent
                     mode.player1.lastTransaction = f'-${rent}'
                     mode.computer.money += rent
@@ -2037,13 +2122,16 @@ class AIMode(Mode):
             #if where you landed is owned by the opponent, pay rent
             if space in mode.player1.properties:
                 if isinstance(space, Property):
-                    rent = mode.rentPriceProperty(space)
+                    rent = mode.rentPriceProperty(space, mode.player1)
+                    print(space.double)
+                    for element in mode.player1.properties:
+                        print(f'{element.name}: {element.double}')
                     mode.computer.money -= rent
                     mode.computer.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
                     mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
-                    rent = mode.rentPriceUtility(space)
+                    rent = mode.rentPriceUtility(space, mode.player1)
                     mode.computer.money -= rent
                     mode.computer.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
@@ -2263,10 +2351,10 @@ class AIMode(Mode):
         #that to the expected value
         if space in mode.player1.properties:
             if isinstance(space, Property):
-                rent = mode.rentPriceProperty(space)
+                rent = mode.rentPriceProperty(space, mode.player1)
                 expectedValueResult -= rent
             elif isinstance(space, Utilities):
-                rent = mode.rentPriceUtility(space)
+                rent = mode.rentPriceUtility(space, mode.player1)
                 expectedValueResult -= rent
             elif isinstance(space, Railroad):
                 rent = mode.rentPriceRailroad(space)
@@ -2275,7 +2363,7 @@ class AIMode(Mode):
             expectedValueResult -= space.tax
         return expectedValueResult
         
-    def comboCalculator(mode, n,k):
+    def comboCalculator(mode, n, k):
         return math.factorial(n) / ((math.factorial(k))*(math.factorial(n-k)))
         
     #this function checks whether the positions a and b are within range of 
@@ -2645,15 +2733,8 @@ class AIMode(Mode):
         for element in computer.properties:
             canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
             counter += 1
-        a'''   
-    def drawCommunityChance(mode, canvas):
-        pass
         
-    
-
-                
-        
-    
+        '''   
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
@@ -2830,6 +2911,10 @@ class HelpMode(Mode):
         mode.background = mode.loadImage(background)
         mode.background = mode.scaleImage(mode.background, .5)
         mode.timerDelay = 1
+        mode.rules1 = mode.loadImage('rules1.png')
+        mode.rules1 = mode.scaleImage(mode.rules1, .5)
+        mode.rules2 = mode.loadImage('rules2.png')
+        mode.rules2 = mode.scaleImage(mode.rules2, .5)
      
         
     def timerFired(mode):
@@ -2842,27 +2927,35 @@ class HelpMode(Mode):
         canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
 
         #left side rule book
-        canvas.create_rectangle(50,50,mode.width / 2 - 50, mode.height - 50, fill = 'white')
-        #the actual words, skip by 20 pixels, 30 lines, start at 90, 53 characters per line
-        canvas.create_text(mode.width / 4, 75, text = 'Monopoly Rules', font = 'Arial 24')
+        canvas.create_rectangle(50,50,mode.width / 2 - 49, mode.height - 49, fill = 'white')
+        canvas.create_image(301, 358, image=ImageTk.PhotoImage(mode.rules1))
         
-        canvas.create_text(70, 120, text = '12345678901234567890123456789012345678901234567890', anchor = 'w')
         
         
         #right side rule book
-        canvas.create_rectangle(mode.width / 2 + 50,50,mode.width - 50, mode.height - 50, fill = 'white')
+        canvas.create_rectangle(mode.width / 2 + 50,50,mode.width - 49, mode.height - 49, fill = 'white')
+        canvas.create_image(901, 358, image=ImageTk.PhotoImage(mode.rules2))
         
         #canvas.create_text(mode.width/2, 250, text='(Rules will be put here)', font=font)
        
-        canvas.create_rectangle(mode.width / 2 - 166, 532, mode.width / 2 + 166, 568, 
+        canvas.create_rectangle(mode.width / 4 - 166, 657, mode.width / 4 + 166, 693, 
                                 fill = 'white', outline = 'red', width = 2)
         if (mode.counter // 12) % 2 == 0:
-            canvas.create_text(mode.width/2, 550, text='Press any key for the game!', 
+            canvas.create_text(mode.width / 4, 675, text='Press "a" for the AI Mode!', 
+                               fill = 'red', font=font1)
+                               
+        canvas.create_rectangle(3  * mode.width / 4 - 206, 657, 3 * mode.width / 4 + 206, 693, 
+                                fill = 'white', outline = 'red', width = 2)
+        if (mode.counter // 12) % 2 == 0:
+            canvas.create_text(3 * mode.width / 4, 675, text='Press "space" for the Two Player!', 
                                fill = 'red', font=font1)
  
 
     def keyPressed(mode, event):
-        mode.app.setActiveMode(mode.app.gameMode)
+        if event.key == 'a':
+            mode.app.setActiveMode(mode.app.AIMode)
+        elif event.key == 'Space':
+            mode.app.setActiveMode(mode.app.gameMode)
         
 ############################  Game Over Mode  ##################################
 
