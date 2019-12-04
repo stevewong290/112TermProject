@@ -17,7 +17,7 @@ winner = None
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 1500
+        self.money = 0
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -244,7 +244,6 @@ communityChanceList.append(communityChance12)
 
 random.shuffle(communityChanceList)
 
-print(communityChanceList[0])
 
 
 
@@ -565,6 +564,21 @@ class GameMode(Mode):
     def appStarted(mode):
         mode.player1 = Player('Player 1')
         mode.player2 = Player('Player 2')
+        mode.turnCompletedPlayer1 = True
+        mode.turnCompletedPlayer2 = True
+        mode.oldPositionPlayer1 = 0
+        mode.tempPositionPlayer1 = 0
+        mode.oldPositionPlayer2 = 0
+        mode.tempPositionPlayer2 = 0
+        mode.counterDrawPlayer1 = 0
+        mode.counterDrawPlayer2 = 0
+        mode.nextSelected = False
+        mode.selectionCounter = 0
+        mode.communityChanceMessage = ''
+        mode.animationSkip = False
+        mode.secondDepthMax = 0
+        mode.endGameCounter = 0
+        mode.gameOver = False
         
         '''
         #showing that buying houses works
@@ -731,9 +745,6 @@ class GameMode(Mode):
         x = random.randint(1,6)
         y = random.randint(1,6)
         return (x,y)
-        
-    def communityChance(mode):
-        x = random.randint()
 
 #################################  Buying  #####################################  
         
@@ -744,6 +755,7 @@ class GameMode(Mode):
             if space in propertySet: 
                 if mode.player1.money >= space.cost:
                     mode.player1.money -= space.cost
+                    mode.player1.lastTransaction = f'-${space.cost}'
                     mode.player1.properties.append(space)
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
@@ -757,6 +769,7 @@ class GameMode(Mode):
             if space in propertySet: 
                 if mode.player2.money >= space.cost:
                     mode.player2.money -= space.cost
+                    mode.player2.lastTransaction = f'-${space.cost}'
                     mode.player2.properties.append(space)
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
@@ -774,7 +787,7 @@ class GameMode(Mode):
         if mode.turnCounter % 2 == 0:
             #print(property.color)
             #print(mode.player1.colorBuild)
-            if (property.color in mode.player1.colorBuild):
+            if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
                     if property.numHouse == min(a,b):
@@ -789,7 +802,7 @@ class GameMode(Mode):
                         return False
             return False
         else:
-            if (property.color in mode.player2.colorBuild):
+            if (property.color in mode.player2.colorBuild and mode.player2.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
                     if property.numHouse == min(a,b):
@@ -816,8 +829,10 @@ class GameMode(Mode):
                         houses[property.color] = (a, b+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
+                        mode.player1.lastTransaction = f'-${property.houseCost}'
                     else:
                         mode.player2.money -= property.houseCost
+                        mode.player2.lastTransaction = f'-${property.houseCost}'
                 else:
                     a,b,c = houses[property.color]
                     if property.setRank == 1:
@@ -828,8 +843,10 @@ class GameMode(Mode):
                         houses[property.color] = (a,b,c+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
+                        mode.player1.lastTransaction = f'-${property.houseCost}'
                     else:
                         mode.player2.money -= property.houseCost
+                        mode.player2.lastTransaction = f'-${property.houseCost}'
                 if len(mode.announcements) < 5:
                     if mode.turnCounter % 2 == 0:
                         mode.announcements.append('Player 1 bought a house')
@@ -850,10 +867,11 @@ class GameMode(Mode):
 
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property):
+        mode.player1.doubleRent()
+        mode.player2.doubleRent()
         if property.numHouse == 0:
-            print(property.double)
-            if property.double:
-                return property.rent * 2
+            if property.color in player.colorBuild:
+                return (property.rent * 2)
             else:
                 return property.rent
         elif property.numHouse == 1:
@@ -869,7 +887,9 @@ class GameMode(Mode):
 
     #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility):
-        if utility.double:
+        mode.player1.doubleRent()
+        mode.player2.doubleRent()
+        if player.utilDouble:
             return mode.prevRoll * 10
         else:
             return mode.prevRoll * 4
@@ -903,25 +923,39 @@ class GameMode(Mode):
     #passed or landed on go
     def didRollAndPassGo(mode, dice, doubleBool):
         if mode.turnCounter % 2 == 0:
+            mode.turnCompletedPlayer1 = False
             if mode.moveForwardJail(doubleBool):
                 prev = mode.player1.position // 40
+                mode.oldPositionPlayer1 = mode.player1.position % 40
+                mode.tempPositionPlayer1 = mode.oldPositionPlayer1
                 mode.player1.position += (dice)
                 mode.landOnJail()
+                if mode.animationSkip:
+                    mode.tempPositionPlayer1 += dice
                 newPos = mode.player1.position // 40
                 if mode.player1.position % 40 == 0:
                     mode.player1.money += 400
+                    mode.player1.lastTransaction = f'+$400'
                 elif prev != newPos:
                     mode.player1.money += 200
+                    mode.player1.lastTransaction = f'+$200'
         else:
+            mode.turnCompletedPlayer2 = False
             if mode.moveForwardJail(doubleBool):
                 prev = mode.player2.position // 40
+                mode.oldPositionPlayer2 = mode.player2.position % 40
+                mode.tempPositionPlayer2 = mode.oldPositionPlayer2
                 mode.player2.position += (dice)
                 mode.landOnJail()
+                if mode.animationSkip:
+                    mode.tempPositionPlayer2 += dice
                 newPos = mode.player2.position // 40
                 if mode.player2.position % 40 == 0:
                     mode.player2.money += 400
+                    mode.player2.lastTransaction = f'+$400'
                 elif prev != newPos:
                     mode.player2.money += 200
+                    mode.player2.lastTransaction = f'+$200'
                 
     #This is a function that returns a bool on whether or not the player can move
     def moveForwardJail(mode, doubleBool):
@@ -929,6 +963,7 @@ class GameMode(Mode):
             if mode.player1.jailCounter == 3:
                 mode.player1.inJail = False
                 mode.player1.money -= 50
+                mode.player1.lastTransaction = f'-$50'
                 return True
             elif not doubleBool and mode.player1.inJail:
                 mode.player1.jailCounter += 1
@@ -940,6 +975,7 @@ class GameMode(Mode):
         else:
             if mode.player2.jailCounter == 3:
                 mode.player2.money -= 50
+                mode.player2.lastTransaction = f'-$50'
                 return True
             elif not doubleBool and mode.player2.inJail:
                 mode.player2.jailCounter += 1
@@ -954,11 +990,114 @@ class GameMode(Mode):
         if mode.turnCounter % 2 == 0:
             if mode.player1.position % 40 == 30:
                 mode.player1.position -= 20
+                mode.tempPositionPlayer1 = mode.player1.position
                 mode.player1.inJail = True
         else:
             if mode.player2.position % 40 == 30:
                 mode.player2.position -= 20
+                mode.tempPositionPlayer2 = mode.player2.position
                 mode.player2.inJail = True
+
+    def reshuffleCommunityChance(mode):
+        #add back all the cards
+        communityChanceList.append(communityChance1)
+        communityChanceList.append(communityChance2)
+        communityChanceList.append(communityChance3)
+        communityChanceList.append(communityChance4)
+        communityChanceList.append(communityChance5)
+        communityChanceList.append(communityChance6)
+        communityChanceList.append(communityChance7)
+        communityChanceList.append(communityChance8)
+        communityChanceList.append(communityChance9)
+        communityChanceList.append(communityChance10)
+        communityChanceList.append(communityChance11)
+        communityChanceList.append(communityChance12)
+        #shuffle the cards
+        random.shuffle(communityChanceList)
+        
+    def nearestRailroad(mode, player):
+        curPos = player.position % 40
+        if curPos > 5 and curPos < 15:
+            player.position = 15
+        elif curPos > 15 and curPos < 25:
+            player.position = 25
+        elif curPos > 25 and curPos < 35:
+            player.position = 35
+        elif curPos < 5 or curPos > 35:
+            player.position = 5
+            
+    def nearestUtility(mode, player):
+        curPos = player.position % 40
+        if curPos > 12 and curPos < 28:
+            player.position = 28
+        else:
+            player.position = 12
+        
+    def moveAction(mode, communityChanceCard, player):
+        #move back 3 spaces
+        if communityChanceCard.name == '7':
+            player.position -= 3
+            mode.communityChanceMessage = 'Move back 3 spaces'
+        #Advance to the nearest Railroad
+        elif communityChanceCard.name == '8':
+            mode.communityChanceMessage = 'Advance to the nearest Railroad'
+            mode.nearestRailroad(player)
+        #Advance to the nearest Utility
+        elif communityChanceCard.name == '9':
+            mode.communityChanceMessage = 'Advance to the nearest Utility'
+            mode.nearestUtility(player)
+        #Advance to the Illinois Ave
+        elif communityChanceCard.name == '10':
+            if player.position % 40 > 24:
+                player.money += 200
+            player.position = 24
+            mode.communityChanceMessage = 'Advance to the Illinois Ave'
+        #Advance to the Boardwalk
+        elif communityChanceCard.name == '11':
+            player.position = 39
+            mode.communityChanceMessage = 'Advance to the Boardwalk'
+        #Advance to the St. Charles
+        elif communityChanceCard.name == '12':
+            if player.position % 40 > 11:
+                player.money += 200
+            player.position = 11
+            mode.communityChanceMessage = 'Advance to the St. Charles Place'
+                
+    def landOnCommunityChance(mode):
+        if len(communityChanceList) == 0:
+            mode.reshuffleCommunityChance()
+        currCommunityChance = communityChanceList.pop(0)
+        #player 1
+        if mode.turnCounter % 2 == 0:
+            if isinstance(currCommunityChance, CommunityChanceCardMoney):
+                mode.player1.money += currCommunityChance.action
+                if currCommunityChance.action > 0:
+                    mode.player1.lastTransaction = f'+${currCommunityChance.action}'
+                else:
+                    absValAction = currCommunityChance.action * -1
+                    mode.player1.lastTransaction = f'-${absValAction}'
+                mode.communityChanceMessage = currCommunityChance.message
+                print(currCommunityChance.message)
+                print('money action player 1')
+            elif isinstance(currCommunityChance, CommunityChanceCardMovement):
+                mode.moveAction(currCommunityChance, mode.player1)
+                print('move action player 1')
+        #computer
+        else:
+            if isinstance(currCommunityChance, CommunityChanceCardMoney):
+                mode.player2.money += currCommunityChance.action
+                if currCommunityChance.action > 0:
+                    mode.player2.lastTransaction = f'+${currCommunityChance.action}'
+                else:
+                    absValAction = currCommunityChance.action * -1
+                    mode.player2.lastTransaction = f'-${absValAction}'
+                mode.communityChanceMessage = currCommunityChance.message
+                print(currCommunityChance.message)
+                print('money action player2')
+            elif isinstance(currCommunityChance, CommunityChanceCardMovement):
+                mode.moveAction(currCommunityChance, mode.player2)
+                print('move action player2')
+        mode.actionsAfterRoll()
             
                 
     def landOpponentOrTax(mode):
@@ -969,29 +1108,36 @@ class GameMode(Mode):
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.player2.money += rent
+                    mode.player2.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.player2.money += rent
+                    mode.player2.lastTransaction = f'+${rent}'
                 elif isinstance(space, Railroad):
                     rent = mode.rentPriceRailroad(space)
                     mode.player1.money -= rent
+                    mode.player1.lastTransaction = f'-${rent}'
                     mode.player2.money += rent
+                    mode.player2.lastTransaction = f'+${rent}'
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
+                mode.player1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                if isinstance(space, CommunityChance):
-                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
-                        space.name == 'Community Chest Side 4'):
-                        mode.announcements.append(f'Player 1 landed on Community Chest')
-                    else:
-                        mode.announcements.append('Player 1 landed on Chance')
+            if isinstance(space, CommunityChance):
+                if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                    space.name == 'Community Chest Side 4'):
+                    mode.announcements.append(f'Player 1 landed on Community Chest')
                 else:
-                    mode.announcements.append(f'Player 1 landed on {space.name}')
-            elif len(mode.announcements) < 5:
+                    mode.announcements.append('Player 1 landed on Chance')
+                mode.landOnCommunityChance()
+            else:
                 mode.announcements.append(f'Player 1 landed on {space.name}')
+           
         else:
             #redefine location as space
             space = board[mode.player2.position % 40]
@@ -1000,32 +1146,44 @@ class GameMode(Mode):
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space)
                     mode.player2.money -= rent
+                    mode.player2.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
                     rent = mode.rentPriceUtility(space)
                     mode.player2.money -= rent
+                    mode.player2.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Railroad):
                     rent = mode.rentPriceRailroad(space)
                     mode.player2.money -= rent
+                    mode.player2.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
+                    mode.player1.lastTransaction = f'+${rent}'
             elif isinstance(space, Tax):
                 mode.player2.money -= space.tax
+                mode.player2.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
-                if isinstance(space, CommunityChance):
-                    if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
-                        space.name == 'Community Chest Side 4'):
-                        mode.announcements.append(f'Player 2 landed on Community Chest')
-                    else:
-                        mode.announcements.append('Player 2 landed on Chance')
+            if isinstance(space, CommunityChance):
+                if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
+                    space.name == 'Community Chest Side 4'):
+                    mode.announcements.append(f'Player 2 landed on Community Chest')
                 else:
-                    mode.announcements.append(f'Player 2 landed on {space.name}')
-            elif len(mode.announcements) < 5:
+                    mode.announcements.append('Player 2 landed on Chance')
+                mode.landOnCommunityChance()
+            else:
                 mode.announcements.append(f'Player 2 landed on {space.name}')
+
    
     def rollDice(mode):
         if mode.rollCounter == 0:
+            mode.endScreenTimer()
+            mode.player1.lastTransaction = '$0'
+            mode.player2.lastTransaction = '$0'
+            mode.counterDrawPlayer1 = 1
+            mode.counterDrawComputer = 1
             mode.rollCounter += 1
             dice1, dice2 = mode.diceRoll()
             if len(mode.announcements) == 5:
@@ -1041,15 +1199,15 @@ class GameMode(Mode):
                     mode.announcements.append('Player 2 rolled the dice')
             double = False
             if dice1 == dice2:
-                double == True
+                double = True
             #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
-            mode.actionsAfterRoll(diceTotal, double)
+            mode.didRollAndPassGo(diceTotal, double)
+            mode.actionsAfterRoll()
             
-    def actionsAfterRoll(mode, diceTotal, double):
-        mode.didRollAndPassGo(diceTotal, double)
+    def actionsAfterRoll(mode):
         mode.landOpponentOrTax()
         mode.player1.doubleRent()
         mode.player1.propertySort()
@@ -1070,9 +1228,17 @@ class GameMode(Mode):
         global winner
         if mode.player1.money < 0:
             winner = mode.player2
-            mode.app.setActiveMode(mode.app.gameOverMode)
+            mode.endGameCounter = 1
+            mode.gameOver = True
+            #mode.app.setActiveMode(mode.app.gameOverMode)
         elif mode.player2.money < 0:
             winner = mode.player1
+            mode.endGameCounter = 1
+            mode.gameOver = True
+            #mode.app.setActiveMode(mode.app.gameOverMode)
+
+    def endScreenTimer(mode):
+        if mode.endGameCounter == 10 and mode.gameOver:
             mode.app.setActiveMode(mode.app.gameOverMode)
                     
     def endTurn(mode):
@@ -1099,109 +1265,85 @@ class GameMode(Mode):
 ############################  Select Spaces  ###################################  
 
     def propertySelection(mode, x, y):
-        for space in board:
-            if isinstance(space,Property):
-                space.selected = False
-                
-        #selection from side 1
-        if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            mediterranean.selected = True
-        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            baltic.selected = True
-        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            oriental.selected = True
-        elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            vermont.selected = True
-        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
-            y >= 628 - 42.5 and y <= 628 + 42.5):
-            connecticut.selected = True
-        
-        #selection from side 2
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 560 - 26.25 and y <= 560 + 26.25):
-            stCharles.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 455 - 26.25 and y <= 455 + 26.25):
-            state.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
-            virginia.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-            stJames.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-            tennessee.selected = True
-        elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
-            y >= 140 - 26.25 and y <= 140 + 26.25):
-            newYork.selected = True
-       
-        #selection from side 3
-        elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            kentucky.selected = True
-        elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            indiana.selected = True
-        elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            illinois.selected = True
-        elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            atlantic.selected = True
-        elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            vetnor.selected = True
-        elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
-            y >= 70 - 42.5 and y <= 70 + 42.5):
-            marvin.selected = True
-        
-        #selection from side 4
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 140 - 26.25 and y <= 140 + 26.25):
-            pacific.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-            northCarolina.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-            pennsylvania.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 455 - 26.25 and y <= 455 + 26.25):
-            parkPlace.selected = True
-        elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
-            y >= 560 - 26.25 and y <= 560 + 26.25):
-            boardwalk.selected = True
-        
+        if mode.nextSelected:
+            for space in board:
+                if isinstance(space,Property):
+                    space.selected = False
+                    
+            #selection from side 1
+            if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                mediterranean.selected = True
+            elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                baltic.selected = True
+            elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                oriental.selected = True
+            elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                vermont.selected = True
+            elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+                y >= 628 - 42.5 and y <= 628 + 42.5):
+                connecticut.selected = True
+            
+            #selection from side 2
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 560 - 26.25 and y <= 560 + 26.25):
+                stCharles.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 455 - 26.25 and y <= 455 + 26.25):
+                state.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
+                virginia.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+                stJames.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+                tennessee.selected = True
+            elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
+                y >= 140 - 26.25 and y <= 140 + 26.25):
+                newYork.selected = True
+           
+            #selection from side 3
+            elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                kentucky.selected = True
+            elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                indiana.selected = True
+            elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                illinois.selected = True
+            elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                atlantic.selected = True
+            elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                vetnor.selected = True
+            elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
+                y >= 70 - 42.5 and y <= 70 + 42.5):
+                marvin.selected = True
+            
+            #selection from side 4
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 140 - 26.25 and y <= 140 + 26.25):
+                pacific.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
+                northCarolina.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
+                pennsylvania.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 455 - 26.25 and y <= 455 + 26.25):
+                parkPlace.selected = True
+            elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
+                y >= 560 - 26.25 and y <= 560 + 26.25):
+                boardwalk.selected = True
 
-###############################  User Input  ################################### 
-
-    def mousePressed(mode, event):
-        #pressed buy property button
-        if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
-            event.y >= 490 and event.y <= 530):
-            mode.buyProperty()
-            print('you pressed the buy property button')
-            
-        #pressed roll dice button
-        if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
-            event.y >= 420 and event.y <= 460):
-            print('you pressed the roll dice button')
-            mode.rollDice()
-            
-        #pressed end turn button
-        if (event.x >= 140-64 and event.x <= 140 + 64 and 
-            event.y >= 630 and event.y <= 670):
-            mode.endTurn()
-            print('you pressed the end turn button')
-            
-        #pressed buy house button
-        if (event.x >= 140-72 and event.x <= 140+72 and 
-            event.y >= 560 and event.y <= 600):
             selected = None
             for space in board:
                 if isinstance(space, Property):
@@ -1209,6 +1351,45 @@ class GameMode(Mode):
                         selected = space
             if selected != None:
                 mode.buyHouse(selected)
+
+        if mode.selectionCounter >= 1:
+            mode.selectionCounter = 0
+            mode.nextSelected = False
+        
+
+###############################  User Input  ################################### 
+
+    def mousePressed(mode, event):
+        #pressed buy property button
+        if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
+            event.y >= 490 and event.y <= 530
+            and mode.turnCompletedPlayer1 and mode.turnCompletedPlayer2):
+            mode.buyProperty()
+            print('you pressed the buy property button')
+            
+        #pressed roll dice button
+        if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
+            event.y >= 420 and event.y <= 460
+            and mode.turnCompletedPlayer1 and mode.turnCompletedPlayer2):
+            print('you pressed the roll dice button')
+            mode.communityChanceMessage = ''
+            mode.rollDice()
+            
+        #pressed end turn button
+        if (event.x >= 140-64 and event.x <= 140 + 64 and 
+            event.y >= 630 and event.y <= 670
+            and mode.turnCompletedPlayer1 and mode.turnCompletedPlayer2):
+            mode.endTurn()
+            mode.animationSkip = False
+            print('you pressed the end turn button')
+            
+        #pressed buy house button
+        if (event.x >= 140-72 and event.x <= 140+72 and 
+            event.y >= 560 and event.y <= 600
+            and mode.turnCompletedPlayer1 and mode.turnCompletedPlayer2):
+
+            mode.selectionCounter = 0
+            mode.nextSelected = True
             print('you pressed the buyHouse button')
             
         #property selection
@@ -1222,9 +1403,51 @@ class GameMode(Mode):
     def keyPressed(mode, event):
         if event.key == 'h':
             mode.app.setActiveMode(mode.app.helpMode)
+            
+        elif event.key == 'o':
+            
+            #showing that buying houses on a player works
+            #easy to show pass go 
+            #easy to show critical value calculator
+            mode.player1.colorBuild.add('grey')
+            mode.player1.properties.append(oriental)
+            mode.player1.properties.append(vermont)
+            mode.player1.properties.append(connecticut)
+            
+            mode.player1.colorBuild.add('orange')
+            mode.player1.properties.append(stJames)
+            mode.player1.properties.append(tennessee)
+            mode.player1.properties.append(newYork)
+            mode.player1.doubleRent()
+            
+            
+            propertySet.remove(oriental)
+            propertySet.remove(vermont)
+            propertySet.remove(connecticut)
+            
+            propertySet.remove(stJames)
+            propertySet.remove(tennessee)
+            propertySet.remove(newYork)
+            
+        elif event.key == 'c':
+            mode.computer.colorBuild.add('yellow')
+            mode.computer.properties.append(atlantic)
+            mode.computer.properties.append(vetnor)
+            mode.computer.properties.append(marvin)
+            
+        elif event.key == 'j':
+            mode.skipAnimation = True
+            mode.player1.inJail = True
+            mode.player1.position = 10
+            mode.tempPositionPlayer1 = 10
+            mode.computer.inJail = True
+            mode.computer.position = 10
+            mode.tempPositionComputer = 10
         
     def timerFired(mode):
-        pass
+        mode.counterDrawPlayer1 += 1
+        mode.counterDrawPlayer2 += 1
+        mode.endGameCounter += 1
         
 ############################  Draw Functions  ################################## 
         
@@ -1236,19 +1459,29 @@ class GameMode(Mode):
         
     def drawPlayer1(mode, canvas, player1):
         position = player1.position % 40
-        (x, y) = mode.player1Locations[position]
+        if mode.tempPositionPlayer1 % 40 == position:
+            mode.turnCompletedPlayer1 = True
+        if mode.counterDrawPlayer1 % 4 == 0 and not mode.turnCompletedPlayer1:
+            mode.tempPositionPlayer1 += 1
+        (x, y) = mode.player1Locations[mode.tempPositionPlayer1 % 40]
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
         
     def drawPlayer2(mode, canvas, player2):
         position = player2.position % 40
-        (x, y) = mode.player2Locations[position]
+        if mode.tempPositionPlayer2 % 40 == position:
+            mode.turnCompletedPlayer2 = True
+        if mode.counterDrawPlayer2 % 4 == 0 and not mode.turnCompletedPlayer2:
+            mode.tempPositionPlayer2 += 1
+        (x, y) = mode.player2Locations[mode.tempPositionPlayer2 % 40]
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1Values(mode, canvas, player1):
         canvas.create_rectangle(930,10,1190, 345)
         canvas.create_rectangle(940, 20, 1180, 60, fill = fill)
         canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
-        canvas.create_text(1060, 80, text = (f'Money: ${player1.money}'))
+        canvas.create_text(940, 80, text = (f'Money: ${player1.money}'), anchor = 'w')
+        canvas.create_text(1066, 80, text = (f'Last Trans: {player1.lastTransaction}'), 
+                           anchor = 'w')
         canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
         canvas.create_text(1076,100, text = 'Houses:', anchor = 'w')
         counter = 0
@@ -1274,7 +1507,9 @@ class GameMode(Mode):
         canvas.create_rectangle(930, 355, 1190, 690)
         canvas.create_rectangle(940, 365, 1180, 405, fill = fill)
         canvas.create_text(1060,385,text = (f'Player 2'), font = 'Arial, 18')
-        canvas.create_text(1060, 425, text = (f'Money: ${player2.money}'))
+        canvas.create_text(940, 425, text = (f'Money: ${player2.money}'), anchor = 'w')
+        canvas.create_text(1066, 425, text = (f'Last Trans: {player2.lastTransaction}'), 
+                           anchor = 'w')
         canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
         canvas.create_text(1076,445, text = 'Houses:', anchor = 'w')
         counter = 0
@@ -1304,14 +1539,8 @@ class GameMode(Mode):
             canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
             counter += 1
         a'''   
-    def drawCommunityChance(mode, canvas):
-        pass
-        
-    
 
-                
-        
-    
+  
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
@@ -1410,6 +1639,11 @@ class GameMode(Mode):
         for message in mode.announcements:
             canvas.create_text(140, 260 + 25 * counter, text = message, font = 'Arial 16')
             counter += 1
+
+    def drawCommunityChanceMessage(mode, canvas):
+        canvas.create_rectangle(215, 675, 920, 708, fill = fill)
+        canvas.create_text(225, 691.5, text = 'Community Chest or Chance Message:' ,anchor = 'w')
+        canvas.create_text(480, 691.5, text = f'{mode.communityChanceMessage}', anchor = 'w')
         
     
 
@@ -1421,7 +1655,7 @@ class GameMode(Mode):
         canvas.create_image(140, 65, image = ImageTk.PhotoImage(mode.logo))
         
         #draw board
-        canvas.create_image(mode.width / 2,mode.height / 2,
+        canvas.create_image(600, 350,
                             image=ImageTk.PhotoImage(mode.board))
                             
         #draw buy property button 
@@ -1458,6 +1692,11 @@ class GameMode(Mode):
         mode.drawAnnouncements(canvas)
         
         mode.drawDice(canvas)
+
+        mode.drawCommunityChanceMessage(canvas)
+
+        #print(mode.endGameCounter)
+        #mode.endScreenTimer()
         
         #print(mode.secondDepthSumExpectedValue())
         #print(mode.sumExpectedValue(baltic))
@@ -1497,6 +1736,8 @@ class AIMode(Mode):
         mode.communityChanceMessage = ''
         mode.animationSkip = False
         mode.secondDepthMax = 0
+        mode.endGameCounter = 0
+        mode.gameOver = False
         
         
         '''
@@ -1923,11 +2164,13 @@ class AIMode(Mode):
         if mode.turnCounter % 2 == 0:
             if mode.player1.position % 40 == 30:
                 mode.player1.position -= 20
+                mode.tempPositionPlayer1 = mode.player1.position
                 mode.player1.inJail = True
                 mode.animationSkip = True
         else:
             if mode.computer.position % 40 == 30:
                 mode.computer.position -= 20
+                mode.tempPositionComputer = mode.computer.position
                 mode.computer.inJail = True
                 mode.animationSkip = True
                 
@@ -1998,7 +2241,7 @@ class AIMode(Mode):
                 
     def landOnCommunityChance(mode):
         if len(communityChanceList) == 0:
-            mode.reshuffleCommunictyChance()
+            mode.reshuffleCommunityChance()
         currCommunityChance = communityChanceList.pop(0)
         #player 1
         if mode.turnCounter % 2 == 0:
@@ -2117,6 +2360,7 @@ class AIMode(Mode):
    
     def rollDice(mode):
         if mode.rollCounter == 0:
+            mode.endScreenTimer()
             mode.player1.lastTransaction = '$0'
             mode.computer.lastTransaction = '$0'
             mode.counterDrawPlayer1 = 1
@@ -2179,10 +2423,23 @@ class AIMode(Mode):
         global winner
         if mode.player1.money < 0:
             winner = mode.computer
-            mode.app.setActiveMode(mode.app.gameOverMode)
+            mode.endGameCounter = 1
+            mode.gameOver = True
+            #while mode.endGameCounter < 10:
+            #    mode.gameOver = True
+            #mode.app.setActiveMode(mode.app.gameOverMode)
         elif mode.computer.money < 0:
             winner = mode.player1
+            mode.endGameCounter = 1
+            mode.gameOver = True
+            #while mode.endGameCounter < 10:
+            #    mode.gameOver = True
+            #mode.app.setActiveMode(mode.app.gameOverMode)
+            
+    def endScreenTimer(mode):
+        if mode.endGameCounter > 1 and mode.gameOver:
             mode.app.setActiveMode(mode.app.gameOverMode)
+        
                     
     def endTurn(mode):
         print(f'Computer: {mode.computer.critMoney}')
@@ -2502,7 +2759,7 @@ class AIMode(Mode):
             space = board[(position + n) % 40]
             #if mode.expectedValue(space) <= -50:
             #   sumExpectedValueResult += mode.expectedValue(space)
-            print(f'{space.name}: {mode.expectedValue(space)}')
+           #print(f'{space.name}: {mode.expectedValue(space)}')
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
             
@@ -2611,9 +2868,10 @@ class AIMode(Mode):
     def keyPressed(mode, event):
         if event.key == 'h':
             mode.app.setActiveMode(mode.app.helpMode)
-        if event.key == 'o':
             
-            #showing that buying houses works
+        elif event.key == 'o':
+            
+            #showing that buying houses on a player works
             #easy to show pass go 
             #easy to show critical value calculator
             mode.player1.colorBuild.add('grey')
@@ -2636,7 +2894,13 @@ class AIMode(Mode):
             propertySet.remove(tennessee)
             propertySet.remove(newYork)
             
-        if event.key == 'j':
+        elif event.key == 'c':
+            mode.computer.colorBuild.add('yellow')
+            mode.computer.properties.append(atlantic)
+            mode.computer.properties.append(vetnor)
+            mode.computer.properties.append(marvin)
+            
+        elif event.key == 'j':
             mode.skipAnimation = True
             mode.player1.inJail = True
             mode.player1.position = 10
@@ -2648,6 +2912,7 @@ class AIMode(Mode):
     def timerFired(mode):
         mode.counterDrawPlayer1 += 1
         mode.counterDrawComputer += 1
+        mode.endGameCounter += 1
         '''
         if mode.turnCounter % 2 == 1:
             mode.counterDrawPlayer1 += 1
@@ -2901,6 +3166,10 @@ class AIMode(Mode):
         
         mode.drawCommunityChanceMessage(canvas)
         
+        
+        #print(mode.endGameCounter)
+        #mode.endScreenTimer()
+        
         #print(mode.secondDepthSumExpectedValue())
         #print(mode.sumExpectedValue(baltic))
         
@@ -2938,16 +3207,18 @@ class AIAIMode(Mode):
         mode.selectionCounter = 0
         mode.communityChanceMessage = ''
         mode.animationSkip = False
-        
-        
-        
+        mode.secondDepthMax = 0
+        mode.endGameCounter = 0
+        mode.gameOver = False
+
+        '''
         #showing that buying houses works
         mode.computer1.colorBuild.add('grey')
         mode.computer1.properties.append(oriental)
         mode.computer1.properties.append(vermont)
         mode.computer1.properties.append(connecticut)
         mode.computer1.doubleRent()
-        
+        '''
         '''
         for space in mode.computer1.properties:
             print(f'{space.name}: {space.double}')
@@ -2968,10 +3239,11 @@ class AIAIMode(Mode):
         mode.computer.properties.append(tennessee)
         mode.computer.properties.append(newYork)
         '''
+        '''
         propertySet.remove(oriental)
         propertySet.remove(vermont)
         propertySet.remove(connecticut)
-        
+        '''
         '''
         propertySet.remove(pacific)
         propertySet.remove(northCarolina)
@@ -3269,7 +3541,7 @@ class AIAIMode(Mode):
     #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility, player):
         mode.computer1.doubleRent()
-        mode.computer.doubleRent()
+        mode.computer2.doubleRent()
         if player.utilDouble: 
             return mode.prevRoll * 10
         else:
@@ -3477,8 +3749,9 @@ class AIAIMode(Mode):
                 print(currCommunityChance.message)
                 print('money action computer2')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
-                mode.moveAction(currCommunityChance, mode.computer)
+                mode.moveAction(currCommunityChance, mode.computer2)
                 print('move action computer2')
+        mode.actionsAfterRoll()
             
                 
     def landOpponentOrTax(mode):
@@ -3565,6 +3838,7 @@ class AIAIMode(Mode):
    
     def rollDice(mode):
         if mode.rollCounter == 0:
+            mode.endScreenTimer()
             mode.computer1.lastTransaction = '$0'
             mode.computer2.lastTransaction = '$0'
             mode.counterDrawComputer1 = 1
@@ -3591,7 +3865,8 @@ class AIAIMode(Mode):
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
-            mode.actionsAfterRoll(diceTotal, double)
+            mode.didRollAndPassGo(diceTotal, double)
+            mode.actionsAfterRoll()
             '''
             mode.didRollAndPassGo(diceTotal, double)
             mode.landOpponentOrTax()
@@ -3602,8 +3877,7 @@ class AIAIMode(Mode):
             mode.checkEndGame()
             '''
             
-    def actionsAfterRoll(mode, diceTotal, double):
-        mode.didRollAndPassGo(diceTotal, double)
+    def actionsAfterRoll(mode):
         mode.landOpponentOrTax()
         mode.computer1.doubleRent()
         mode.computer1.propertySort()
@@ -3626,13 +3900,19 @@ class AIAIMode(Mode):
         global winner
         if mode.computer1.money < 0:
             winner = mode.computer2
-            mode.app.setActiveMode(mode.app.gameOverMode)
+            mode.endGameCounter = 1
+            mode.gameOver = True
         elif mode.computer2.money < 0:
             winner = mode.computer1
+            mode.endGameCounter = 1
+            mode.gameOver = True
+
+    def endScreenTimer(mode):
+        if mode.endGameCounter > 1 and mode.gameOver:
             mode.app.setActiveMode(mode.app.gameOverMode)
-                    
+
+    
     def endTurn(mode):
-        
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
@@ -3653,7 +3933,7 @@ class AIAIMode(Mode):
             mode.computer2.propertySort()
             mode.checkEndGame()
             if mode.turnCounter % 2 == 1:
-                mode.monopolyAI()
+                mode.monopolyAIComputer2()
         
 ############################  AI Select Spaces  ###################################  
 
@@ -3753,7 +4033,7 @@ class AIAIMode(Mode):
             
 #######################  Monopoly Aritifical Intelligence  #####################
 
-    def expectedValue(mode, space):
+    def expectedValueComputer2(mode, space):
         expectedValueResult = 0
         #if where you landed is owned by the opponent, pay rent, so we can add 
         #that to the expected value
@@ -3825,7 +4105,7 @@ class AIAIMode(Mode):
         elif num == 5:
             return space.hotel
             
-    def rentAcquiredProperty(mode, space):
+    def rentAcquiredPropertyComputer2(mode, space):
         color = space.color
         counter = 0
         computer1Potential = mode.computer1.money
@@ -3871,7 +4151,7 @@ class AIAIMode(Mode):
                     return space.rent
             return 0
     
-    def rentAcquiredUtilities(mode, space, range):
+    def rentAcquiredUtilitiesComputer2(mode, space, range):
         counter = 0
         for prop in mode.computer1.properties:
             if isinstance(prop, Utilities):
@@ -3885,7 +4165,7 @@ class AIAIMode(Mode):
                 return 4 * range
         return 0
         
-    def rentAcquiredRailroad(mode, space):
+    def rentAcquiredRailroadComputer2(mode, space):
         counter = 0
         for prop in mode.computer1.properties:
             if isinstance(prop, Railroad):
@@ -3903,15 +4183,15 @@ class AIAIMode(Mode):
                 return 25
         return 0
             
-    def rentIfAcquired(mode, space, range):
+    def rentIfAcquiredComputer2(mode, space, range):
         if isinstance(space,Property):
-            return mode.rentAcquiredProperty(space)
+            return mode.rentAcquiredPropertyComputer2(space)
         elif isinstance(space, Utilities):
-            return mode.rentAcquiredUtilities(space, range)
+            return mode.rentAcquiredUtilitiesComputer2(space, range)
         elif isinstance(space, Railroad):
-            return mode.rentAcquiredRailroad(space)
+            return mode.rentAcquiredRailroadComputer2(space)
             
-    def potentialLossFromOpponent(mode, position):
+    def potentialLossFromOpponentComputer2(mode, position):
         sumExpectedValuePotential = 0
         for n in range(2,13):
             posValue = (position + n) % 40
@@ -3927,48 +4207,46 @@ class AIAIMode(Mode):
                 if boolRange:
                     #print(space.name)
                     sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
-                                                  mode.rentIfAcquired(space, distance))
+                                                  mode.rentIfAcquiredComputer2(space, distance))
         return sumExpectedValuePotential
                 
             
-    def sumExpectedValue(mode, position):
+    def sumExpectedValueComputer2(mode, position):
         sumExpectedValueResult = 0
         for n in range(2,13):
             space = board[(position + n) % 40]
-            if mode.expectedValue(space) >= 50:
-                sumExpectedValueResult += mode.expectedValue(space)
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
-                                       mode.expectedValue(space))
-        sumExpectedValueResult -= mode.potentialLossFromOpponent(position)
+                                       mode.expectedValueComputer2(space))
+        sumExpectedValueResult -= mode.potentialLossFromOpponentComputer2(position)
         return sumExpectedValueResult
         
-    def secondDepthSumExpectedValue(mode):
+    def secondDepthSumExpectedValueComputer2(mode):
         sumSecondExpectedValue = 0
         for n in range(2,13):
             space = board[(mode.computer2.position + n) % 40]
             position = mode.computer2.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
-                        (mode.expectedValue(space) + mode.sumExpectedValue(position)))
+                        (mode.expectedValueComputer2(space) + mode.sumExpectedValueComputer2(position)))
             #print(space.name)
             #print(f'expected val: {mode.expectedValue(space)}')
             #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
             #print(f'Second Depth:{sumSecondExpectedValue}')
-        sumSecondExpectedValue += mode.secondDepthMaxPay(mode.computer2.position)
+        sumSecondExpectedValue += mode.secondDepthMaxPayComputer2(mode.computer2.position)
         return sumSecondExpectedValue
         
-    def secondDepthMaxPay(mode, position):
+    def secondDepthMaxPayComputer2(mode, position):
         maxVal = 0
         for n in range(2,13):
             space = board[ (position + n) % 40 ]
-            expectedPay = mode.expectedValue(space)
+            expectedPay = mode.expectedValueComputer2(space)
             for m in range(2,13):
                 secondSpace = board[(position + n + m) % 40]
-                secondExpectedPay = mode.expectedValue(secondSpace)
+                secondExpectedPay = mode.expectedValueComputer2(secondSpace)
                 if secondExpectedPay + expectedPay < maxVal:
                     maxVal = secondExpectedPay + expectedPay
         return maxVal
         
-    def AIBuyHouse(mode, color):
+    def AIBuyHouseComputer2(mode, color):
         houseBuild = []
         for space in board:
             if isinstance(space, Property):
@@ -3981,15 +4259,15 @@ class AIAIMode(Mode):
                     mode.buyHouse(space)
                     #print(space.color)
     
-    def monopolyAI(mode):
+    def monopolyAIComputer2(mode):
         #list of things my AI needs to do 
         #1. find the expected value change on the next 2 moves 
         #2. find the critical money value held based ont he expected value change
         #3. use the extra money either to buy properties the next 2 rounds or 
         #   buy houses when possible
         mode.rollDice()
-        mode.computer2.critMoney = mode.secondDepthSumExpectedValue()
-        mode.computer2.critMoney = int(mode.computer.critMoney) - 1
+        mode.computer2.critMoney = mode.secondDepthSumExpectedValueComputer2()
+        mode.computer2.critMoney = int(mode.computer2.critMoney) - 1
         mode.computer2.critMoney *= -1
         if mode.computer2.money > mode.computer2.critMoney:
             #buy property if you can and have extra money
@@ -4003,7 +4281,7 @@ class AIAIMode(Mode):
             #print(mode.computer.colorBuild)
             for element in mode.computer2.colorBuild:
                 #print(element)
-                mode.AIBuyHouse(element)
+                mode.AIBuyHouseComputer2(element)
         mode.endTurn()
         print(f'AI Turn Counter: {mode.turnCounter}')
             
@@ -4060,6 +4338,7 @@ class AIAIMode(Mode):
     def timerFired(mode):
         mode.counterDrawComputer1 += 1
         mode.counterDrawComputer2 += 1
+        mode.endGameCounter += 1
         '''
         if mode.turnCounter % 2 == 1:
             mode.counterDrawcomputer1 += 1
@@ -4102,12 +4381,14 @@ class AIAIMode(Mode):
         canvas.create_text(940, 80, text = (f'Money: ${computer1.money}'), anchor = 'w')
         canvas.create_text(1066, 80, text = (f'Last Trans: {computer1.lastTransaction}'), 
                            anchor = 'w')
-        canvas.create_text(950,100,text = 'Properties:', anchor = 'w')
-        canvas.create_text(1076,100, text = 'Houses:', anchor = 'w')
+        canvas.create_text(1003 , 100, text = (f'Critical Level: ${mode.computer1.critMoney}'), 
+                           anchor = 'w')
+        canvas.create_text(950,120,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,120, text = 'Houses:', anchor = 'w')
         counter = 0
         r = 4
         for element in computer1.properties:
-            canvas.create_text(950, 130 + (18 * counter), text = element.name, anchor = 'w')
+            canvas.create_text(950, 150 + (18 * counter), text = element.name, anchor = 'w')
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
@@ -4130,12 +4411,14 @@ class AIAIMode(Mode):
         canvas.create_text(940, 425, text = (f'Money: ${computer2.money}'), anchor = 'w')
         canvas.create_text(1066, 425, text = (f'Last Trans: {computer2.lastTransaction}'), 
                            anchor = 'w')
-        canvas.create_text(950,445,text = 'Properties:', anchor = 'w')
-        canvas.create_text(1076,445, text = 'Houses:', anchor = 'w')
+        canvas.create_text(1003 , 445, text = (f'Critical Level: ${mode.computer2.critMoney}'), 
+                           anchor = 'w')
+        canvas.create_text(950,465,text = 'Properties:', anchor = 'w')
+        canvas.create_text(1076,465, text = 'Houses:', anchor = 'w')
         counter = 0
         r = 4
         for element in computer2.properties:
-            canvas.create_text(950, 475 + (18 * counter), text = element.name, anchor = 'w')
+            canvas.create_text(950, 495 + (18 * counter), text = element.name, anchor = 'w')
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
