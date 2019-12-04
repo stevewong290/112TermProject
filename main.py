@@ -2030,6 +2030,7 @@ class AIMode(Mode):
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.computer)
                 print('move action computer')
+        mode.actionsAfterRoll()
             
                 
     def landOpponentOrTax(mode):
@@ -2142,7 +2143,8 @@ class AIMode(Mode):
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
-            mode.actionsAfterRoll(diceTotal, double)
+            mode.didRollAndPassGo(diceTotal, double)
+            mode.actionsAfterRoll()
             '''
             mode.didRollAndPassGo(diceTotal, double)
             mode.landOpponentOrTax()
@@ -2153,8 +2155,8 @@ class AIMode(Mode):
             mode.checkEndGame()
             '''
             
-    def actionsAfterRoll(mode, diceTotal, double):
-        mode.didRollAndPassGo(diceTotal, double)
+    def actionsAfterRoll(mode):
+        #check pass go
         mode.landOpponentOrTax()
         mode.player1.doubleRent()
         mode.player1.propertySort()
