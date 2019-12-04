@@ -3210,6 +3210,7 @@ class AIAIMode(Mode):
         mode.secondDepthMax = 0
         mode.endGameCounter = 0
         mode.gameOver = False
+        mode.turnLimit = 100
 
         '''
         #showing that buying houses works
@@ -3719,7 +3720,7 @@ class AIAIMode(Mode):
                 
     def landOnCommunityChance(mode):
         if len(communityChanceList) == 0:
-            mode.reshuffleCommunictyChance()
+            mode.reshuffleCommunityChance()
         currCommunityChance = communityChanceList.pop(0)
         #player 1
         if mode.turnCounter % 2 == 0:
@@ -3912,8 +3913,9 @@ class AIAIMode(Mode):
             mode.app.setActiveMode(mode.app.gameOverMode)
 
     
-    def endTurn(mode):
-        if mode.rollCounter == 1:
+    def nextTurn(mode):
+        if mode.rollCounter == 1 and mode.turnCounter < mode.turnLimit:
+            mode.communityChanceMessage = ''
             mode.turnCounter += 1
             mode.rollCounter = 0
             if len(mode.announcements) == 5:
@@ -3934,6 +3936,8 @@ class AIAIMode(Mode):
             mode.checkEndGame()
             if mode.turnCounter % 2 == 1:
                 mode.monopolyAIComputer2()
+            else:
+                mode.monopolyAIComputer1()
         
 ############################  AI Select Spaces  ###################################  
 
@@ -4051,6 +4055,24 @@ class AIAIMode(Mode):
             expectedValueResult -= space.tax
         return expectedValueResult
         
+    def expectedValueComputer1(mode, space):
+        expectedValueResult = 0
+        #if where you landed is owned by the opponent, pay rent, so we can add 
+        #that to the expected value
+        if space in mode.computer2.properties:
+            if isinstance(space, Property):
+                rent = mode.rentPriceProperty(space, mode.computer2)
+                expectedValueResult -= rent
+            elif isinstance(space, Utilities):
+                rent = mode.rentPriceUtility(space, mode.computer2)
+                expectedValueResult -= rent
+            elif isinstance(space, Railroad):
+                rent = mode.rentPriceRailroad(space)
+                expectedValueResult -= rent
+        elif isinstance(space, Tax):
+            expectedValueResult -= space.tax
+        return expectedValueResult
+        
     def comboCalculator(mode, n, k):
         return math.factorial(n) / ((math.factorial(k))*(math.factorial(n-k)))
         
@@ -4123,7 +4145,7 @@ class AIAIMode(Mode):
                         boughtHouse = houses // 2 + 1
                         return mode.rentHomeCalculator(space, boughtHouse)
                     else:
-                        boughtHouse == houses // 2
+                        boughtHouse = houses // 2
                         if boughtHouse == 0:
                             return space.rent * 2
                         else:
@@ -4136,6 +4158,52 @@ class AIAIMode(Mode):
                 computer1Potential -= space.cost
                 if counter == 2:
                     houses = computer1Potential // space.houseCost
+                    if houses >= 10:
+                        return space.hotel
+                    elif houses % 3 == 1 or houses % 3 == 2:
+                        boughtHouse = houses // 2 + 1
+                        return mode.rentHomeCalculator(space, boughtHouse)
+                    else:
+                        boughtHouse = houses // 2
+                        if boughtHouse == 0:
+                            return space.rent * 2
+                        else:
+                            return mode.rentHomeCalculator(space, boughtHouse)
+                else:
+                    return space.rent
+            return 0
+            
+    def rentAcquiredPropertyComputer1(mode, space):
+        color = space.color
+        counter = 0
+        computer2Potential = mode.computer2.money
+        for prop in mode.computer2.properties:
+            if isinstance(prop, Property) and prop.color == color:
+                counter += 1
+        if color == 'blue' or color == 'brown':
+            if computer2Potential >= space.cost:
+                computer2Potential -= space.cost
+                if counter == 1:
+                    houses = computer2Potential // space.houseCost
+                    if houses >= 10:
+                        return space.hotel
+                    elif houses % 2 == 1:
+                        boughtHouse = houses // 2 + 1
+                        return mode.rentHomeCalculator(space, boughtHouse)
+                    else:
+                        boughtHouse == houses // 2
+                        if boughtHouse == 0:
+                            return space.rent * 2
+                        else:
+                            return mode.rentHomeCalculator(space, boughtHouse)
+                else:
+                    return space.rent
+            return 0
+        else:
+            if computer2Potential >= space.cost:
+                computer2Potential -= space.cost
+                if counter == 2:
+                    houses = computer2Potential // space.houseCost
                     if houses >= 10:
                         return space.hotel
                     elif houses % 3 == 1 or houses % 3 == 2:
@@ -4165,6 +4233,20 @@ class AIAIMode(Mode):
                 return 4 * range
         return 0
         
+    def rentAcquiredUtilitiesComputer1(mode, space, range):
+        counter = 0
+        for prop in mode.computer2.properties:
+            if isinstance(prop, Utilities):
+                counter += 1
+        computer2Potential = mode.computer2.money
+        if computer2Potential >= space.cost:
+            computer2Potential -= space.cost
+            if counter == 1:
+                return 10 * range
+            else:
+                return 4 * range
+        return 0
+        
     def rentAcquiredRailroadComputer2(mode, space):
         counter = 0
         for prop in mode.computer1.properties:
@@ -4182,6 +4264,24 @@ class AIAIMode(Mode):
             else:
                 return 25
         return 0
+        
+    def rentAcquiredRailroadComputer1(mode, space):
+        counter = 0
+        for prop in mode.computer2.properties:
+            if isinstance(prop, Railroad):
+                counter += 1
+        computer2Potential = mode.computer1.money
+        if computer2Potential >= space.cost:
+            computer2Potential -= space.cost
+            if counter == 1:
+                return 50
+            elif counter == 2:
+                return 100
+            elif counter == 3:
+                return 200
+            else:
+                return 25
+        return 0
             
     def rentIfAcquiredComputer2(mode, space, range):
         if isinstance(space,Property):
@@ -4190,6 +4290,14 @@ class AIAIMode(Mode):
             return mode.rentAcquiredUtilitiesComputer2(space, range)
         elif isinstance(space, Railroad):
             return mode.rentAcquiredRailroadComputer2(space)
+            
+    def rentIfAcquiredComputer1(mode, space, range):
+        if isinstance(space,Property):
+            return mode.rentAcquiredPropertyComputer1(space)
+        elif isinstance(space, Utilities):
+            return mode.rentAcquiredUtilitiesComputer1(space, range)
+        elif isinstance(space, Railroad):
+            return mode.rentAcquiredRailroadComputer1(space)
             
     def potentialLossFromOpponentComputer2(mode, position):
         sumExpectedValuePotential = 0
@@ -4209,6 +4317,25 @@ class AIAIMode(Mode):
                     sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
                                                   mode.rentIfAcquiredComputer2(space, distance))
         return sumExpectedValuePotential
+        
+    def potentialLossFromOpponentComputer1(mode, position):
+        sumExpectedValuePotential = 0
+        for n in range(2,13):
+            posValue = (position + n) % 40
+            space = board[posValue]
+            opponentPosValue = mode.computer2.position % 40
+            boolRange, distance = mode.withinRange(posValue, opponentPosValue)
+            if (isinstance(space, Property) or isinstance(space, Utilities) or 
+                isinstance(space, Railroad)) and (space in propertySet):
+                #if the space we are looking at is both unowned and a space where rent needs to be paid,
+                #we assume that the opponent will buy it and therefore will require us to have some money
+                #we now have to check whether or not it will complete a set, and if it does complete a set
+                #we assume the worst case and the opponent will buy the maxnumber of houses
+                if boolRange:
+                    #print(space.name)
+                    sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
+                                                  mode.rentIfAcquiredComputer1(space, distance))
+        return sumExpectedValuePotential
                 
             
     def sumExpectedValueComputer2(mode, position):
@@ -4218,6 +4345,15 @@ class AIAIMode(Mode):
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValueComputer2(space))
         sumExpectedValueResult -= mode.potentialLossFromOpponentComputer2(position)
+        return sumExpectedValueResult
+        
+    def sumExpectedValueComputer1(mode, position):
+        sumExpectedValueResult = 0
+        for n in range(2,13):
+            space = board[(position + n) % 40]
+            sumExpectedValueResult += (mode.probabilityCalculator(n) * 
+                                       mode.expectedValueComputer1(space))
+        sumExpectedValueResult -= mode.potentialLossFromOpponentComputer1(position)
         return sumExpectedValueResult
         
     def secondDepthSumExpectedValueComputer2(mode):
@@ -4234,6 +4370,20 @@ class AIAIMode(Mode):
         sumSecondExpectedValue += mode.secondDepthMaxPayComputer2(mode.computer2.position)
         return sumSecondExpectedValue
         
+    def secondDepthSumExpectedValueComputer1(mode):
+        sumSecondExpectedValue = 0
+        for n in range(2,13):
+            space = board[(mode.computer1.position + n) % 40]
+            position = mode.computer1.position + n
+            sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
+                        (mode.expectedValueComputer1(space) + mode.sumExpectedValueComputer1(position)))
+            #print(space.name)
+            #print(f'expected val: {mode.expectedValue(space)}')
+            #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
+            #print(f'Second Depth:{sumSecondExpectedValue}')
+        sumSecondExpectedValue += mode.secondDepthMaxPayComputer1(mode.computer1.position)
+        return sumSecondExpectedValue
+        
     def secondDepthMaxPayComputer2(mode, position):
         maxVal = 0
         for n in range(2,13):
@@ -4242,6 +4392,18 @@ class AIAIMode(Mode):
             for m in range(2,13):
                 secondSpace = board[(position + n + m) % 40]
                 secondExpectedPay = mode.expectedValueComputer2(secondSpace)
+                if secondExpectedPay + expectedPay < maxVal:
+                    maxVal = secondExpectedPay + expectedPay
+        return maxVal
+        
+    def secondDepthMaxPayComputer1(mode, position):
+        maxVal = 0
+        for n in range(2,13):
+            space = board[ (position + n) % 40 ]
+            expectedPay = mode.expectedValueComputer1(space)
+            for m in range(2,13):
+                secondSpace = board[(position + n + m) % 40]
+                secondExpectedPay = mode.expectedValueComputer1(secondSpace)
                 if secondExpectedPay + expectedPay < maxVal:
                     maxVal = secondExpectedPay + expectedPay
         return maxVal
@@ -4256,6 +4418,19 @@ class AIAIMode(Mode):
         for i in range(5):
             for space in houseBuild:
                 if (mode.computer2.money - mode.computer2.critMoney > houseBuild[0].houseCost):
+                    mode.buyHouse(space)
+                    #print(space.color)
+                    
+    def AIBuyHouseComputer1(mode, color):
+        houseBuild = []
+        for space in board:
+            if isinstance(space, Property):
+                if space.color == color:
+                    houseBuild.append(space)
+        #print(f'houseBuild: {houseBuild}')
+        for i in range(5):
+            for space in houseBuild:
+                if (mode.computer1.money - mode.computer1.critMoney > houseBuild[0].houseCost):
                     mode.buyHouse(space)
                     #print(space.color)
     
@@ -4282,7 +4457,33 @@ class AIAIMode(Mode):
             for element in mode.computer2.colorBuild:
                 #print(element)
                 mode.AIBuyHouseComputer2(element)
-        mode.endTurn()
+        #mode.endTurn()
+        print(f'AI Turn Counter: {mode.turnCounter}')
+        
+    def monopolyAIComputer1(mode):
+        #list of things my AI needs to do 
+        #1. find the expected value change on the next 2 moves 
+        #2. find the critical money value held based ont he expected value change
+        #3. use the extra money either to buy properties the next 2 rounds or 
+        #   buy houses when possible
+        mode.rollDice()
+        mode.computer1.critMoney = mode.secondDepthSumExpectedValueComputer1()
+        mode.computer1.critMoney = int(mode.computer1.critMoney) - 1
+        mode.computer1.critMoney *= -1
+        if mode.computer1.money > mode.computer1.critMoney:
+            #buy property if you can and have extra money
+            space = board[mode.computer1.position % 40]
+            if ((isinstance(space, Property) or isinstance(space, Utilities) or 
+                 isinstance(space, Railroad)) and 
+                 mode.computer1.money - mode.computer1.critMoney > space.cost):
+                mode.buyProperty()
+            
+            #buy houses if you can and have extra money
+            #print(mode.computer.colorBuild)
+            for element in mode.computer1.colorBuild:
+                #print(element)
+                mode.AIBuyHouseComputer1(element)
+        #mode.endTurn()
         print(f'AI Turn Counter: {mode.turnCounter}')
             
         
@@ -4303,14 +4504,13 @@ class AIAIMode(Mode):
             event.y >= 420 and event.y <= 460
             and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
             print('you pressed the roll dice button')
-            mode.communityChanceMessage = ''
             mode.rollDice()
             
         #pressed end turn button
         if (event.x >= 140-64 and event.x <= 140 + 64 and 
             event.y >= 630 and event.y <= 670
             and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
-            mode.endTurn()
+            mode.nextTurn()
             mode.animationSkip = False
             print('you pressed the end turn button')
             
@@ -4392,16 +4592,16 @@ class AIAIMode(Mode):
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
-                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),150 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 150 + r + (18 * counter),
                                         fill = 'red')
                     elif circleCounter <= element.numHouse - 1:
-                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),150 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 150 + r + (18 * counter),
                                         fill = 'green')
                     else:
-                        canvas.create_oval(1080-r + (20 * circleCounter),130 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 130 + r + (18 * counter))
+                        canvas.create_oval(1080-r + (20 * circleCounter),150 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 150 + r + (18 * counter))
             counter += 1
         
     def drawComputer2Values(mode, canvas, computer2):
@@ -4422,16 +4622,16 @@ class AIAIMode(Mode):
             if isinstance(element, Property):
                 for circleCounter in range(5):
                     if circleCounter == element.numHouse - 1 and circleCounter == 4:
-                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),495 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 495 + r + (18 * counter),
                                         fill = 'red')
                     elif circleCounter <= element.numHouse - 1:
-                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter),
+                        canvas.create_oval(1080-r + (20 * circleCounter),495 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 495 + r + (18 * counter),
                                         fill = 'green')
                     else:
-                        canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
-                                        1080 + r + (20 * circleCounter), 475 + r + (18 * counter))
+                        canvas.create_oval(1080-r + (20 * circleCounter),495 - r + (18 * counter), 
+                                        1080 + r + (20 * circleCounter), 495 + r + (18 * counter))
             counter += 1
         '''
         canvas.create_text(1075,200,text = (
