@@ -1,7 +1,12 @@
 from cmu_112_graphics import *
 from tkinter import *
 from TwoAI import * 
+from CornerTaxUtility import *
+from Property import Property
+from Railroad import Railroad
+from CommunityChance import * 
 import random, math, copy, string, time
+
 
 #I got the cmu 112 graphics from the class notes 
 #https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
@@ -17,7 +22,7 @@ winner = None
 class Player(object):
     def __init__(self, name):
         self.name = name
-        self.money = 0
+        self.money = 1500
         self.position = 0
         self.properties = []
         self.numRailroads = 0
@@ -137,78 +142,8 @@ class Player(object):
             temp = self.properties[i]
             self.properties[i] = self.properties[minPosition]
             self.properties[minPosition] = temp
-            
-            
-            
-class Property(object):
-    def __init__(self, name, cost, rent, h1, h2, h3, h4, hotel, houseCost, color, setRank, rank):
-        self.name = name
-        self.cost = cost
-        self.rent = rent
-        self.h1 = h1
-        self.h2 = h2
-        self.h3 = h3
-        self.h4 = h4
-        self.hotel = hotel
-        self.houseCost = houseCost
-        self.double = False
-        self.numHouse = 0
-        self.selected = False
-        self.color = color
-        self.setRank = setRank
-        self.rank = rank
-        
-    def __str__(self):
-        return self.name
-        
-    def __repr__(self):
-        return self.name
-        
-        
-class Railroad(object):
-    def __init__(self, name, rank):
-        self.name = name
-        self.cost = 200
-        self.r1 = 25
-        self.r2 = 50
-        self.r3 = 100
-        self.r4 = 200
-        self.rank = rank
-        
-class CommunityChance(object):
-    def __init__(self, name):
-        self.name = name
 
-class CommunityChanceCardMoney(CommunityChance):
-    def __init__(self, name, action, message):
-        super().__init__(name)
-        self.action = action
-        self.message = message
-        
-class CommunityChanceCardMovement(CommunityChance):
-    def __init__(self, name, action, message):
-        super().__init__(name)
-        self.action = action
-        self.message = message
-        
 
-        
-
-class CornerSpace(object):
-    def __init__(self, name):
-        self.name = name
-
-class Tax(object):
-    def __init__(self, name, tax):
-        self.name = name
-        self.tax = tax
-        
-class Utilities(object):
-    def __init__(self, name, cost, rank):
-        self.name = name
-        self.cost = cost
-        self.double = False
-        self.rank = rank
 
 ############################  Board Setup  #####################################     
 
@@ -3940,7 +3875,7 @@ class AIAIMode(Mode):
                 mode.monopolyAIComputer1()
         
 ############################  AI Select Spaces  ###################################  
-
+    
     def propertySelection(mode, x, y):
         #print(mode.nextSelected)
         if mode.nextSelected:
@@ -4034,6 +3969,7 @@ class AIAIMode(Mode):
         if mode.selectionCounter >= 1:
             mode.selectionCounter = 0
             mode.nextSelected = False
+
             
 #######################  Monopoly Aritifical Intelligence  #####################
 
