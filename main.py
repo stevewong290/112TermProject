@@ -25,6 +25,132 @@ winner = None
 #tophat from https://www.pinpng.com/pngs/m/23-237788_monopoly-game-pieces-png-transparent-png.png
 #thimble from https://p7.hiclipart.com/preview/778/559/612/hasbro-monopoly-token-madness-game-thimble-brik-wheelbarrow.jpg
 
+def boardReset():
+#################################  Spaces  #####################################
+    #instantiated properties        
+    mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+    baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+    oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+    vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+    connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+    stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
+    state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+    virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+    stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
+    tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+    newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+    kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+    indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+    illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+    atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+    vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+    marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+    pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+    northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+    pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+    parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
+    boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
+    
+    #instantiated railroads
+    readingRail = Railroad('Reading R.R.', 23)
+    pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
+    boRail= Railroad('B & O R.R.', 25)
+    shortRail = Railroad('Short Line R.R.', 26)
+    
+    #instantiated utilities
+    electric = Utilities('Electric Company', 150, 27)
+    water = Utilities('Water Works', 150, 28)
+    
+    #instantiated corner spaces
+    passGo = CornerSpace('Pass Go')
+    jailCell = CornerSpace('Jail Cell')
+    freeParking = CornerSpace('Free Parking')
+    goToJail = CornerSpace('Go To Jail')
+    
+    #instantiated community chest / chance spaces
+    communitySide1 = CommunityChance('Community Chest Side 1')
+    communitySide2 = CommunityChance('Community Chest Side 2')
+    communitySide4 = CommunityChance('Community Chest Side 4')
+    chanceSide1 = CommunityChance('Chance Side 1')
+    chanceSide3 = CommunityChance('Chance Side 3')
+    chanceSide4 = CommunityChance('Chance Side 4')
+    
+    #instantiated tax space
+    incomeTax = Tax('Income Tax', 200)
+    luxuryTax = Tax('Luxury Tax', 100)
+    
+    ############################  Board ############################################
+    
+    #putting each space into a list
+    board = []
+    
+    #side1
+    board.append(passGo)
+    board.append(mediterranean)
+    board.append(communitySide1)
+    board.append(baltic)
+    board.append(incomeTax)
+    board.append(readingRail)
+    board.append(oriental)
+    board.append(chanceSide1)
+    board.append(vermont)
+    board.append(connecticut)
+    board.append(jailCell)
+    
+    #side2
+    board.append(stCharles)
+    board.append(electric)
+    board.append(state)
+    board.append(virginia)
+    board.append(pennsylvaniaRail)
+    board.append(stJames)
+    board.append(communitySide2)
+    board.append(tennessee)
+    board.append(newYork)
+    board.append(freeParking)
+    
+    #side3
+    board.append(kentucky)
+    board.append(chanceSide3)
+    board.append(indiana)
+    board.append(illinois)
+    board.append(boRail)
+    board.append(atlantic)
+    board.append(vetnor)
+    board.append(water)
+    board.append(marvin)
+    board.append(goToJail)
+    
+    #side4
+    board.append(pacific)
+    board.append(northCarolina)
+    board.append(communitySide4)
+    board.append(pennsylvania)
+    board.append(shortRail)
+    board.append(chanceSide4)
+    board.append(parkPlace)
+    board.append(luxuryTax)
+    board.append(boardwalk)
+    
+    
+    #property set
+    propertySet = set(board)
+    
+    #this removes the nonproperties from the set 
+    for element in board:
+        if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
+            isinstance(element, CommunityChance)):
+            propertySet.remove(element)
+    
+    houses = dict()
+    houses['brown'] = (0,0)
+    houses['grey'] = (0,0,0)
+    houses['pink'] = (0,0,0)
+    houses['orange'] = (0,0,0)
+    houses['red'] = (0,0,0)
+    houses['yellow'] = (0,0,0)
+    houses['green'] = (0,0,0)
+    houses['blue'] = (0,0)
 
 
 class Player(object):
@@ -773,7 +899,7 @@ class GameMode(Mode):
 #########################  Rent Price Calculator  ##############################  
 
     #this function takes in a property and returns how much to pay
-    def rentPriceProperty(mode, property):
+    def rentPriceProperty(mode, property, player):
         mode.player1.doubleRent()
         mode.player2.doubleRent()
         if property.numHouse == 0:
@@ -793,7 +919,7 @@ class GameMode(Mode):
             return property.hotel
 
     #this function takes in a utility and returns how much to pay
-    def rentPriceUtility(mode, utility):
+    def rentPriceUtility(mode, utility, player):
         mode.player1.doubleRent()
         mode.player2.doubleRent()
         if player.utilDouble:
@@ -1007,13 +1133,13 @@ class GameMode(Mode):
             space = board[mode.player1.position % 40]
             if space in mode.player2.properties:
                 if isinstance(space, Property):
-                    rent = mode.rentPriceProperty(space)
+                    rent = mode.rentPriceProperty(space, mode.player2)
                     mode.player1.money -= rent
                     mode.player1.lastTransaction = f'-${rent}'
                     mode.player2.money += rent
                     mode.player2.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
-                    rent = mode.rentPriceUtility(space)
+                    rent = mode.rentPriceUtility(space, mode.player2)
                     mode.player1.money -= rent
                     mode.player1.lastTransaction = f'-${rent}'
                     mode.player2.money += rent
@@ -1051,13 +1177,13 @@ class GameMode(Mode):
             #if where you landed is owned by the opponent, pay rent
             if space in mode.player1.properties:
                 if isinstance(space, Property):
-                    rent = mode.rentPriceProperty(space)
+                    rent = mode.rentPriceProperty(space, mode.player1)
                     mode.player2.money -= rent
                     mode.player2.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
                     mode.player1.lastTransaction = f'+${rent}'
                 elif isinstance(space, Utilities):
-                    rent = mode.rentPriceUtility(space)
+                    rent = mode.rentPriceUtility(space, mode.player1)
                     mode.player2.money -= rent
                     mode.player2.lastTransaction = f'-${rent}'
                     mode.player1.money += rent
@@ -1272,6 +1398,7 @@ class GameMode(Mode):
 ###############################  User Input  ################################### 
 
     def mousePressed(mode, event):
+        mode.selectionCounter += 1
         #pressed buy property button
         if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
             event.y >= 490 and event.y <= 530
@@ -1304,10 +1431,19 @@ class GameMode(Mode):
             mode.nextSelected = True
             print('you pressed the buyHouse button')
             
+        print(mode.selectionCounter)
+        mode.propertySelection(event.x,event.y)
 
     def keyPressed(mode, event):
         if event.key == 'h':
+            boardReset()
             mode.app.setActiveMode(mode.app.helpMode)
+            
+        elif event.key == 'a':
+            mode.app.setActiveMode(mode.app.AIMode)
+            
+        elif event.key == 'd':
+            mode.app.setActiveMode(mode.app.AIAIMode)
             
         elif event.key == 'o':
             
@@ -1335,19 +1471,19 @@ class GameMode(Mode):
             propertySet.remove(newYork)
             
         elif event.key == 'c':
-            mode.computer.colorBuild.add('yellow')
-            mode.computer.properties.append(atlantic)
-            mode.computer.properties.append(vetnor)
-            mode.computer.properties.append(marvin)
+            mode.player2.colorBuild.add('yellow')
+            mode.player2.properties.append(atlantic)
+            mode.player2.properties.append(vetnor)
+            mode.player2.properties.append(marvin)
             
         elif event.key == 'j':
             mode.skipAnimation = True
             mode.player1.inJail = True
             mode.player1.position = 10
             mode.tempPositionPlayer1 = 10
-            mode.computer.inJail = True
-            mode.computer.position = 10
-            mode.tempPositionComputer = 10
+            mode.player2.inJail = True
+            mode.player2.position = 10
+            mode.tempPositionPlayer2 = 10
         
     def timerFired(mode):
         mode.counterDrawPlayer1 += 1
@@ -2599,14 +2735,22 @@ class AIMode(Mode):
         if (event.x >= 140-72 and event.x <= 140+72 and 
             event.y >= 560 and event.y <= 600
             and mode.turnCompletedPlayer1 and mode.turnCompletedComputer):
-            
             mode.selectionCounter = 0
             mode.nextSelected = True
             print('you pressed the buyHouse button')
+            
+        print(mode.selectionCounter)
+        mode.propertySelection(event.x,event.y)
 
     def keyPressed(mode, event):
         if event.key == 'h':
             mode.app.setActiveMode(mode.app.helpMode)
+            
+        elif event.key == 'd':
+            mode.app.setActiveMode(mode.app.AIAIMode)
+            
+        elif event.key == 'Space':
+            mode.app.setActiveMode(mode.app.gameMode)
             
         elif event.key == 'o':
             #showing that buying houses on a player works
@@ -2924,6 +3068,16 @@ class AIAIMode(Mode):
         #this is the board image that we are uploading
         board = ('board.jpg')
         mode.board = mode.loadImage(board)
+        
+        #this is computer1
+        computer1Piece = 'thimble.png'
+        mode.computer1Piece = mode.loadImage(computer1Piece)
+        mode.computer1Piece = mode.scaleImage(mode.computer1Piece, .05)
+        
+        #This is computer
+        computer2Piece = 'topHat.png'
+        mode.computer2Piece = mode.loadImage(computer2Piece)
+        mode.computer2Piece = mode.scaleImage(mode.computer2Piece, .03)
         
         #this is the end turn button
         nextStep = ('nextStep.png')
@@ -3629,7 +3783,7 @@ class AIAIMode(Mode):
             if selected != None:
                 mode.buyHouse(selected)
            
-        #print(mode.selectionCounter)
+        print(mode.selectionCounter)
         if mode.selectionCounter >= 1:
             mode.selectionCounter = 0
             mode.nextSelected = False
@@ -4087,6 +4241,12 @@ class AIAIMode(Mode):
     def keyPressed(mode, event):
         if event.key == 'h':
             mode.app.setActiveMode(mode.app.helpMode)
+            
+        elif event.key == 'Space':
+            mode.app.setActiveMode(mode.app.gameMode)
+        
+        elif event.key == 'a':
+            mode.app.setActiveMode(mode.app.AIMode)
         
     def timerFired(mode):
         mode.counterDrawComputer1 += 1
@@ -4095,12 +4255,6 @@ class AIAIMode(Mode):
 
 ############################  AI Draw Functions  ###############################
         
-    def drawComputer1Path(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
-        
-    def drawComputer2Path(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
-        
     def drawComputer1(mode, canvas, computer1):
         position = computer1.position % 40
         if mode.tempPositionComputer1 % 40 == position:
@@ -4108,7 +4262,7 @@ class AIAIMode(Mode):
         if mode.counterDrawComputer1 % 4 == 0 and not mode.turnCompletedComputer1:
             mode.tempPositionComputer1 += 1
         (x, y) = mode.computer1Locations[mode.tempPositionComputer1 % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
+        canvas.create_image(x,y,image= ImageTk.PhotoImage(mode.computer1Piece))
         
     def drawComputer2(mode, canvas, computer2):
         position = computer2.position % 40
@@ -4117,7 +4271,7 @@ class AIAIMode(Mode):
         if mode.counterDrawComputer2 % 4 == 0 and not mode.turnCompletedComputer2:
             mode.tempPositionComputer2 += 1
         (x, y) = mode.computer2Locations[mode.tempPositionComputer2 % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
+        canvas.create_image(x,y,image= ImageTk.PhotoImage(mode.computer2Piece))
         
     def drawComputer1Values(mode, canvas, computer1):
         canvas.create_rectangle(930,10,1190, 345)
@@ -4152,7 +4306,7 @@ class AIAIMode(Mode):
     def drawComputer2Values(mode, canvas, computer2):
         canvas.create_rectangle(930, 355, 1190, 690)
         canvas.create_rectangle(940, 365, 1180, 405, fill = fill)
-        canvas.create_text(1060,385,text = (f'Computer2'), font = 'Arial, 18')
+        canvas.create_text(1060,385,text = (f'Computer 2'), font = 'Arial, 18')
         canvas.create_text(940, 425, text = (f'Money: ${computer2.money}'), anchor = 'w')
         canvas.create_text(1066, 425, text = (f'Last Trans: {computer2.lastTransaction}'), 
                            anchor = 'w')
@@ -4360,6 +4514,16 @@ class HelpMode(Mode):
 class GameOverMode(Mode):
     def appStarted(mode):
         mode.gameOver = True
+        
+    def keyPressed(mode, event):
+        if event.key == 'a':
+            mode.app.setActiveMode(mode.app.AIMode)
+        elif event.key == 'Space':
+            mode.app.setActiveMode(mode.app.gameMode)
+        elif event.key == 'd':
+            mode.app.setActiveMode(mode.app.AIAIMode)
+        elif event.key == 'h':
+            mode.app.setActiveMode(mode.app.helpMode)
         
     def redrawAll(mode,canvas):
         global winner
