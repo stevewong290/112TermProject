@@ -22,6 +22,8 @@ winner = None
 #https://www.amazon.com/Hasbro-Monopoly-Replacement-Board/dp/B017MNUCXC
 #monopoly logo taken off of https://www.pinterest.com/pin/531847037219720134/
 #dice taken off of wikipedia: https://commons.wikimedia.org/wiki/Category:Dice_faces
+#tophat from https://www.pinpng.com/pngs/m/23-237788_monopoly-game-pieces-png-transparent-png.png
+#thimble from https://p7.hiclipart.com/preview/778/559/612/hasbro-monopoly-token-madness-game-thimble-brik-wheelbarrow.jpg
 
 
 
@@ -525,42 +527,6 @@ class GameMode(Mode):
         mode.endGameCounter = 0
         mode.gameOver = False
         
-        '''
-        #showing that buying houses works
-        mode.player1.colorBuild.add('grey')
-        mode.player1.properties.append(oriental)
-        mode.player1.properties.append(vermont)
-        mode.player1.properties.append(connecticut)
-        
-        mode.player2.colorBuild.add('green')
-        mode.player2.properties.append(pacific)
-        mode.player2.properties.append(northCarolina)
-        mode.player2.properties.append(pennsylvania)
-        
-        mode.player2.colorBuild.add('yellow')
-        mode.player2.properties.append(atlantic)
-        mode.player2.properties.append(vetnor)
-        mode.player2.properties.append(marvin)
-        
-        mode.player2.colorBuild.add('orange')
-        mode.player2.properties.append(stJames)
-        mode.player2.properties.append(tennessee)
-        mode.player2.properties.append(newYork)
-        
-        propertySet.remove(oriental)
-        propertySet.remove(vermont)
-        propertySet.remove(connecticut)
-        propertySet.remove(pacific)
-        propertySet.remove(northCarolina)
-        propertySet.remove(atlantic)
-        propertySet.remove(vetnor)
-        propertySet.remove(marvin)
-        propertySet.remove(stJames)
-        propertySet.remove(tennessee)
-        propertySet.remove(newYork)
-        propertySet.remove(pennsylvania)
-        '''
-        
         
         mode.dice = (1,1)
         
@@ -582,6 +548,16 @@ class GameMode(Mode):
         #this is the board image that we are uploading
         board = ('board.jpg')
         mode.board = mode.loadImage(board)
+        
+        #this is player 1
+        player1Piece = 'thimble.png'
+        mode.player1Piece = mode.loadImage(player1Piece)
+        mode.player1Piece = mode.scaleImage(mode.player1Piece, .05)
+        
+        #This is player 2
+        player2Piece = 'topHat.png'
+        mode.player2Piece = mode.loadImage(player2Piece)
+        mode.player2Piece = mode.scaleImage(mode.player2Piece, .03)
         
         #this is the buy button that we are uploading
         buyButton = ('buyProperty.png')
@@ -613,16 +589,8 @@ class GameMode(Mode):
         mode.diceSix = mode.loadImage('dice6.png')
         mode.diceSix = mode.scaleImage(mode.diceSix,.3)
         
-        
-        
-        #this is announcementsa
+        #this is announcements
         mode.announcements = []
-        
-        '''
-        #these are the pictures of the dices
-        dice1 = 
-        mode.dice1 = 
-        '''
         
         #THESE ARE THE POSSIBLE LOCATIONS OF PLAYER 1 (outer)
         mode.player1Locations = []
@@ -730,8 +698,6 @@ class GameMode(Mode):
     def buyHouseConstraint(mode, property):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            #print(property.color)
-            #print(mode.player1.colorBuild)
             if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
@@ -803,10 +769,6 @@ class GameMode(Mode):
                         mode.announcements.append('Player 1 bought a house')
                     else:
                         mode.announcements.append('Player 2 bought a house')
-                    
-            #print(houses['grey'])
-
-            
                     
 #########################  Rent Price Calculator  ##############################  
 
@@ -935,12 +897,12 @@ class GameMode(Mode):
         if mode.turnCounter % 2 == 0:
             if mode.player1.position % 40 == 30:
                 mode.player1.position -= 20
-                mode.tempPositionPlayer1 = mode.player1.position
+                #mode.tempPositionPlayer1 = mode.player1.position
                 mode.player1.inJail = True
         else:
             if mode.player2.position % 40 == 30:
                 mode.player2.position -= 20
-                mode.tempPositionPlayer2 = mode.player2.position
+                #mode.tempPositionPlayer2 = mode.player2.position
                 mode.player2.inJail = True
 
     def reshuffleCommunityChance(mode):
@@ -1022,11 +984,8 @@ class GameMode(Mode):
                     absValAction = currCommunityChance.action * -1
                     mode.player1.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
-                print(currCommunityChance.message)
-                print('money action player 1')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.player1)
-                print('move action player 1')
         #computer
         else:
             if isinstance(currCommunityChance, CommunityChanceCardMoney):
@@ -1037,11 +996,8 @@ class GameMode(Mode):
                     absValAction = currCommunityChance.action * -1
                     mode.player2.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
-                print(currCommunityChance.message)
-                print('money action player2')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.player2)
-                print('move action player2')
         mode.actionsAfterRoll()
             
                 
@@ -1071,6 +1027,7 @@ class GameMode(Mode):
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
                 mode.player1.lastTransaction = f'-${space.tax}'
+            #adds to the announcements
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
             announcementLength = len(mode.announcements)
@@ -1347,13 +1304,6 @@ class GameMode(Mode):
             mode.nextSelected = True
             print('you pressed the buyHouse button')
             
-        #property selection
-        mode.propertySelection(event.x, event.y)
-        for space in board:
-            if isinstance(space, Property):
-                if space.selected == True:
-                    print(f'{space.name} is selected') 
-            
 
     def keyPressed(mode, event):
         if event.key == 'h':
@@ -1406,12 +1356,6 @@ class GameMode(Mode):
         
 ############################  Draw Functions  ################################## 
         
-    def drawPlayer1Path(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
-        
-    def drawPlayer2Path(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
-        
     def drawPlayer1(mode, canvas, player1):
         position = player1.position % 40
         if mode.tempPositionPlayer1 % 40 == position:
@@ -1419,7 +1363,7 @@ class GameMode(Mode):
         if mode.counterDrawPlayer1 % 4 == 0 and not mode.turnCompletedPlayer1:
             mode.tempPositionPlayer1 += 1
         (x, y) = mode.player1Locations[mode.tempPositionPlayer1 % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
+        canvas.create_image(x,y, image=ImageTk.PhotoImage(mode.player1Piece))
         
     def drawPlayer2(mode, canvas, player2):
         position = player2.position % 40
@@ -1428,7 +1372,7 @@ class GameMode(Mode):
         if mode.counterDrawPlayer2 % 4 == 0 and not mode.turnCompletedPlayer2:
             mode.tempPositionPlayer2 += 1
         (x, y) = mode.player2Locations[mode.tempPositionPlayer2 % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
+        canvas.create_image(x,y, image=ImageTk.PhotoImage(mode.player2Piece))
         
     def drawPlayer1Values(mode, canvas, player1):
         canvas.create_rectangle(930,10,1190, 345)
@@ -1485,22 +1429,10 @@ class GameMode(Mode):
                         canvas.create_oval(1080-r + (20 * circleCounter),475 - r + (18 * counter), 
                                         1080 + r + (20 * circleCounter), 475 + r + (18 * counter))
             counter += 1
-        '''
-        canvas.create_text(1075,200,text = (
-                           f'computer money:{mode.computer.money}'))
-        canvas.create_text(1075,220,text = 'properties')
-        counter = 0
-        for element in computer.properties:
-            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
-            counter += 1
-        a'''   
 
-  
-     
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
         canvas.create_rectangle(20, 410, 125, 470, fill = fill)
-        #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
             canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
@@ -1526,9 +1458,6 @@ class GameMode(Mode):
         elif dice2 == 6:
             canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceSix))
         
-        
-        
-        
     def drawTurn(mode, canvas):
         canvas.create_rectangle(50, 140, 230, 180, fill = fill)
         canvas.create_text(90, 160, text = 'Turn:', font = 'Arial 22')
@@ -1536,8 +1465,7 @@ class GameMode(Mode):
             canvas.create_text(180, 160, text = 'Player 1', font = 'Arial 20')
         else:
             canvas.create_text(180, 160, text = 'Player 2', font = 'Arial 20')
-        
-        
+
     def drawHouse(mode, canvas):
         spaceIndex = 0
         for property in housePosition:
@@ -1564,8 +1492,6 @@ class GameMode(Mode):
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
-                
-                    
             spaceIndex += 1
             
     def drawAnnouncements(mode, canvas):
@@ -1580,8 +1506,6 @@ class GameMode(Mode):
         canvas.create_rectangle(215, 675, 920, 708, fill = fill)
         canvas.create_text(225, 691.5, text = 'Community Chest or Chance Message:' ,anchor = 'w')
         canvas.create_text(480, 691.5, text = f'{mode.communityChanceMessage}', anchor = 'w')
-        
-    
 
     def redrawAll(mode, canvas):
         #draw turn
@@ -1618,13 +1542,10 @@ class GameMode(Mode):
         mode.drawPlayer1Values(canvas, mode.player1)
         mode.drawPlayer2Values(canvas, mode.player2)
         
-        #finding coordinates for houses
-        
         mode.drawHouse(canvas)
-        #mode.drawPropArea(canvas)
         
-        #canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', 
-        #                   font = 'Arial 50 bold')
+        canvas.create_text(mode.width / 2, 15, text = 'Two Player Mode', font = 'Arial 16 ')
+        
         mode.drawAnnouncements(canvas)
         
         mode.drawDice(canvas)
@@ -1658,45 +1579,6 @@ class AIMode(Mode):
         mode.endGameCounter = 0
         mode.gameOver = False
         
-        
-        '''
-        for space in mode.player1.properties:
-            print(f'{space.name}: {space.double}')
-        '''
-        
-        '''
-        mode.computer.colorBuild.add('green')
-        mode.computer.properties.append(pacific)
-        mode.computer.properties.append(northCarolina)
-        mode.computer.properties.append(pennsylvania)
-        
-        mode.computer.colorBuild.add('yellow')
-        mode.computer.properties.append(atlantic)
-        mode.computer.properties.append(vetnor)
-        mode.computer.properties.append(marvin)
-        
-        mode.computer.colorBuild.add('orange')
-        mode.computer.properties.append(stJames)
-        mode.computer.properties.append(tennessee)
-        mode.computer.properties.append(newYork)
-        '''
-        
-        
-        '''
-        propertySet.remove(pacific)
-        propertySet.remove(northCarolina)
-        propertySet.remove(pennsylvania)
-        
-        propertySet.remove(atlantic)
-        propertySet.remove(vetnor)
-        propertySet.remove(marvin)
-        '''
-        
-        
-        
-        
-        
-        
         mode.dice = (1,1)
         
         #roll tracking in order to help calculate the rent for utilities
@@ -1717,6 +1599,16 @@ class AIMode(Mode):
         #this is the board image that we are uploading
         board = ('board.jpg')
         mode.board = mode.loadImage(board)
+        
+        #this is player 1
+        player1Piece = 'thimble.png'
+        mode.player1Piece = mode.loadImage(player1Piece)
+        mode.player1Piece = mode.scaleImage(mode.player1Piece, .05)
+        
+        #This is computer
+        computerPiece = 'topHat.png'
+        mode.computerPiece = mode.loadImage(computerPiece)
+        mode.computerPiece = mode.scaleImage(mode.computerPiece, .03)
         
         #this is the buy button that we are uploading
         buyButton = ('buyProperty.png')
@@ -1748,16 +1640,8 @@ class AIMode(Mode):
         mode.diceSix = mode.loadImage('dice6.png')
         mode.diceSix = mode.scaleImage(mode.diceSix,.3)
         
-        
-        
-        #this is announcementsa
+        #this is announcements
         mode.announcements = []
-        
-        '''
-        #these are the pictures of the dices
-        dice1 = 
-        mode.dice1 = 
-        '''
         
         #THESE ARE THE POSSIBLE LOCATIONS OF PLAYER 1 (outer)
         mode.player1Locations = []
@@ -1823,13 +1707,10 @@ class AIMode(Mode):
             
         mode.communityChance = []
         
-        
     def diceRoll(mode):
         x = random.randint(1,6)
         y = random.randint(1,6)
         return (x,y)
-        
-        
 
 #################################  AI Buying  ##################################
         
@@ -1870,8 +1751,6 @@ class AIMode(Mode):
     def buyHouseConstraint(mode, property):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            #print(property.color)
-            #print(mode.player1.colorBuild)
             if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
@@ -1943,10 +1822,6 @@ class AIMode(Mode):
                         mode.announcements.append('Player 1 bought a house')
                     else:
                         mode.announcements.append('Computer bought a house')
-                        
-            #print(houses['grey'])
-
-            
                     
 #########################  Rent Price Calculator  ##############################  
 
@@ -1954,13 +1829,6 @@ class AIMode(Mode):
     def rentPriceProperty(mode, property, player):
         mode.player1.doubleRent()
         mode.computer.doubleRent()
-        '''
-        for i in range(len(mode.player1.properties)):
-            print(f'{mode.player1.properties[i].name}: {mode.player1.properties[i].double}')
-            if givenProp == mode.player1.properties[i]:
-                property = mode.player1.properties[i]
-                print(f'{property.name}: {property.double}')
-        '''
         if property.numHouse == 0:
             if property.color in player.colorBuild:
                 return (property.rent * 2)
@@ -2079,17 +1947,16 @@ class AIMode(Mode):
         return True
         
     def landOnJail(mode):
-        
         if mode.turnCounter % 2 == 0:
             if mode.player1.position % 40 == 30:
                 mode.player1.position -= 20
-                mode.tempPositionPlayer1 = mode.player1.position
+                #mode.tempPositionPlayer1 = mode.player1.position
                 mode.player1.inJail = True
                 mode.animationSkip = True
         else:
             if mode.computer.position % 40 == 30:
                 mode.computer.position -= 20
-                mode.tempPositionComputer = mode.computer.position
+                #mode.tempPositionComputer = mode.computer.position
                 mode.computer.inJail = True
                 mode.animationSkip = True
                 
@@ -2172,11 +2039,8 @@ class AIMode(Mode):
                     absValAction = currCommunityChance.action * -1
                     mode.player1.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
-                print(currCommunityChance.message)
-                print('money action player 1')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.player1)
-                print('move action player 1')
         #computer
         else:
             if isinstance(currCommunityChance, CommunityChanceCardMoney):
@@ -2187,11 +2051,8 @@ class AIMode(Mode):
                     absValAction = currCommunityChance.action * -1
                     mode.computer.lastTransaction = f'-${absValAction}'
                 mode.communityChanceMessage = currCommunityChance.message
-                print(currCommunityChance.message)
-                print('money action computer')
             elif isinstance(currCommunityChance, CommunityChanceCardMovement):
                 mode.moveAction(currCommunityChance, mode.computer)
-                print('move action computer')
         mode.actionsAfterRoll()
             
                 
@@ -2222,6 +2083,7 @@ class AIMode(Mode):
             elif isinstance(space, Tax):
                 mode.player1.money -= space.tax
                 mode.player1.lastTransaction = f'-${space.tax}'
+            #adding to announcements
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
             announcementLength = len(mode.announcements)
@@ -2247,7 +2109,6 @@ class AIMode(Mode):
             if space in mode.player1.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.player1)
-                    print(space.double)
                     for element in mode.player1.properties:
                         print(f'{element.name}: {element.double}')
                     mode.computer.money -= rent
@@ -2310,23 +2171,11 @@ class AIMode(Mode):
             double = False
             if dice1 == dice2:
                 double = True
-            #print(dice1, dice2)
-            #print(f'roll doubes? {double}')
-            #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
             mode.didRollAndPassGo(diceTotal, double)
             mode.actionsAfterRoll()
-            '''
-            mode.didRollAndPassGo(diceTotal, double)
-            mode.landOpponentOrTax()
-            mode.player1.doubleRent()
-            mode.player1.propertySort()
-            mode.computer.doubleRent()
-            mode.computer.propertySort()
-            mode.checkEndGame()
-            '''
             
     def actionsAfterRoll(mode):
         #check pass go
@@ -2337,33 +2186,16 @@ class AIMode(Mode):
         mode.computer.propertySort()
         mode.checkEndGame()
         
-        '''
-        print(mode.withinRange(0, 38)) #True
-        print(mode.withinRange(0, 28)) #True
-        print(mode.withinRange(12, 0)) #True
-        print(mode.withinRange(6, 37)) #True
-        print(mode.withinRange(6, 34)) #True
-        print(mode.withinRange(6, 33)) #False
-        print(mode.withinRange(2,0))   #True
-        print(mode.withinRange(4, 32)) #True
-        print(mode.withinRange(4, 31)) #False
-        '''
     def checkEndGame(mode):
         global winner
         if mode.player1.money < 0:
             winner = mode.computer
             mode.endGameCounter = 1
             mode.gameOver = True
-            #while mode.endGameCounter < 10:
-            #    mode.gameOver = True
-            #mode.app.setActiveMode(mode.app.gameOverMode)
         elif mode.computer.money < 0:
             winner = mode.player1
             mode.endGameCounter = 1
             mode.gameOver = True
-            #while mode.endGameCounter < 10:
-            #    mode.gameOver = True
-            #mode.app.setActiveMode(mode.app.gameOverMode)
             
     def endScreenTimer(mode):
         if mode.endGameCounter > 1 and mode.gameOver:
@@ -2371,7 +2203,6 @@ class AIMode(Mode):
         
                     
     def endTurn(mode):
-        print(f'Computer: {mode.computer.critMoney}')
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
@@ -2686,9 +2517,6 @@ class AIMode(Mode):
         sumExpectedValueResult = 0
         for n in range(2,13):
             space = board[(position + n) % 40]
-            #if mode.expectedValue(space) <= -50:
-            #   sumExpectedValueResult += mode.expectedValue(space)
-           #print(f'{space.name}: {mode.expectedValue(space)}')
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
             
@@ -2702,10 +2530,6 @@ class AIMode(Mode):
             position = mode.computer.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValue(space) + mode.sumExpectedValue(position)))
-            #print(space.name)
-            #print(f'expected val: {mode.expectedValue(space)}')
-            #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
-            #print(f'Second Depth:{sumSecondExpectedValue}')
         sumSecondExpectedValue += mode.secondDepthMaxPay(mode.computer.position)
         return sumSecondExpectedValue
         
@@ -2715,12 +2539,10 @@ class AIMode(Mode):
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
-        #print(f'houseBuild: {houseBuild}')
         for i in range(5):
             for space in houseBuild:
                 if (mode.computer.money - mode.computer.critMoney > houseBuild[0].houseCost):
                     mode.buyHouse(space)
-                    #print(space.color)
     
     def monopolyAI(mode):
         #list of things my AI needs to do 
@@ -2739,14 +2561,10 @@ class AIMode(Mode):
                  isinstance(space, Railroad)) and 
                  mode.computer.money - mode.computer.critMoney > space.cost):
                 mode.buyProperty()
-            
             #buy houses if you can and have extra money
-            #print(mode.computer.colorBuild)
             for element in mode.computer.colorBuild:
-                #print(element)
                 mode.AIBuyHouse(element)
         mode.endTurn()
-        print(f'AI Turn Counter: {mode.turnCounter}')
             
         
 
@@ -2785,21 +2603,12 @@ class AIMode(Mode):
             mode.selectionCounter = 0
             mode.nextSelected = True
             print('you pressed the buyHouse button')
-            
-        #property selection
-        mode.propertySelection(event.x, event.y)
-        for space in board:
-            if isinstance(space, Property):
-                if space.selected == True:
-                    print(f'{space.name} is selected') 
-            
 
     def keyPressed(mode, event):
         if event.key == 'h':
             mode.app.setActiveMode(mode.app.helpMode)
             
         elif event.key == 'o':
-            
             #showing that buying houses on a player works
             #easy to show pass go 
             #easy to show critical value calculator
@@ -2813,7 +2622,6 @@ class AIMode(Mode):
             mode.player1.properties.append(tennessee)
             mode.player1.properties.append(newYork)
             mode.player1.doubleRent()
-            
             
             propertySet.remove(oriental)
             propertySet.remove(vermont)
@@ -2842,19 +2650,8 @@ class AIMode(Mode):
         mode.counterDrawPlayer1 += 1
         mode.counterDrawComputer += 1
         mode.endGameCounter += 1
-        '''
-        if mode.turnCounter % 2 == 1:
-            mode.counterDrawPlayer1 += 1
-        else:
-            mode.counterDrawComputer += 1
-        '''
+
 ############################  AI Draw Functions  ###############################
-        
-    def drawPlayer1Path(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
-        
-    def drawComputerPath(mode,canvas,x,y):
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
         
     def drawPlayer1(mode, canvas, player1):
         position = player1.position % 40
@@ -2863,10 +2660,7 @@ class AIMode(Mode):
         if mode.counterDrawPlayer1 % 4 == 0 and not mode.turnCompletedPlayer1:
             mode.tempPositionPlayer1 += 1
         (x, y) = mode.player1Locations[mode.tempPositionPlayer1 % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
-        #print(f'temp: {mode.tempPositionPlayer1}')
-        #print(f'position: {position}')
-        #print(f'counterDrawPlayer: {mode.counterDrawPlayer}')
+        canvas.create_image(x,y, image=ImageTk.PhotoImage(mode.player1Piece))
         
     def drawComputer(mode, canvas, computer):
         position = computer.position % 40
@@ -2875,7 +2669,7 @@ class AIMode(Mode):
         if mode.counterDrawComputer % 4 == 0 and not mode.turnCompletedComputer:
             mode.tempPositionComputer += 1
         (x, y) = mode.computerLocations[mode.tempPositionComputer % 40]
-        canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'green')
+        canvas.create_image(x,y, image=ImageTk.PhotoImage(mode.computerPiece))
         
     def drawPlayer1Values(mode, canvas, player1):
         canvas.create_rectangle(930,10,1190, 345)
@@ -2933,22 +2727,11 @@ class AIMode(Mode):
                     else:
                         canvas.create_oval(1080-r + (20 * circleCounter),495 - r + (18 * counter), 
                                         1080 + r + (20 * circleCounter), 495 + r + (18 * counter))
-            counter += 1
-        '''
-        canvas.create_text(1075,200,text = (
-                           f'computer money:{mode.computer.money}'))
-        canvas.create_text(1075,220,text = 'properties')
-        counter = 0
-        for element in computer.properties:
-            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
-            counter += 1
-        
-        '''   
+            counter += 1 
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
         canvas.create_rectangle(20, 410, 125, 470, fill = fill)
-        #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
             canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
@@ -2984,7 +2767,6 @@ class AIMode(Mode):
             canvas.create_text(180, 160, text = 'Player 1', font = 'Arial 20')
         else:
             canvas.create_text(180, 160, text = 'Computer', font = 'Arial 20')
-        
         
     def drawHouse(mode, canvas):
         spaceIndex = 0
@@ -3088,31 +2870,12 @@ class AIMode(Mode):
         mode.drawHouse(canvas)
         #mode.drawPropArea(canvas)
         
-        canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
+        canvas.create_text(mode.width / 2, 15, text = 'Player vs. AI Mode', font = 'Arial 16')
         mode.drawAnnouncements(canvas)
         
         mode.drawDice(canvas)
         
         mode.drawCommunityChanceMessage(canvas)
-        
-        
-        #print(mode.endGameCounter)
-        #mode.endScreenTimer()
-        
-        #print(mode.secondDepthSumExpectedValue())
-        #print(mode.sumExpectedValue(baltic))
-        
-        
-        '''
-        #help find player location on the board
-        for location in mode.player1Locations:
-            (xcor, ycor) = location
-            mode.drawPlayer1Path(canvas,xcor,ycor)
-            
-        for location in mode.computerLocations:
-            h(xcor, ycor) = location
-            mode.drawcomputerPath(canvas,xcor,ycor)
-        '''
         
 ################################################################################
 ################################################################################
@@ -3140,52 +2903,6 @@ class AIAIMode(Mode):
         mode.endGameCounter = 0
         mode.gameOver = False
         mode.turnLimit = 100
-
-        '''
-        #showing that buying houses works
-        mode.computer1.colorBuild.add('grey')
-        mode.computer1.properties.append(oriental)
-        mode.computer1.properties.append(vermont)
-        mode.computer1.properties.append(connecticut)
-        mode.computer1.doubleRent()
-        '''
-        '''
-        for space in mode.computer1.properties:
-            print(f'{space.name}: {space.double}')
-        '''
-        '''
-        mode.computer.colorBuild.add('green')
-        mode.computer.properties.append(pacific)
-        mode.computer.properties.append(northCarolina)
-        mode.computer.properties.append(pennsylvania)
-        
-        mode.computer.colorBuild.add('yellow')
-        mode.computer.properties.append(atlantic)
-        mode.computer.properties.append(vetnor)
-        mode.computer.properties.append(marvin)
-        
-        mode.computer.colorBuild.add('orange')
-        mode.computer.properties.append(stJames)
-        mode.computer.properties.append(tennessee)
-        mode.computer.properties.append(newYork)
-        '''
-        '''
-        propertySet.remove(oriental)
-        propertySet.remove(vermont)
-        propertySet.remove(connecticut)
-        '''
-        '''
-        propertySet.remove(pacific)
-        propertySet.remove(northCarolina)
-        propertySet.remove(atlantic)
-        propertySet.remove(vetnor)
-        propertySet.remove(marvin)
-        propertySet.remove(stJames)
-        propertySet.remove(tennessee)
-        propertySet.remove(newYork)
-        propertySet.remove(pennsylvania)
-        '''
-        
         
         mode.dice = (1,1)
         
@@ -3216,8 +2933,6 @@ class AIAIMode(Mode):
         startGame = ('startGame.png')
         mode.startGame = mode.loadImage(startGame)
         
-        
-        
         #these are the die
         mode.diceOne = mode.loadImage('dice1.png')
         mode.diceOne = mode.scaleImage(mode.diceOne,.3)
@@ -3232,18 +2947,10 @@ class AIAIMode(Mode):
         mode.diceSix = mode.loadImage('dice6.png')
         mode.diceSix = mode.scaleImage(mode.diceSix,.3)
         
-        
-        
         #this is announcementsa
         mode.announcements = []
         
-        '''
-        #these are the pictures of the dices
-        dice1 = 
-        mode.dice1 = 
-        '''
-        
-        #THESE ARE THE POSSIBLE LOCATIONS OF PLAYER 1 (outer)
+        #THESE ARE THE POSSIBLE LOCATIONS OF Computer 1 (outer)
         mode.computer1Locations = []
             
         #pass go, this is where we start appending
@@ -3306,14 +3013,11 @@ class AIAIMode(Mode):
             mode.computer2Locations.append((876.5,141.25 + 52.5 * i))
             
         mode.communityChance = []
-        
-        
+
     def diceRoll(mode):
         x = random.randint(1,6)
         y = random.randint(1,6)
         return (x,y)
-        
-        
 
 #################################  AI Buying  ##################################
         
@@ -3354,8 +3058,6 @@ class AIAIMode(Mode):
     def buyHouseConstraint(mode, property):
         #computer1 turn
         if mode.turnCounter % 2 == 0:
-            #print(property.color)
-            #print(mode.computer1.colorBuild)
             if (property.color in mode.computer1.colorBuild and mode.computer1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
                     a, b = houses[property.color]
@@ -3428,24 +3130,13 @@ class AIAIMode(Mode):
                         mode.announcements.append('Comp1 bought a house')
                     else:
                         mode.announcements.append('Comp2 bought a house')
-                        
-            #print(houses['grey'])
 
-            
-                    
 #########################  Rent Price Calculator  ##############################  
 
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property, player):
         mode.computer1.doubleRent()
         mode.computer2.doubleRent()
-        '''
-        for i in range(len(mode.computer1.properties)):
-            print(f'{mode.computer1.properties[i].name}: {mode.computer1.properties[i].double}')
-            if givenProp == mode.computer1.properties[i]:
-                property = mode.computer1.properties[i]
-                print(f'{property.name}: {property.double}')
-        '''
         if property.numHouse == 0:
             if property.color in player.colorBuild:
                 return (property.rent * 2)
@@ -3731,11 +3422,6 @@ class AIAIMode(Mode):
             if space in mode.computer1.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.computer1)
-                    '''
-                    print(space.double)
-                    for element in mode.computer1.properties:
-                        print(f'{element.name}: {element.double}')
-                    '''
                     mode.computer2.money -= rent
                     mode.computer2.lastTransaction = f'-${rent}'
                     mode.computer1.money += rent
@@ -3796,23 +3482,11 @@ class AIAIMode(Mode):
             double = False
             if dice1 == dice2:
                 double = True
-            #print(dice1, dice2)
-            #print(f'roll doubes? {double}')
-            #stores the previous dice in the app
             mode.prevRoll = dice1 + dice2
             mode.dice = (dice1, dice2)
             diceTotal = dice1 + dice2
             mode.didRollAndPassGo(diceTotal, double)
             mode.actionsAfterRoll()
-            '''
-            mode.didRollAndPassGo(diceTotal, double)
-            mode.landOpponentOrTax()
-            mode.computer1.doubleRent()
-            mode.computer1.propertySort()
-            mode.computer.doubleRent()
-            mode.computer.propertySort()
-            mode.checkEndGame()
-            '''
             
     def actionsAfterRoll(mode):
         mode.landOpponentOrTax()
@@ -3822,17 +3496,6 @@ class AIAIMode(Mode):
         mode.computer2.propertySort()
         mode.checkEndGame()
         
-        '''
-        print(mode.withinRange(0, 38)) #True
-        print(mode.withinRange(0, 28)) #True
-        print(mode.withinRange(12, 0)) #True
-        print(mode.withinRange(6, 37)) #True
-        print(mode.withinRange(6, 34)) #True
-        print(mode.withinRange(6, 33)) #False
-        print(mode.withinRange(2,0))   #True
-        print(mode.withinRange(4, 32)) #True
-        print(mode.withinRange(4, 31)) #False
-        '''
     def checkEndGame(mode):
         global winner
         if mode.computer1.money < 0:
@@ -4250,7 +3913,6 @@ class AIAIMode(Mode):
                 #we now have to check whether or not it will complete a set, and if it does complete a set
                 #we assume the worst case and the opponent will buy the maxnumber of houses
                 if boolRange:
-                    #print(space.name)
                     sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
                                                   mode.rentIfAcquiredComputer2(space, distance))
         return sumExpectedValuePotential
@@ -4269,11 +3931,9 @@ class AIAIMode(Mode):
                 #we now have to check whether or not it will complete a set, and if it does complete a set
                 #we assume the worst case and the opponent will buy the maxnumber of houses
                 if boolRange:
-                    #print(space.name)
                     sumExpectedValuePotential += (mode.probabilityCalculator(distance) * 
                                                   mode.rentIfAcquiredComputer1(space, distance))
         return sumExpectedValuePotential
-                
             
     def sumExpectedValueComputer2(mode, position):
         sumExpectedValueResult = 0
@@ -4300,10 +3960,6 @@ class AIAIMode(Mode):
             position = mode.computer2.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValueComputer2(space) + mode.sumExpectedValueComputer2(position)))
-            #print(space.name)
-            #print(f'expected val: {mode.expectedValue(space)}')
-            #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
-            #print(f'Second Depth:{sumSecondExpectedValue}')
         sumSecondExpectedValue += mode.secondDepthMaxPayComputer2(mode.computer2.position)
         return sumSecondExpectedValue
         
@@ -4314,10 +3970,6 @@ class AIAIMode(Mode):
             position = mode.computer1.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValueComputer1(space) + mode.sumExpectedValueComputer1(position)))
-            #print(space.name)
-            #print(f'expected val: {mode.expectedValue(space)}')
-            #print(f'sumExpectedVal: {mode.sumExpectedValue(position)}')
-            #print(f'Second Depth:{sumSecondExpectedValue}')
         sumSecondExpectedValue += mode.secondDepthMaxPayComputer1(mode.computer1.position)
         return sumSecondExpectedValue
         
@@ -4351,12 +4003,10 @@ class AIAIMode(Mode):
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
-        #print(f'houseBuild: {houseBuild}')
         for i in range(5):
             for space in houseBuild:
                 if (mode.computer2.money - mode.computer2.critMoney > houseBuild[0].houseCost):
                     mode.buyHouse(space)
-                    #print(space.color)
                     
     def AIBuyHouseComputer1(mode, color):
         houseBuild = []
@@ -4364,12 +4014,10 @@ class AIAIMode(Mode):
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
-        #print(f'houseBuild: {houseBuild}')
         for i in range(5):
             for space in houseBuild:
                 if (mode.computer1.money - mode.computer1.critMoney > houseBuild[0].houseCost):
                     mode.buyHouse(space)
-                    #print(space.color)
     
     def monopolyAIComputer2(mode):
         #list of things my AI needs to do 
@@ -4390,12 +4038,8 @@ class AIAIMode(Mode):
                 mode.buyProperty()
             
             #buy houses if you can and have extra money
-            #print(mode.computer.colorBuild)
             for element in mode.computer2.colorBuild:
-                #print(element)
                 mode.AIBuyHouseComputer2(element)
-        #mode.endTurn()
-        print(f'AI Turn Counter: {mode.turnCounter}')
         
     def monopolyAIComputer1(mode):
         #list of things my AI needs to do 
@@ -4414,14 +4058,9 @@ class AIAIMode(Mode):
                  isinstance(space, Railroad)) and 
                  mode.computer1.money - mode.computer1.critMoney > space.cost):
                 mode.buyProperty()
-            
             #buy houses if you can and have extra money
-            #print(mode.computer.colorBuild)
             for element in mode.computer1.colorBuild:
-                #print(element)
                 mode.AIBuyHouseComputer1(element)
-        #mode.endTurn()
-        print(f'AI Turn Counter: {mode.turnCounter}')
             
         
 
@@ -4429,14 +4068,6 @@ class AIAIMode(Mode):
 
     def mousePressed(mode, event):
         mode.selectionCounter += 1
-        '''
-        #pressed buy property button
-        if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
-            event.y >= 490 and event.y <= 530 
-            and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
-            mode.buyProperty()
-            print('you pressed the buy property button')
-        '''
             
         #pressed start game button
         if (event.x >= 200 - 76 and event.x <= 200 + 76 and 
@@ -4452,24 +4083,6 @@ class AIAIMode(Mode):
             mode.nextTurn()
             mode.animationSkip = False
             print('you pressed the next step button')
-         
-        '''
-        #pressed buy house button
-        if (event.x >= 140-72 and event.x <= 140+72 and 
-            event.y >= 560 and event.y <= 600
-            and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
-            
-            mode.selectionCounter = 0
-            mode.nextSelected = True
-            print('you pressed the buyHouse button')
-        
-        #property selection
-        mode.propertySelection(event.x, event.y)
-        for space in board:
-            if isinstance(space, Property):
-                if space.selected == True:
-                    print(f'{space.name} is selected') 
-        '''    
 
     def keyPressed(mode, event):
         if event.key == 'h':
@@ -4479,12 +4092,7 @@ class AIAIMode(Mode):
         mode.counterDrawComputer1 += 1
         mode.counterDrawComputer2 += 1
         mode.endGameCounter += 1
-        '''
-        if mode.turnCounter % 2 == 1:
-            mode.counterDrawcomputer1 += 1
-        else:
-            mode.counterDrawComputer += 1
-        '''
+
 ############################  AI Draw Functions  ###############################
         
     def drawComputer1Path(mode,canvas,x,y):
@@ -4501,9 +4109,6 @@ class AIAIMode(Mode):
             mode.tempPositionComputer1 += 1
         (x, y) = mode.computer1Locations[mode.tempPositionComputer1 % 40]
         canvas.create_rectangle(x-5,y-5,x+5,y+5, fill = 'blue')
-        #print(f'temp: {mode.tempPositioncomputer1}')
-        #print(f'position: {position}')
-        #print(f'counterDrawPlayer: {mode.counterDrawPlayer}')
         
     def drawComputer2(mode, canvas, computer2):
         position = computer2.position % 40
@@ -4573,21 +4178,10 @@ class AIAIMode(Mode):
                         canvas.create_oval(1080-r + (20 * circleCounter),495 - r + (18 * counter), 
                                         1080 + r + (20 * circleCounter), 495 + r + (18 * counter))
             counter += 1
-        '''
-        canvas.create_text(1075,200,text = (
-                           f'computer money:{mode.computer.money}'))
-        canvas.create_text(1075,220,text = 'properties')
-        counter = 0
-        for element in computer.properties:
-            canvas.create_text(940, 240 + (20 * counter), text = element.name, anchor = 'w')
-            counter += 1
-        
-        '''   
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
         canvas.create_rectangle(10, 410, 115, 470, fill = fill)
-        #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
             canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
@@ -4613,9 +4207,6 @@ class AIAIMode(Mode):
         elif dice2 == 6:
             canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceSix))
         
-        
-        
-        
     def drawTurn(mode, canvas):
         canvas.create_rectangle(50, 140, 230, 180, fill = fill)
         canvas.create_text(90, 160, text = 'Turn:', font = 'Arial 22')
@@ -4623,7 +4214,6 @@ class AIAIMode(Mode):
             canvas.create_text(170, 160, text = 'Computer1', font = 'Arial 20')
         else:
             canvas.create_text(170, 160, text = 'Computer2', font = 'Arial 20')
-        
         
     def drawHouse(mode, canvas):
         spaceIndex = 0
@@ -4652,25 +4242,6 @@ class AIAIMode(Mode):
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
             spaceIndex += 1
-
-    def drawPropArea(mode, canvas):
-        for pair in coorSide1:
-            x,y = pair
-            canvas.create_rectangle(x - 26.25, y - (42.5), 
-                                    x + 26.25, y + (42.5), fill = 'red')
-                                    
-        for pair in coorSide2:
-            x,y = pair
-            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
-        
-        for pair in coorSide3:
-            x,y = pair
-            canvas.create_rectangle(x - 26.25, y - (42.5), 
-                                    x + 26.25, y + (42.5), fill = 'red')
-        
-        for pair in coorSide4:
-            x,y = pair
-            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
             
     def drawAnnouncements(mode, canvas):
         counter = 0
@@ -4679,13 +4250,11 @@ class AIAIMode(Mode):
         for message in mode.announcements:
             canvas.create_text(140, 260 + 25 * counter, text = message, font = 'Arial 16')
             counter += 1
-            
+
     def drawCommunityChanceMessage(mode, canvas):
         canvas.create_rectangle(215, 675, 920, 708, fill = fill)
         canvas.create_text(225, 691.5, text = 'Community Chest or Chance Message:' ,anchor = 'w')
         canvas.create_text(480, 691.5, text = f'{mode.communityChanceMessage}', anchor = 'w')
-        
-    
 
     def redrawAll(mode, canvas):
         #draw turn
@@ -4720,27 +4289,12 @@ class AIAIMode(Mode):
         mode.drawHouse(canvas)
         #mode.drawPropArea(canvas)
         
-        canvas.create_text(mode.width / 2, mode.height / 2, text = 'THIS IS THE AI MODE', font = 'Arial 50 bold')
+        canvas.create_text(mode.width / 2, 15, text = 'AI vs. AI Mode', font = 'Arial 16')
         mode.drawAnnouncements(canvas)
         
         mode.drawDice(canvas)
         
         mode.drawCommunityChanceMessage(canvas)
-        
-        #print(mode.secondDepthSumExpectedValue())
-        #print(mode.sumExpectedValue(baltic))
-        
-        
-        '''
-        #help find player location on the board
-        for location in mode.computer1Locations:
-            (xcor, ycor) = location
-            mode.drawcomputer1Path(canvas,xcor,ycor)
-            
-        for location in mode.computerLocations:
-            h(xcor, ycor) = location
-            mode.drawcomputerPath(canvas,xcor,ycor)
-        '''
 
 ##############################  Help Mode Setup  ############################### 
 
@@ -4792,11 +4346,6 @@ class HelpMode(Mode):
                                fill = 'red', font=font1)
             canvas.create_text(mode.width / 4, 690, text='Press "d" for the AI vs. AI', 
                                fill = 'red', font=font1)
-                               
-       
-
-            
- 
 
     def keyPressed(mode, event):
         if event.key == 'a':
