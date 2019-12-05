@@ -1016,8 +1016,9 @@ class GameMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
                         mode.announcements.append('Player 1 landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
+                    
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
                     mode.announcements.append(f'Player 1 landed on {space.name}')
@@ -1061,8 +1062,8 @@ class GameMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Player 2 landed on Chance':
                         mode.announcements.append('Player 2 landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 2 landed on {space.name}':
                     mode.announcements.append(f'Player 2 landed on {space.name}')
@@ -1129,11 +1130,12 @@ class GameMode(Mode):
             #mode.app.setActiveMode(mode.app.gameOverMode)
 
     def endScreenTimer(mode):
-        if mode.endGameCounter == 10 and mode.gameOver:
+        if mode.endGameCounter > 1 and mode.gameOver:
             mode.app.setActiveMode(mode.app.gameOverMode)
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
+            mode.endScreenTimer()
             mode.turnCounter += 1
             mode.rollCounter = 0
             mode.communityChanceBool = True
@@ -2275,8 +2277,9 @@ class AIMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
                         mode.announcements.append('Player 1 landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
+                    
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
                     mode.announcements.append(f'Player 1 landed on {space.name}')
@@ -2323,8 +2326,9 @@ class AIMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Computer landed on Chance':
                         mode.announcements.append('Computer landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
+                    
             else:
                 if mode.announcements[announcementLength - 1] != f'Computer landed on {space.name}':
                     mode.announcements.append(f'Computer landed on {space.name}')
@@ -2386,6 +2390,7 @@ class AIMode(Mode):
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
+            mode.endScreenTimer()
             mode.communityChanceBool = True
             mode.turnCounter += 1
             mode.rollCounter = 0
@@ -3799,13 +3804,11 @@ class AIAIMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Comp1 landed on Chance':
                         mode.announcements.append('Comp1 landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
             else:
                 if mode.announcements[announcementLength - 1] != f'Comp1 landed on {space.name}':
                     mode.announcements.append(f'Comp1 landed on {space.name}')
-                
-            
 
         else:
             #redefine location as space
@@ -3846,8 +3849,8 @@ class AIAIMode(Mode):
                     if mode.announcements[announcementLength - 1] != 'Comp2 landed on Chance':
                         mode.announcements.append('Comp2 landed on Chance')
                 if mode.communityChanceBool:
-                    mode.landOnCommunityChance()
                     mode.communityChanceBool = False
+                    mode.landOnCommunityChance()
             else:
                 if mode.announcements[announcementLength - 1] != f'Comp2 landed on {space.name}':
                     mode.announcements.append(f'Comp2 landed on {space.name}')
@@ -3911,6 +3914,7 @@ class AIAIMode(Mode):
     
     def nextTurn(mode):
         if mode.rollCounter == 1 and mode.turnCounter < mode.turnLimit:
+            mode.endScreenTimer()
             mode.communityChanceMessage = ''
             mode.communityChanceBool = True
             mode.turnCounter += 1
