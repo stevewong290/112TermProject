@@ -1,0 +1,64 @@
+Project Description:
+Name: 112 Monopoly AI 
+	This project is a Monopoly game with most features that can be found in the classic version. There will be an AI that allows you to play with a computer that controls buying properties and homes. 
+
+Competitive Analysis:
+* Some similar features that my game has with online versions is buying houses and hotels, buying properties, and having an instruction panel. 
+* Other monopoly games online do not always have an AI or computer player feature, which is what differentiates my project. One thing that my monopoly game does not have is a trading feature that allows you to trade with the opponent. Some other versions also have different levels for their AI, which I do not have. Most other versions of monopoly have some form of animation of the dice rolling in order to make the user experience feel more realistic
+
+Structural Plan:
+* There is the main file and there all the pictures will be in different files
+* Within the main file, I first create the Property, Utility, Railroad, Tax, and Corner classes. These classes contain all the information that each space needs to store. I also create the player class that stores all the information for each player and the methods that the player will need
+* I then have the different modes, since I will be making a modalApp that allows us to go between different panels
+* I group the functions that do similar things to help keep my code well organized. For example, I group all my buying functions together and the drawing functions together.
+* In our game panel, we have a few necessary functions: We have a diceRoll, communityChance, buyProperty, rentPriceProperty, rentPriceUtility, rentPriceRailroad, didRollAndPassGo, moveForwardJail, landOpponentOrTax, rollDice, endTurn, mousePressed, all the draw functions
+* diceRoll: returns the dice rolls and changes the variables in the mode in order allow the drawDice to know which pictures
+* communityChance: random number results in a random card 
+* buyProperty: buys a property if not in opponent
+* rentPriceProperty: returns the rent price
+* rentPriceUtility: return a utility price
+* rentPriceRailroad: return a railroadprice
+* didRollAndPassGo: moves the player and checks whether or not it passed go or landed on go, giving them money
+* moveForwardJail: conditions for moving from jail 
+* landOponentOrTax: if you land on opponent, pay rent or if you land on tax, pay tax
+* mousePressed: helps check which buttons are pressed
+* endTurn: ends the turn but has conditions to make sure you have rolled
+
+Algorithmic Plan: The trickiest part of the project will be implementing the AI
+* The first thing I will do is calculate probability of the next 3 moves and where the player will land. Then, it will multiply each of those probabilities by the cost of that exact sequence including paying for rent, after it finds the expected value, I will then use that expected value as a critical level of money that needs to be held. With any money surplus of that amount, the AI will use it to purchase property and houses, with a priority on property since owning property is zero sum. 
+* After implementing this feature, I would like to also include projected paths for the opponent that will lead to potential weight changes if the opponent buys the properties or purchases houses. This would be a cool feature since it would actually change the expected value
+* One specific implementation for this would be to use the worst-case scenario that the opponent will always buy properties or build houses if the opponent has enough money. This guarantees that the AIÕs critical level of money will be greater. 
+
+Timeline Plan:
+* 11/19: finish implementing the buying house feature 
+* 11/20
+* 11/21: start building the AI / calculate the probability
+* 11/22
+* 11/23: have the AI calculate the expected value critical level given a board state
+* 11/24
+* 11/25: integrate AI into the code so that it can run effectively
+* 11/26
+* 11/27: QA testing on the AI given different states to make sure it works
+* 11/28: Thanksgiving Break
+* 11/29: Thanksgiving Break
+* 11/30: adding in chance cards
+* 12/1: improving user interface
+* 12/2:
+* 12/3:
+* 12/4: final debugging + video recording
+* 12/5:
+
+Version Control Plan:
+* I am periodically pushing my code onto my github
+
+Module List:
+* I am using tkinter
+
+TP2 Design Update:
+* I have reached the UI interface that I like for my AI mode, but I would like to make it more robust in terms of making it prettier and improving the color scheme that more accurately matches monopoly instead of a more pistachio color. I also have not changed much of my final goal design. 
+
+TP2 Update for Project:
+* A new goal that I want to implement is my AI playing against itself and showing that. Also, when the computer goes I would like to add in time delays in order to more accurately reflect what playing the game would be like. Lastly, I think that I can have an analysis portion that my AI can see what the other person does and potentially "changes" the strategy based off of what the other AI is doing. 
+
+TP3 Update for Project:
+* Added an AI vs. AI mode. I was also able to add a section that tells you what card you landed on for Community Chest or Chance by displaying the message. I also was able to add a better time delay for the animating the moving around the board.

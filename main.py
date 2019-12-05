@@ -1,6 +1,5 @@
 from cmu_112_graphics import *
 from tkinter import *
-from TwoAI import * 
 from CornerTaxUtility import *
 from Property import Property
 from Railroad import Railroad
@@ -18,6 +17,13 @@ winner = None
 
 #I got the structure of the code from the modal app from class
 #https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
+#all buttons in this game are created on https://dabuttonfactory.com
+#board was taken off amazon website:
+#https://www.amazon.com/Hasbro-Monopoly-Replacement-Board/dp/B017MNUCXC
+#monopoly logo taken off of https://www.pinterest.com/pin/531847037219720134/
+#dice taken off of wikipedia: https://commons.wikimedia.org/wiki/Category:Dice_faces
+
+
 
 class Player(object):
     def __init__(self, name):
@@ -1063,15 +1069,20 @@ class GameMode(Mode):
                 mode.player1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Player 1 landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Player 1 landed on Community Chest':
+                        mode.announcements.append('Player 1 landed on Community Chest')
                 else:
-                    mode.announcements.append('Player 1 landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
+                        mode.announcements.append('Player 1 landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Player 1 landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
+                    mode.announcements.append(f'Player 1 landed on {space.name}')
            
         else:
             #redefine location as space
@@ -1101,15 +1112,20 @@ class GameMode(Mode):
                 mode.player2.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Player 2 landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Player 2 landed on Community Chest':
+                        mode.announcements.append('Player 2 landed on Community Chest')
                 else:
-                    mode.announcements.append('Player 2 landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Player 2 landed on Chance':
+                        mode.announcements.append('Player 2 landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Player 2 landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Player 2 landed on {space.name}':
+                    mode.announcements.append(f'Player 2 landed on {space.name}')
 
    
     def rollDice(mode):
@@ -2240,15 +2256,20 @@ class AIMode(Mode):
                 mode.player1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Player 1 landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Player 1 landed on Community Chest':
+                        mode.announcements.append('Comp2 landed on Community Chest')
                 else:
-                    mode.announcements.append('Player 1 landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
+                        mode.announcements.append('Player 1 landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Player 1 landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
+                    mode.announcements.append(f'Player 1 landed on {space.name}')
             
 
         else:
@@ -2282,15 +2303,20 @@ class AIMode(Mode):
                 mode.computer.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Computer landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Computer landed on Community Chest':
+                        mode.announcements.append('Computer landed on Community Chest')
                 else:
-                    mode.announcements.append('Computer landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Computer landed on Chance':
+                        mode.announcements.append('Computer landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Computer landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Computer landed on {space.name}':
+                    mode.announcements.append(f'Computer landed on {space.name}')
 
    
     def rollDice(mode):
@@ -3214,21 +3240,15 @@ class AIAIMode(Mode):
         board = ('board.jpg')
         mode.board = mode.loadImage(board)
         
-        #this is the buy button that we are uploading
-        buyButton = ('buyProperty.png')
-        mode.buy = mode.loadImage(buyButton)
-        
         #this is the end turn button
-        turnButton = ('endTurn.png')
-        mode.turn = mode.loadImage(turnButton)
+        nextStep = ('nextStep.png')
+        mode.nextStep = mode.loadImage(nextStep)
         
         #this is the roll dice button
-        rollDice = ('rollDice.png')
-        mode.roll = mode.loadImage(rollDice)
+        startGame = ('startGame.png')
+        mode.startGame = mode.loadImage(startGame)
         
-        #this is the buy house button
-        buyHouse = ('buyHouse.png')
-        mode.buyHouseButton = mode.loadImage(buyHouse)
+        
         
         #these are the die
         mode.diceOne = mode.loadImage('dice1.png')
@@ -3341,9 +3361,9 @@ class AIAIMode(Mode):
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
-                        mode.announcements.append(f'Computer 1 bought {space.name}')
+                        mode.announcements.append(f'Comp1 bought {space.name}')
                     elif len(mode.announcements) < 5:
-                        mode.announcements.append(f'Computer 1 bought {space.name}')
+                        mode.announcements.append(f'Comp1 bought {space.name}')
         #computer2 turn
         else:
             space = board[mode.computer2.position % 40]
@@ -3355,9 +3375,9 @@ class AIAIMode(Mode):
                     propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
-                        mode.announcements.append(f'Computer2 bought {space.name}')
+                        mode.announcements.append(f'Comp2 bought {space.name}')
                     elif len(mode.announcements) < 5:
-                        mode.announcements.append(f'Computer2 bought {space.name}')
+                        mode.announcements.append(f'Comp2 bought {space.name}')
         mode.computer1.doubleRent()
         mode.computer1.propertySort()
         mode.computer2.doubleRent()
@@ -3431,15 +3451,15 @@ class AIAIMode(Mode):
                         mode.computer2.lastTransaction = f'-${property.houseCost}'
                 if len(mode.announcements) < 5:
                     if mode.turnCounter % 2 == 0:
-                        mode.announcements.append('Computer1 bought a house')
+                        mode.announcements.append('Comp1 bought a house')
                     else:
-                        mode.announcements.append('Computer2 bought a house')
+                        mode.announcements.append('Comp2 bought a house')
                 elif len(mode.announcements) == 5:
                     mode.announcements = mode.announcements[1:]
                     if mode.turnCounter % 2 == 0:
-                        mode.announcements.append('Computer1 bought a house')
+                        mode.announcements.append('Comp1 bought a house')
                     else:
-                        mode.announcements.append('Computer2 bought a house')
+                        mode.announcements.append('Comp2 bought a house')
                         
             #print(houses['grey'])
 
@@ -3697,7 +3717,7 @@ class AIAIMode(Mode):
             if space in mode.computer2.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.computer2)
-                    print(space.double)
+                    #print(space.double)
                     mode.computer1.money -= rent
                     mode.computer1.lastTransaction = f'-${rent}'
                     mode.computer2.money += rent
@@ -3719,15 +3739,21 @@ class AIAIMode(Mode):
                 mode.computer1.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Computer1 landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Comp1 landed on Community Chest':
+                        mode.announcements.append('Comp1 landed on Community Chest')
                 else:
-                    mode.announcements.append('Computer1 landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Comp1 landed on Chance':
+                        mode.announcements.append('Comp1 landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Computer1 landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Comp1 landed on {space.name}':
+                    mode.announcements.append(f'Comp1 landed on {space.name}')
+                
             
 
         else:
@@ -3737,9 +3763,11 @@ class AIAIMode(Mode):
             if space in mode.computer1.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.computer1)
+                    '''
                     print(space.double)
                     for element in mode.computer1.properties:
                         print(f'{element.name}: {element.double}')
+                    '''
                     mode.computer2.money -= rent
                     mode.computer2.lastTransaction = f'-${rent}'
                     mode.computer1.money += rent
@@ -3761,15 +3789,20 @@ class AIAIMode(Mode):
                 mode.computer2.lastTransaction = f'-${space.tax}'
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
+            announcementLength = len(mode.announcements)
             if isinstance(space, CommunityChance):
                 if (space.name == 'Community Chest Side 1' or space.name == 'Community Chest Side 2' or 
                     space.name == 'Community Chest Side 4'):
-                    mode.announcements.append(f'Computer2 landed on Community Chest')
+                    
+                    if mode.announcements[announcementLength - 1] != 'Comp2 landed on Community Chest':
+                        mode.announcements.append('Comp2 landed on Community Chest')
                 else:
-                    mode.announcements.append('Computer2 landed on Chance')
+                    if mode.announcements[announcementLength - 1] != 'Comp2 landed on Chance':
+                        mode.announcements.append('Comp2 landed on Chance')
                 mode.landOnCommunityChance()
             else:
-                mode.announcements.append(f'Computer2 landed on {space.name}')
+                if mode.announcements[announcementLength - 1] != f'Comp2 landed on {space.name}':
+                    mode.announcements.append(f'Comp2 landed on {space.name}')
 
    
     def rollDice(mode):
@@ -3784,14 +3817,14 @@ class AIAIMode(Mode):
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if mode.turnCounter % 2 == 0:
-                    mode.announcements.append('Computer1 rolled the dice')
+                    mode.announcements.append('Comp1 rolled the dice')
                 else:
-                    mode.announcements.append('Computer2 rolled the dice')
+                    mode.announcements.append('Comp2 rolled the dice')
             elif len(mode.announcements) < 5:
                 if mode.turnCounter % 2 == 0:
-                    mode.announcements.append('Computer1 rolled the dice')
+                    mode.announcements.append('Comp1 rolled the dice')
                 else:
-                    mode.announcements.append('Computer2 rolled the dice')
+                    mode.announcements.append('Comp2 rolled the dice')
             double = False
             if dice1 == dice2:
                 double = True
@@ -3856,14 +3889,14 @@ class AIAIMode(Mode):
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if mode.turnCounter % 2 == 1:
-                    mode.announcements.append('Computer1 ended their turn')
+                    mode.announcements.append('Comp1 ended their turn')
                 else:
-                    mode.announcements.append('Computer2 ended their turn')
+                    mode.announcements.append('Comp2 ended their turn')
             elif len(mode.announcements) < 5:
                 if mode.turnCounter % 2 == 1:
-                    mode.announcements.append('Computer1 ended their turn')
+                    mode.announcements.append('Comp1 ended their turn')
                 else:
-                    mode.announcements.append('Computer2 ended their turn')
+                    mode.announcements.append('Comp2 ended their turn')
             mode.computer1.doubleRent()
             mode.computer1.propertySort()
             mode.computer2.doubleRent()
@@ -4428,28 +4461,31 @@ class AIAIMode(Mode):
 
     def mousePressed(mode, event):
         mode.selectionCounter += 1
+        '''
         #pressed buy property button
         if (event.x >= 140 - 85 and event.x <= 140 + 85 and 
             event.y >= 490 and event.y <= 530 
             and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
             mode.buyProperty()
             print('you pressed the buy property button')
+        '''
             
-        #pressed roll dice button
-        if (event.x >= 205 - 63 and event.x <= 205 + 63 and 
+        #pressed start game button
+        if (event.x >= 200 - 76 and event.x <= 200 + 76 and 
             event.y >= 420 and event.y <= 460
             and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
             print('you pressed the roll dice button')
             mode.rollDice()
             
-        #pressed end turn button
-        if (event.x >= 140-64 and event.x <= 140 + 64 and 
-            event.y >= 630 and event.y <= 670
+        #pressed next step button
+        if (event.x >= 140-67 and event.x <= 140 + 67 and 
+            event.y >= 480 and event.y <= 520
             and mode.turnCompletedComputer1 and mode.turnCompletedComputer2):
             mode.nextTurn()
             mode.animationSkip = False
-            print('you pressed the end turn button')
-            
+            print('you pressed the next step button')
+         
+        '''
         #pressed buy house button
         if (event.x >= 140-72 and event.x <= 140+72 and 
             event.y >= 560 and event.y <= 600
@@ -4458,14 +4494,14 @@ class AIAIMode(Mode):
             mode.selectionCounter = 0
             mode.nextSelected = True
             print('you pressed the buyHouse button')
-            
+        
         #property selection
         mode.propertySelection(event.x, event.y)
         for space in board:
             if isinstance(space, Property):
                 if space.selected == True:
                     print(f'{space.name} is selected') 
-            
+        '''    
 
     def keyPressed(mode, event):
         if event.key == 'h':
@@ -4513,7 +4549,7 @@ class AIAIMode(Mode):
     def drawComputer1Values(mode, canvas, computer1):
         canvas.create_rectangle(930,10,1190, 345)
         canvas.create_rectangle(940, 20, 1180, 60, fill = fill)
-        canvas.create_text(1060,40,text = (f'Player 1'), font = 'Arial, 18')
+        canvas.create_text(1060,40,text = (f'Computer 1'), font = 'Arial, 18')
         canvas.create_text(940, 80, text = (f'Money: ${computer1.money}'), anchor = 'w')
         canvas.create_text(1066, 80, text = (f'Last Trans: {computer1.lastTransaction}'), 
                            anchor = 'w')
@@ -4582,32 +4618,32 @@ class AIAIMode(Mode):
      
     def drawDice(mode, canvas):
         (dice1, dice2) = mode.dice
-        canvas.create_rectangle(20, 410, 125, 470, fill = fill)
+        canvas.create_rectangle(10, 410, 115, 470, fill = fill)
         #canvas.create_text(45, 400, text = 'Dice:', font = 'Arial, 22')
         if dice1 == 1:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceOne))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice1 == 2:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceTwo))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice1 == 3:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceThree))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice1 == 4:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFour))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice1 == 5:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceFive))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice1 == 6:
-            canvas.create_image(50,440, image = ImageTk.PhotoImage(mode.diceSix))
+            canvas.create_image(40,440, image = ImageTk.PhotoImage(mode.diceSix))
         if dice2 == 1:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceOne))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceOne))
         elif dice2 == 2:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceTwo))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceTwo))
         elif dice2 == 3:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceThree))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceThree))
         elif dice2 == 4:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFour))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceFour))
         elif dice2 == 5:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceFive))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceFive))
         elif dice2 == 6:
-            canvas.create_image(95,440, image = ImageTk.PhotoImage(mode.diceSix))
+            canvas.create_image(85,440, image = ImageTk.PhotoImage(mode.diceSix))
         
         
         
@@ -4616,9 +4652,9 @@ class AIAIMode(Mode):
         canvas.create_rectangle(50, 140, 230, 180, fill = fill)
         canvas.create_text(90, 160, text = 'Turn:', font = 'Arial 22')
         if mode.turnCounter % 2 == 0:
-            canvas.create_text(180, 160, text = 'Computer1', font = 'Arial 20')
+            canvas.create_text(170, 160, text = 'Computer1', font = 'Arial 20')
         else:
-            canvas.create_text(180, 160, text = 'Computer2', font = 'Arial 20')
+            canvas.create_text(170, 160, text = 'Computer2', font = 'Arial 20')
         
         
     def drawHouse(mode, canvas):
@@ -4694,21 +4730,14 @@ class AIAIMode(Mode):
         canvas.create_image(600, 350,
                             image=ImageTk.PhotoImage(mode.board))
                             
-        #draw buy property button 
-        canvas.create_image(140, 510, image =
-                            ImageTk.PhotoImage(mode.buy))
+        #draw next turn button
+        canvas.create_image(140, 500, image = 
+                            ImageTk.PhotoImage(mode.nextStep))
                             
-        #draw end turn button
-        canvas.create_image(140, 650, image = 
-                            ImageTk.PhotoImage(mode.turn))
+        #draw start game button
+        canvas.create_image(200, 440, image = 
+                            ImageTk.PhotoImage(mode.startGame))
                             
-        #draw roll dice button
-        canvas.create_image(205, 440, image = 
-                            ImageTk.PhotoImage(mode.roll))
-                            
-        #draw buy house button
-        canvas.create_image(140, 580, image = 
-                            ImageTk.PhotoImage(mode.buyHouseButton))
         
         #draw players
         mode.drawComputer1(canvas, mode.computer1)
