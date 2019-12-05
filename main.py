@@ -475,18 +475,22 @@ class SplashScreenMode(Mode):
         font1 = 'Arial 24 bold'
         canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
         canvas.create_image(600, 250, image = ImageTk.PhotoImage(mode.background))
-        canvas.create_rectangle(mode.width / 2 - 166, 382, mode.width / 2 + 166, 418, 
+        canvas.create_rectangle(mode.width / 2 - 160, 382, mode.width / 2 + 160, 418, 
                                 fill = 'white', outline = 'red', width = 2)
-        canvas.create_rectangle(mode.width / 2 - 236, 482, mode.width / 2 + 236, 518, 
+        canvas.create_rectangle(mode.width / 2 - 236, 457, mode.width / 2 + 236, 493, 
                                 fill = 'white', outline = 'red', width = 2)
-        canvas.create_rectangle(mode.width / 2 - 186, 582, mode.width / 2 + 186, 618, 
+        canvas.create_rectangle(mode.width / 2 - 186, 532, mode.width / 2 + 186, 568, 
+                                fill = 'white', outline = 'red', width = 2)
+        canvas.create_rectangle(mode.width / 2 - 166, 607, mode.width / 2 + 166, 643, 
                                 fill = 'white', outline = 'red', width = 2)
         if (mode.counter // 8) % 2 == 0:
             canvas.create_text(mode.width/2, 400, text="Press  'a'  for the AI Mode!", 
                                fill = 'red', font=font1)
-            canvas.create_text(mode.width/2, 500, text="Press 'space' for the Two Player Mode!", 
+            canvas.create_text(mode.width/2, 475, text="Press 'space' for the Two Player Mode!", 
                                fill = 'red', font=font1)
-            canvas.create_text(mode.width/2, 600, text="Press 'h' for the Instructions!", 
+            canvas.create_text(mode.width/2, 550, text="Press 'h' for the Instructions!", 
+                               fill = 'red', font=font1)
+            canvas.create_text(mode.width/2, 625, text="Press 'd' for the AI vs. AI!", 
                                fill = 'red', font=font1)
 
     def keyPressed(mode, event):
@@ -1564,25 +1568,6 @@ class GameMode(Mode):
                     
             spaceIndex += 1
             
-    def drawPropArea(mode, canvas):
-        for pair in coorSide1:
-            x,y = pair
-            canvas.create_rectangle(x - 26.25, y - (42.5), 
-                                    x + 26.25, y + (42.5), fill = 'red')
-                                    
-        for pair in coorSide2:
-            x,y = pair
-            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
-        
-        for pair in coorSide3:
-            x,y = pair
-            canvas.create_rectangle(x - 26.25, y - (42.5), 
-                                    x + 26.25, y + (42.5), fill = 'red')
-        
-        for pair in coorSide4:
-            x,y = pair
-            canvas.create_rectangle(x-42.5, y-26.25, x+42.5, y+26.25, fill = 'red')
-            
     def drawAnnouncements(mode, canvas):
         counter = 0
         canvas.create_rectangle(10, 210, 270, 380, fill = fill)
@@ -1646,23 +1631,6 @@ class GameMode(Mode):
 
         mode.drawCommunityChanceMessage(canvas)
 
-        #print(mode.endGameCounter)
-        #mode.endScreenTimer()
-        
-        #print(mode.secondDepthSumExpectedValue())
-        #print(mode.sumExpectedValue(baltic))
-        
-        
-        '''
-        #help find player location on the board
-        for location in mode.player1Locations:
-            (xcor, ycor) = location
-            mode.drawPlayer1Path(canvas,xcor,ycor)
-            
-        for location in mode.computerLocations:
-            h(xcor, ycor) = location
-            mode.drawcomputerPath(canvas,xcor,ycor)
-        '''
 ################################################################################
 ################################################################################
 ############################## AI Mode Setup ###################################
@@ -4795,7 +4763,7 @@ class HelpMode(Mode):
         
     def redrawAll(mode, canvas):
         font = 'Arial 60 bold'
-        font1 = 'Arial 24 bold'
+        font1 = 'Arial 16 bold'
         #background color
         canvas.create_rectangle(0,0,mode.width, mode.height, fill = '#D5EFB5')
 
@@ -4811,17 +4779,23 @@ class HelpMode(Mode):
         
         #canvas.create_text(mode.width/2, 250, text='(Rules will be put here)', font=font)
        
-        canvas.create_rectangle(mode.width / 4 - 166, 657, mode.width / 4 + 166, 693, 
+        canvas.create_rectangle(mode.width / 2 - 100, 678, mode.width / 2 + 100, 703, 
+                                fill = 'white', outline = 'red', width = 2)
+        canvas.create_rectangle(3  * mode.width / 4 - 135, 678, 3 * mode.width / 4 + 135, 703, 
+                                fill = 'white', outline = 'red', width = 2)
+        canvas.create_rectangle(mode.width / 4 - 115, 678,mode.width / 4 + 115, 703, 
                                 fill = 'white', outline = 'red', width = 2)
         if (mode.counter // 12) % 2 == 0:
-            canvas.create_text(mode.width / 4, 675, text='Press "a" for the AI Mode!', 
+            canvas.create_text(mode.width / 2, 690, text='Press "a" for the AI Mode', 
+                               fill = 'red', font=font1)
+            canvas.create_text(3 * mode.width / 4, 690, text='Press "space" for the Two Player', 
+                               fill = 'red', font=font1)
+            canvas.create_text(mode.width / 4, 690, text='Press "d" for the AI vs. AI', 
                                fill = 'red', font=font1)
                                
-        canvas.create_rectangle(3  * mode.width / 4 - 206, 657, 3 * mode.width / 4 + 206, 693, 
-                                fill = 'white', outline = 'red', width = 2)
-        if (mode.counter // 12) % 2 == 0:
-            canvas.create_text(3 * mode.width / 4, 675, text='Press "space" for the Two Player!', 
-                               fill = 'red', font=font1)
+       
+
+            
  
 
     def keyPressed(mode, event):
@@ -4829,6 +4803,8 @@ class HelpMode(Mode):
             mode.app.setActiveMode(mode.app.AIMode)
         elif event.key == 'Space':
             mode.app.setActiveMode(mode.app.gameMode)
+        elif event.key == 'd':
+            mode.app.setActiveMode(mode.app.AIAIMode)
         
 ############################  Game Over Mode  ##################################
 
