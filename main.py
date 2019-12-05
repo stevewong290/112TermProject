@@ -3893,7 +3893,7 @@ class AIAIMode(Mode):
         mode.computer2.propertySort()
         mode.checkEndGame()
         space = mode.board[mode.computer1.position]
-        if isinstance(space, Property) or isinstance(space, Railroad) or isinstance(space,Utility):
+        if isinstance(space, Property) or isinstance(space, Railroad) or isinstance(space,Utilities):
             mode.buyProperty()
         
     def checkEndGame(mode):
