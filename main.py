@@ -25,133 +25,6 @@ winner = None
 #tophat from https://www.pinpng.com/pngs/m/23-237788_monopoly-game-pieces-png-transparent-png.png
 #thimble from https://p7.hiclipart.com/preview/778/559/612/hasbro-monopoly-token-madness-game-thimble-brik-wheelbarrow.jpg
 
-def boardReset():
-#################################  Spaces  #####################################
-    #instantiated properties        
-    mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
-    baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
-    oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
-    vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
-    connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
-    stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
-    state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
-    virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
-    stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
-    tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
-    newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
-    kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
-    indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
-    illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
-    atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
-    vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
-    marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
-    pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
-    northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
-    pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
-    parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
-    boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
-    
-    #instantiated railroads
-    readingRail = Railroad('Reading R.R.', 23)
-    pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
-    boRail= Railroad('B & O R.R.', 25)
-    shortRail = Railroad('Short Line R.R.', 26)
-    
-    #instantiated utilities
-    electric = Utilities('Electric Company', 150, 27)
-    water = Utilities('Water Works', 150, 28)
-    
-    #instantiated corner spaces
-    passGo = CornerSpace('Pass Go')
-    jailCell = CornerSpace('Jail Cell')
-    freeParking = CornerSpace('Free Parking')
-    goToJail = CornerSpace('Go To Jail')
-    
-    #instantiated community chest / chance spaces
-    communitySide1 = CommunityChance('Community Chest Side 1')
-    communitySide2 = CommunityChance('Community Chest Side 2')
-    communitySide4 = CommunityChance('Community Chest Side 4')
-    chanceSide1 = CommunityChance('Chance Side 1')
-    chanceSide3 = CommunityChance('Chance Side 3')
-    chanceSide4 = CommunityChance('Chance Side 4')
-    
-    #instantiated tax space
-    incomeTax = Tax('Income Tax', 200)
-    luxuryTax = Tax('Luxury Tax', 100)
-    
-    ############################  Board ############################################
-    
-    #putting each space into a list
-    board = []
-    
-    #side1
-    board.append(passGo)
-    board.append(mediterranean)
-    board.append(communitySide1)
-    board.append(baltic)
-    board.append(incomeTax)
-    board.append(readingRail)
-    board.append(oriental)
-    board.append(chanceSide1)
-    board.append(vermont)
-    board.append(connecticut)
-    board.append(jailCell)
-    
-    #side2
-    board.append(stCharles)
-    board.append(electric)
-    board.append(state)
-    board.append(virginia)
-    board.append(pennsylvaniaRail)
-    board.append(stJames)
-    board.append(communitySide2)
-    board.append(tennessee)
-    board.append(newYork)
-    board.append(freeParking)
-    
-    #side3
-    board.append(kentucky)
-    board.append(chanceSide3)
-    board.append(indiana)
-    board.append(illinois)
-    board.append(boRail)
-    board.append(atlantic)
-    board.append(vetnor)
-    board.append(water)
-    board.append(marvin)
-    board.append(goToJail)
-    
-    #side4
-    board.append(pacific)
-    board.append(northCarolina)
-    board.append(communitySide4)
-    board.append(pennsylvania)
-    board.append(shortRail)
-    board.append(chanceSide4)
-    board.append(parkPlace)
-    board.append(luxuryTax)
-    board.append(boardwalk)
-    
-    
-    #property set
-    propertySet = set(board)
-    
-    #this removes the nonproperties from the set 
-    for element in board:
-        if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
-            isinstance(element, CommunityChance)):
-            propertySet.remove(element)
-    
-    houses = dict()
-    houses['brown'] = (0,0)
-    houses['grey'] = (0,0,0)
-    houses['pink'] = (0,0,0)
-    houses['orange'] = (0,0,0)
-    houses['red'] = (0,0,0)
-    houses['yellow'] = (0,0,0)
-    houses['green'] = (0,0,0)
-    houses['blue'] = (0,0)
-
 
 class Player(object):
     def __init__(self, name):
@@ -174,98 +47,6 @@ class Player(object):
                 counter += 1
         self.numRailroads = counter
     
-    def doubleRent(self):
-        #brown properties
-        if mediterranean in self.properties and baltic in self.properties:
-            self.colorBuild.add('brown')
-            mediterranean.double = True
-            baltic.double = True
-        else:
-            mediterranean.double = False
-            baltic.double = False
-        #grey properties
-        if (oriental in self.properties and vermont in self.properties and 
-              connecticut in self.properties):
-            self.colorBuild.add('grey')
-            oriental.double = True
-            vermont.double = True
-            connecticut.double = True
-        else:
-            oriental.double = False
-            vermont.double = False
-            connecticut.double = False
-        #pink properties
-        if (stCharles in self.properties and state in self.properties and 
-            virginia in self.properties):
-            self.colorBuild.add('pink')
-            stCharles.double = True
-            state.double = True
-            virginia.double = True
-        else:
-            stCharles.double = False
-            state.double = False
-            virginia.double = False
-        #orange properties
-        if (stJames in self.properties and tennessee in self.properties and 
-            newYork in self.properties):
-            self.colorBuild.add('orange')
-            stJames.double = True
-            tennessee.double = True
-            newYork.double = True
-        else:
-            stJames.double = False
-            tennessee.double = False
-            newYork.double = False
-        #red properties
-        if (kentucky in self.properties and indiana in self.properties and 
-            illinois in self.properties):
-            self.colorBuild.add('red')
-            kentucky.double = True
-            indiana.double = True
-            illinois.double = True
-        else:
-            kentucky.double = False
-            indiana.double = False
-            illinois.double = False
-        #yellow properties
-        if (atlantic in self.properties and vetnor in self.properties and 
-            marvin in self.properties):
-            self.colorBuild.add('yellow')
-            atlantic.double = True
-            vetnor.double = True
-            marvin.double = True
-        else:
-            atlantic.double = False
-            vetnor.double = False
-            marvin.double = False
-        #green properties
-        if (pacific in self.properties and northCarolina in self.properties and 
-            pennsylvania in self.properties):
-            self.colorBuild.add('green')
-            pacific.double = True
-            northCarolina.double = True
-            pennsylvania.double = True
-        else:
-            pacific.double = False
-            northCarolina.double = False
-            pennsylvania.double = False
-        #blue properties
-        if (parkPlace in self.properties and boardwalk in self.properties):
-            self.colorBuild.add('blue')
-            parkPlace.double = True
-            boardwalk.double = True
-        else:
-            parkPlace.double = False
-            boardwalk.double = False
-        #utilities
-        if (electric in self.properties and water in self.properties):
-            electric.double = True
-            water.double = True
-            self.utilDouble = True
-        else:
-            electric.double = False
-            water.double = False
-            self.utilDouble = False
     def propertySort(self):
         for i in range(len(self.properties)):
             minPosition = i
@@ -317,120 +98,7 @@ random.shuffle(communityChanceList)
 
 
 #################################  Spaces  #####################################
-#instantiated properties        
-mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
-baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
-oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
-vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
-connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
-stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
-state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
-virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
-stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
-tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
-newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
-kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
-indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
-illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
-atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
-vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
-marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
-pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
-northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
-pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
-parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
-boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
 
-#instantiated railroads
-readingRail = Railroad('Reading R.R.', 23)
-pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
-boRail= Railroad('B & O R.R.', 25)
-shortRail = Railroad('Short Line R.R.', 26)
-
-#instantiated utilities
-electric = Utilities('Electric Company', 150, 27)
-water = Utilities('Water Works', 150, 28)
-
-#instantiated corner spaces
-passGo = CornerSpace('Pass Go')
-jailCell = CornerSpace('Jail Cell')
-freeParking = CornerSpace('Free Parking')
-goToJail = CornerSpace('Go To Jail')
-
-#instantiated community chest / chance spaces
-communitySide1 = CommunityChance('Community Chest Side 1')
-communitySide2 = CommunityChance('Community Chest Side 2')
-communitySide4 = CommunityChance('Community Chest Side 4')
-chanceSide1 = CommunityChance('Chance Side 1')
-chanceSide3 = CommunityChance('Chance Side 3')
-chanceSide4 = CommunityChance('Chance Side 4')
-
-#instantiated tax space
-incomeTax = Tax('Income Tax', 200)
-luxuryTax = Tax('Luxury Tax', 100)
-
-############################  Board ############################################
-
-#putting each space into a list
-board = []
-
-#side1
-board.append(passGo)
-board.append(mediterranean)
-board.append(communitySide1)
-board.append(baltic)
-board.append(incomeTax)
-board.append(readingRail)
-board.append(oriental)
-board.append(chanceSide1)
-board.append(vermont)
-board.append(connecticut)
-board.append(jailCell)
-
-#side2
-board.append(stCharles)
-board.append(electric)
-board.append(state)
-board.append(virginia)
-board.append(pennsylvaniaRail)
-board.append(stJames)
-board.append(communitySide2)
-board.append(tennessee)
-board.append(newYork)
-board.append(freeParking)
-
-#side3
-board.append(kentucky)
-board.append(chanceSide3)
-board.append(indiana)
-board.append(illinois)
-board.append(boRail)
-board.append(atlantic)
-board.append(vetnor)
-board.append(water)
-board.append(marvin)
-board.append(goToJail)
-
-#side4
-board.append(pacific)
-board.append(northCarolina)
-board.append(communitySide4)
-board.append(pennsylvania)
-board.append(shortRail)
-board.append(chanceSide4)
-board.append(parkPlace)
-board.append(luxuryTax)
-board.append(boardwalk)
-
-
-#property set
-propertySet = set(board)
-
-#this removes the nonproperties from the set 
-for element in board:
-    if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
-        isinstance(element, CommunityChance)):
-        propertySet.remove(element)
         
 ###########################  Houses ############################################
         
@@ -574,15 +242,7 @@ housePosition.append(parkPlaceHouse)
 housePosition.append(None)
 housePosition.append(boardwalkHouse)
 
-houses = dict()
-houses['brown'] = (0,0)
-houses['grey'] = (0,0,0)
-houses['pink'] = (0,0,0)
-houses['orange'] = (0,0,0)
-houses['red'] = (0,0,0)
-houses['yellow'] = (0,0,0)
-houses['green'] = (0,0,0)
-houses['blue'] = (0,0)
+
 
 ########################  Splash Screen Setup  #################################  
 
@@ -652,6 +312,134 @@ class GameMode(Mode):
         mode.secondDepthMax = 0
         mode.endGameCounter = 0
         mode.gameOver = False
+        mode.communityChanceBool = True
+        
+        #BOARD SETUP
+        
+        #instantiated properties        
+        mode.mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+        mode.baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+        mode.oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+        mode.vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+        mode.connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+        mode.stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
+        mode.state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+        mode.virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+        mode.stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
+        mode.tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+        mode.newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+        mode.kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+        mode.indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+        mode.illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+        mode.atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+        mode.vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+        mode.marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+        mode.pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+        mode.northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+        mode.pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+        mode.parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
+        mode.boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
+        
+        #instantiated railroads
+        mode.readingRail = Railroad('Reading R.R.', 23)
+        mode.pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
+        mode.boRail= Railroad('B & O R.R.', 25)
+        mode.shortRail = Railroad('Short Line R.R.', 26)
+        
+        #instantiated utilities
+        mode.electric = Utilities('Electric Company', 150, 27)
+        mode.water = Utilities('Water Works', 150, 28)
+        
+        #instantiated corner spaces
+        mode.passGo = CornerSpace('Pass Go')
+        mode.jailCell = CornerSpace('Jail Cell')
+        mode.freeParking = CornerSpace('Free Parking')
+        mode.goToJail = CornerSpace('Go To Jail')
+        
+        #instantiated community chest / chance spaces
+        mode.communitySide1 = CommunityChance('Community Chest Side 1')
+        mode.communitySide2 = CommunityChance('Community Chest Side 2')
+        mode.communitySide4 = CommunityChance('Community Chest Side 4')
+        mode.chanceSide1 = CommunityChance('Chance Side 1')
+        mode.chanceSide3 = CommunityChance('Chance Side 3')
+        mode.chanceSide4 = CommunityChance('Chance Side 4')
+        
+        #instantiated tax space
+        mode.incomeTax = Tax('Income Tax', 200)
+        mode.luxuryTax = Tax('Luxury Tax', 100)
+        
+        ############################  Board ############################################
+        
+        #putting each space into a list
+        mode.board = []
+        
+        #side1
+        mode.board.append(mode.passGo)
+        mode.board.append(mode.mediterranean)
+        mode.board.append(mode.communitySide1)
+        mode.board.append(mode.baltic)
+        mode.board.append(mode.incomeTax)
+        mode.board.append(mode.readingRail)
+        mode.board.append(mode.oriental)
+        mode.board.append(mode.chanceSide1)
+        mode.board.append(mode.vermont)
+        mode.board.append(mode.connecticut)
+        mode.board.append(mode.jailCell)
+        
+        #side2
+        mode.board.append(mode.stCharles)
+        mode.board.append(mode.electric)
+        mode.board.append(mode.state)
+        mode.board.append(mode.virginia)
+        mode.board.append(mode.pennsylvaniaRail)
+        mode.board.append(mode.stJames)
+        mode.board.append(mode.communitySide2)
+        mode.board.append(mode.tennessee)
+        mode.board.append(mode.newYork)
+        mode.board.append(mode.freeParking)
+        
+        #side3
+        mode.board.append(mode.kentucky)
+        mode.board.append(mode.chanceSide3)
+        mode.board.append(mode.indiana)
+        mode.board.append(mode.illinois)
+        mode.board.append(mode.boRail)
+        mode.board.append(mode.atlantic)
+        mode.board.append(mode.vetnor)
+        mode.board.append(mode.water)
+        mode.board.append(mode.marvin)
+        mode.board.append(mode.goToJail)
+        
+        #side4
+        mode.board.append(mode.pacific)
+        mode.board.append(mode.northCarolina)
+        mode.board.append(mode.communitySide4)
+        mode.board.append(mode.pennsylvania)
+        mode.board.append(mode.shortRail)
+        mode.board.append(mode.chanceSide4)
+        mode.board.append(mode.parkPlace)
+        mode.board.append(mode.luxuryTax)
+        mode.board.append(mode.boardwalk)
+        
+        
+        #property set
+        mode.propertySet = set(mode.board)
+        
+        #this removes the nonproperties from the set 
+        for element in mode.board:
+            if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
+                isinstance(element, CommunityChance)):
+                mode.propertySet.remove(element)
+        
+        mode.houses = dict()
+        mode.houses['brown'] = (0,0)
+        mode.houses['grey'] = (0,0,0)
+        mode.houses['pink'] = (0,0,0)
+        mode.houses['orange'] = (0,0,0)
+        mode.houses['red'] = (0,0,0)
+        mode.houses['yellow'] = (0,0,0)
+        mode.houses['green'] = (0,0,0)
+        mode.houses['blue'] = (0,0)
         
         
         mode.dice = (1,1)
@@ -673,7 +461,7 @@ class GameMode(Mode):
         
         #this is the board image that we are uploading
         board = ('board.jpg')
-        mode.board = mode.loadImage(board)
+        mode.boardPic = mode.loadImage(board)
         
         #this is player 1
         player1Piece = 'thimble.png'
@@ -790,13 +578,13 @@ class GameMode(Mode):
     def buyProperty(mode):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            space = board[mode.player1.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.player1.position % 40]
+            if space in mode.propertySet: 
                 if mode.player1.money >= space.cost:
                     mode.player1.money -= space.cost
                     mode.player1.lastTransaction = f'-${space.cost}'
                     mode.player1.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Player 1 bought {space.name}')
@@ -804,21 +592,21 @@ class GameMode(Mode):
                         mode.announcements.append(f'Player 1 bought {space.name}')
         #player 2 turn
         else:
-            space = board[mode.player2.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.player2.position % 40]
+            if space in mode.propertySet: 
                 if mode.player2.money >= space.cost:
                     mode.player2.money -= space.cost
                     mode.player2.lastTransaction = f'-${space.cost}'
                     mode.player2.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Player 2 bought {space.name}')
                     elif len(mode.announcements) < 5:
                         mode.announcements.append(f'Player 2 bought {space.name}')
-        mode.player1.doubleRent()
+        mode.doubleRent(mode.player1)
         mode.player1.propertySort()
-        mode.player2.doubleRent()
+        mode.doubleRent(mode.player2)
         mode.player2.propertySort()
         
     def buyHouseConstraint(mode, property):
@@ -826,13 +614,13 @@ class GameMode(Mode):
         if mode.turnCounter % 2 == 0:
             if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -841,13 +629,13 @@ class GameMode(Mode):
         else:
             if (property.color in mode.player2.colorBuild and mode.player2.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -859,11 +647,11 @@ class GameMode(Mode):
             if property.numHouse <= 4:
                 property.numHouse += 1
                 if property.color == 'brown' or property.color == 'blue':
-                    a,b = houses[property.color]
+                    a,b = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b)
+                        mode.houses[property.color] = (a+1,b)
                     else:
-                        houses[property.color] = (a, b+1)
+                        mode.houses[property.color] = (a, b+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
                         mode.player1.lastTransaction = f'-${property.houseCost}'
@@ -871,13 +659,13 @@ class GameMode(Mode):
                         mode.player2.money -= property.houseCost
                         mode.player2.lastTransaction = f'-${property.houseCost}'
                 else:
-                    a,b,c = houses[property.color]
+                    a,b,c = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b,c)
+                        mode.houses[property.color] = (a+1,b,c)
                     elif property.setRank == 2:
-                        houses[property.color] = (a,b+1,c)
+                        mode.houses[property.color] = (a,b+1,c)
                     else:
-                        houses[property.color] = (a,b,c+1)
+                        mode.houses[property.color] = (a,b,c+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
                         mode.player1.lastTransaction = f'-${property.houseCost}'
@@ -896,12 +684,71 @@ class GameMode(Mode):
                     else:
                         mode.announcements.append('Player 2 bought a house')
                     
-#########################  Rent Price Calculator  ##############################  
+#########################  Rent Price Calculator  ##############################
+
+    def doubleRent(mode, player):
+        #brown properties
+        if mode.mediterranean in player.properties and mode.baltic in player.properties:
+            player.colorBuild.add('brown')
+            mode.mediterranean.double = True
+            mode.baltic.double = True
+        #grey properties
+        if (mode.oriental in player.properties and mode.vermont in player.properties and 
+            mode.connecticut in player.properties):
+            player.colorBuild.add('grey')
+            mode.oriental.double = True
+            mode.vermont.double = True
+            mode.connecticut.double = True
+        #pink properties
+        if (mode.stCharles in player.properties and mode.state in player.properties and 
+            mode.virginia in player.properties):
+            player.colorBuild.add('pink')
+            mode.stCharles.double = True
+            mode.state.double = True
+            mode.virginia.double = True
+        #orange properties
+        if (mode.stJames in player.properties and mode.tennessee in player.properties and 
+            mode.newYork in player.properties):
+            player.colorBuild.add('orange')
+            mode.stJames.double = True
+            mode.tennessee.double = True
+            mode.newYork.double = True
+        #red properties
+        if (mode.kentucky in player.properties and mode.indiana in player.properties and 
+            mode.illinois in player.properties):
+            player.colorBuild.add('red')
+            mode.kentucky.double = True
+            mode.indiana.double = True
+            mode.illinois.double = True
+        #yellow properties
+        if (mode.atlantic in player.properties and mode.vetnor in player.properties and 
+            mode.marvin in player.properties):
+            player.colorBuild.add('yellow')
+            mode.atlantic.double = True
+            mode.vetnor.double = True
+            mode.marvin.double = True
+        #green properties
+        if (mode.pacific in player.properties and mode.northCarolina in player.properties and 
+            mode.pennsylvania in player.properties):
+            player.colorBuild.add('green')
+            mode.pacific.double = True
+            mode.northCarolina.double = True
+            mode.pennsylvania.double = True
+        #blue properties
+        if (mode.parkPlace in player.properties and mode.boardwalk in player.properties):
+            player.colorBuild.add('blue')
+            mode.parkPlace.double = True
+            mode.boardwalk.double = True
+        #utilities
+        if (mode.electric in player.properties and mode.water in player.properties):
+            mode.electric.double = True
+            mode.water.double = True
+            player.utilDouble = True
 
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property, player):
-        mode.player1.doubleRent()
-        mode.player2.doubleRent()
+        mode.doubleRent(mode.player1)
+        mode.doubleRent(mode.player2)
         if property.numHouse == 0:
             if property.color in player.colorBuild:
                 return (property.rent * 2)
@@ -920,8 +767,8 @@ class GameMode(Mode):
 
     #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility, player):
-        mode.player1.doubleRent()
-        mode.player2.doubleRent()
+        mode.doubleRent(mode.player1)
+        mode.doubleRent(mode.player2)
         if player.utilDouble:
             return mode.prevRoll * 10
         else:
@@ -994,6 +841,7 @@ class GameMode(Mode):
     def moveForwardJail(mode, doubleBool):
         if mode.turnCounter % 2 == 0:
             if mode.player1.jailCounter == 3:
+                mode.player1.jailCounter = 0
                 mode.player1.inJail = False
                 mode.player1.money -= 50
                 mode.player1.lastTransaction = f'-$50'
@@ -1007,6 +855,7 @@ class GameMode(Mode):
                 return True
         else:
             if mode.player2.jailCounter == 3:
+                mode.player2.jailCounter = 0
                 mode.player2.money -= 50
                 mode.player2.lastTransaction = f'-$50'
                 return True
@@ -1130,7 +979,7 @@ class GameMode(Mode):
     def landOpponentOrTax(mode):
         if mode.turnCounter % 2 == 0:
             #redefine location as space
-            space = board[mode.player1.position % 40]
+            space = mode.board[mode.player1.position % 40]
             if space in mode.player2.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.player2)
@@ -1166,14 +1015,16 @@ class GameMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
                         mode.announcements.append('Player 1 landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
                     mode.announcements.append(f'Player 1 landed on {space.name}')
            
         else:
             #redefine location as space
-            space = board[mode.player2.position % 40]
+            space = mode.board[mode.player2.position % 40]
             #if where you landed is owned by the opponent, pay rent
             if space in mode.player1.properties:
                 if isinstance(space, Property):
@@ -1209,7 +1060,9 @@ class GameMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Player 2 landed on Chance':
                         mode.announcements.append('Player 2 landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 2 landed on {space.name}':
                     mode.announcements.append(f'Player 2 landed on {space.name}')
@@ -1247,9 +1100,9 @@ class GameMode(Mode):
             
     def actionsAfterRoll(mode):
         mode.landOpponentOrTax()
-        mode.player1.doubleRent()
+        mode.doubleRent(mode.player1)
         mode.player1.propertySort()
-        mode.player2.doubleRent()
+        mode.doubleRent(mode.player2)
         mode.player2.propertySort()
         mode.checkEndGame()
      
@@ -1283,6 +1136,7 @@ class GameMode(Mode):
         if mode.rollCounter == 1:
             mode.turnCounter += 1
             mode.rollCounter = 0
+            mode.communityChanceBool = True
             if len(mode.announcements) == 5:
                 mode.announcements = mode.announcements[1:]
                 if mode.turnCounter % 2 == 1:
@@ -1294,9 +1148,9 @@ class GameMode(Mode):
                     mode.announcements.append('Player 1 ended their turn')
                 else:
                     mode.announcements.append('Player 2 ended their turn')
-            mode.player1.doubleRent()
+            mode.doubleRent(mode.player1)
             mode.player1.propertySort()
-            mode.player2.doubleRent()
+            mode.doubleRent(mode.player2)
             mode.player2.propertySort()
             mode.checkEndGame()
         
@@ -1304,86 +1158,86 @@ class GameMode(Mode):
 
     def propertySelection(mode, x, y):
         if mode.nextSelected:
-            for space in board:
+            for space in mode.board:
                 if isinstance(space,Property):
                     space.selected = False
                     
             #selection from side 1
             if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                mediterranean.selected = True
+                mode.mediterranean.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                baltic.selected = True
+                mode.baltic.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                oriental.selected = True
+                mode.oriental.selected = True
             elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                vermont.selected = True
+                mode.vermont.selected = True
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                connecticut.selected = True
+                mode.connecticut.selected = True
             
             #selection from side 2
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                stCharles.selected = True
+                mode.stCharles.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                state.selected = True
+                mode.state.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
-                virginia.selected = True
+                mode.virginia.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                stJames.selected = True
+                mode.stJames.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                tennessee.selected = True
+                mode.tennessee.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                newYork.selected = True
+                mode.newYork.selected = True
            
             #selection from side 3
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                kentucky.selected = True
+                mode.kentucky.selected = True
             elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                indiana.selected = True
+                mode.indiana.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                illinois.selected = True
+                mode.illinois.selected = True
             elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                atlantic.selected = True
+                mode.atlantic.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                vetnor.selected = True
+                mode.vetnor.selected = True
             elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                marvin.selected = True
+                mode.marvin.selected = True
             
             #selection from side 4
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                pacific.selected = True
+                mode.pacific.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                northCarolina.selected = True
+                mode.northCarolina.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                pennsylvania.selected = True
+                mode.pennsylvania.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                parkPlace.selected = True
+                mode.parkPlace.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                boardwalk.selected = True
+                mode.boardwalk.selected = True
 
             selected = None
-            for space in board:
+            for space in mode.board:
                 if isinstance(space, Property):
                     if space.selected:
                         selected = space
@@ -1436,7 +1290,6 @@ class GameMode(Mode):
 
     def keyPressed(mode, event):
         if event.key == 'h':
-            boardReset()
             mode.app.setActiveMode(mode.app.helpMode)
             
         elif event.key == 'a':
@@ -1451,30 +1304,30 @@ class GameMode(Mode):
             #easy to show pass go 
             #easy to show critical value calculator
             mode.player1.colorBuild.add('grey')
-            mode.player1.properties.append(oriental)
-            mode.player1.properties.append(vermont)
-            mode.player1.properties.append(connecticut)
+            mode.player1.properties.append(mode.oriental)
+            mode.player1.properties.append(mode.vermont)
+            mode.player1.properties.append(mode.connecticut)
             
             mode.player1.colorBuild.add('orange')
-            mode.player1.properties.append(stJames)
-            mode.player1.properties.append(tennessee)
-            mode.player1.properties.append(newYork)
-            mode.player1.doubleRent()
+            mode.player1.properties.append(mode.stJames)
+            mode.player1.properties.append(mode.tennessee)
+            mode.player1.properties.append(mode.newYork)
+            mode.doubleRent(mode.player1)
             
             
-            propertySet.remove(oriental)
-            propertySet.remove(vermont)
-            propertySet.remove(connecticut)
+            mode.propertySet.remove(mode.oriental)
+            mode.propertySet.remove(mode.vermont)
+            mode.propertySet.remove(mode.connecticut)
             
-            propertySet.remove(stJames)
-            propertySet.remove(tennessee)
-            propertySet.remove(newYork)
+            mode.propertySet.remove(mode.stJames)
+            mode.propertySet.remove(mode.tennessee)
+            mode.propertySet.remove(mode.newYork)
             
         elif event.key == 'c':
             mode.player2.colorBuild.add('yellow')
-            mode.player2.properties.append(atlantic)
-            mode.player2.properties.append(vetnor)
-            mode.player2.properties.append(marvin)
+            mode.player2.properties.append(mode.atlantic)
+            mode.player2.properties.append(mode.vetnor)
+            mode.player2.properties.append(mode.marvin)
             
         elif event.key == 'j':
             mode.skipAnimation = True
@@ -1607,8 +1460,8 @@ class GameMode(Mode):
         for property in housePosition:
             if property != None:
                 counter = 0
-                if board[spaceIndex].numHouse == 5:
-                    space = board[spaceIndex]
+                if mode.board[spaceIndex].numHouse == 5:
+                    space = mode.board[spaceIndex]
                     x, y = property[1]
                     if space.color == 'brown' or space.color == 'grey':
                         canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
@@ -1624,7 +1477,7 @@ class GameMode(Mode):
                                                 y + 4.5, fill = 'red')
                 else:
                     for houseCoor in property:
-                        if counter < board[spaceIndex].numHouse and counter < 4:
+                        if counter < mode.board[spaceIndex].numHouse and counter < 4:
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
@@ -1652,7 +1505,7 @@ class GameMode(Mode):
         
         #draw board
         canvas.create_image(600, 350,
-                            image=ImageTk.PhotoImage(mode.board))
+                            image=ImageTk.PhotoImage(mode.boardPic))
                             
         #draw buy property button 
         canvas.create_image(140, 510, image =
@@ -1714,6 +1567,134 @@ class AIMode(Mode):
         mode.secondDepthMax = 0
         mode.endGameCounter = 0
         mode.gameOver = False
+        mode.communityChanceBool = True
+        
+        #BOARD SETUP
+        
+        #instantiated properties        
+        mode.mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+        mode.baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+        mode.oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+        mode.vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+        mode.connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+        mode.stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
+        mode.state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+        mode.virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+        mode.stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
+        mode.tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+        mode.newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+        mode.kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+        mode.indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+        mode.illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+        mode.atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+        mode.vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+        mode.marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+        mode.pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+        mode.northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+        mode.pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+        mode.parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
+        mode.boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
+        
+        #instantiated railroads
+        mode.readingRail = Railroad('Reading R.R.', 23)
+        mode.pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
+        mode.boRail= Railroad('B & O R.R.', 25)
+        mode.shortRail = Railroad('Short Line R.R.', 26)
+        
+        #instantiated utilities
+        mode.electric = Utilities('Electric Company', 150, 27)
+        mode.water = Utilities('Water Works', 150, 28)
+        
+        #instantiated corner spaces
+        mode.passGo = CornerSpace('Pass Go')
+        mode.jailCell = CornerSpace('Jail Cell')
+        mode.freeParking = CornerSpace('Free Parking')
+        mode.goToJail = CornerSpace('Go To Jail')
+        
+        #instantiated community chest / chance spaces
+        mode.communitySide1 = CommunityChance('Community Chest Side 1')
+        mode.communitySide2 = CommunityChance('Community Chest Side 2')
+        mode.communitySide4 = CommunityChance('Community Chest Side 4')
+        mode.chanceSide1 = CommunityChance('Chance Side 1')
+        mode.chanceSide3 = CommunityChance('Chance Side 3')
+        mode.chanceSide4 = CommunityChance('Chance Side 4')
+        
+        #instantiated tax space
+        mode.incomeTax = Tax('Income Tax', 200)
+        mode.luxuryTax = Tax('Luxury Tax', 100)
+        
+        ############################  Board ############################################
+        
+        #putting each space into a list
+        mode.board = []
+        
+        #side1
+        mode.board.append(mode.passGo)
+        mode.board.append(mode.mediterranean)
+        mode.board.append(mode.communitySide1)
+        mode.board.append(mode.baltic)
+        mode.board.append(mode.incomeTax)
+        mode.board.append(mode.readingRail)
+        mode.board.append(mode.oriental)
+        mode.board.append(mode.chanceSide1)
+        mode.board.append(mode.vermont)
+        mode.board.append(mode.connecticut)
+        mode.board.append(mode.jailCell)
+        
+        #side2
+        mode.board.append(mode.stCharles)
+        mode.board.append(mode.electric)
+        mode.board.append(mode.state)
+        mode.board.append(mode.virginia)
+        mode.board.append(mode.pennsylvaniaRail)
+        mode.board.append(mode.stJames)
+        mode.board.append(mode.communitySide2)
+        mode.board.append(mode.tennessee)
+        mode.board.append(mode.newYork)
+        mode.board.append(mode.freeParking)
+        
+        #side3
+        mode.board.append(mode.kentucky)
+        mode.board.append(mode.chanceSide3)
+        mode.board.append(mode.indiana)
+        mode.board.append(mode.illinois)
+        mode.board.append(mode.boRail)
+        mode.board.append(mode.atlantic)
+        mode.board.append(mode.vetnor)
+        mode.board.append(mode.water)
+        mode.board.append(mode.marvin)
+        mode.board.append(mode.goToJail)
+        
+        #side4
+        mode.board.append(mode.pacific)
+        mode.board.append(mode.northCarolina)
+        mode.board.append(mode.communitySide4)
+        mode.board.append(mode.pennsylvania)
+        mode.board.append(mode.shortRail)
+        mode.board.append(mode.chanceSide4)
+        mode.board.append(mode.parkPlace)
+        mode.board.append(mode.luxuryTax)
+        mode.board.append(mode.boardwalk)
+        
+        
+        #property set
+        mode.propertySet = set(mode.board)
+        
+        #this removes the nonproperties from the set 
+        for element in mode.board:
+            if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
+                isinstance(element, CommunityChance)):
+                mode.propertySet.remove(element)
+        
+        mode.houses = dict()
+        mode.houses['brown'] = (0,0)
+        mode.houses['grey'] = (0,0,0)
+        mode.houses['pink'] = (0,0,0)
+        mode.houses['orange'] = (0,0,0)
+        mode.houses['red'] = (0,0,0)
+        mode.houses['yellow'] = (0,0,0)
+        mode.houses['green'] = (0,0,0)
+        mode.houses['blue'] = (0,0)
         
         mode.dice = (1,1)
         
@@ -1734,7 +1715,7 @@ class AIMode(Mode):
         
         #this is the board image that we are uploading
         board = ('board.jpg')
-        mode.board = mode.loadImage(board)
+        mode.boardPic = mode.loadImage(board)
         
         #this is player 1
         player1Piece = 'thimble.png'
@@ -1853,13 +1834,13 @@ class AIMode(Mode):
     def buyProperty(mode):
         #player 1 turn
         if mode.turnCounter % 2 == 0:
-            space = board[mode.player1.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.player1.position % 40]
+            if space in mode.propertySet: 
                 if mode.player1.money >= space.cost:
                     mode.player1.money -= space.cost
                     mode.player1.lastTransaction = f'-${space.cost}'
                     mode.player1.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Player 1 bought {space.name}')
@@ -1867,21 +1848,21 @@ class AIMode(Mode):
                         mode.announcements.append(f'Player 1 bought {space.name}')
         #computer turn
         else:
-            space = board[mode.computer.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.computer.position % 40]
+            if space in mode.propertySet: 
                 if mode.computer.money >= space.cost:
                     mode.computer.money -= space.cost
                     mode.computer.lastTransaction = f'-${space.cost}'
                     mode.computer.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Computer bought {space.name}')
                     elif len(mode.announcements) < 5:
                         mode.announcements.append(f'Computer bought {space.name}')
-        mode.player1.doubleRent()
+        mode.doubleRent(mode.player1)
         mode.player1.propertySort()
-        mode.computer.doubleRent()
+        mode.doubleRent(mode.computer)
         mode.computer.propertySort()
         
     def buyHouseConstraint(mode, property):
@@ -1889,13 +1870,13 @@ class AIMode(Mode):
         if mode.turnCounter % 2 == 0:
             if (property.color in mode.player1.colorBuild and mode.player1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -1904,13 +1885,13 @@ class AIMode(Mode):
         else:
             if (property.color in mode.computer.colorBuild and mode.computer.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -1922,11 +1903,11 @@ class AIMode(Mode):
             if property.numHouse <= 4:
                 property.numHouse += 1
                 if property.color == 'brown' or property.color == 'blue':
-                    a,b = houses[property.color]
+                    a,b = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b)
+                        mode.houses[property.color] = (a+1,b)
                     else:
-                        houses[property.color] = (a, b+1)
+                        mode.houses[property.color] = (a, b+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
                         mode.player1.lastTransaction = f'-${property.houseCost}'
@@ -1934,13 +1915,13 @@ class AIMode(Mode):
                         mode.computer.money -= property.houseCost
                         mode.computer.lastTransaction = f'-${property.houseCost}'
                 else:
-                    a,b,c = houses[property.color]
+                    a,b,c = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b,c)
+                        mode.houses[property.color] = (a+1,b,c)
                     elif property.setRank == 2:
-                        houses[property.color] = (a,b+1,c)
+                        mode.houses[property.color] = (a,b+1,c)
                     else:
-                        houses[property.color] = (a,b,c+1)
+                        mode.houses[property.color] = (a,b,c+1)
                     if property in mode.player1.properties:
                         mode.player1.money -= property.houseCost
                         mode.player1.lastTransaction = f'-${property.houseCost}'
@@ -1961,10 +1942,69 @@ class AIMode(Mode):
                     
 #########################  Rent Price Calculator  ##############################  
 
+    def doubleRent(mode, player):
+        #brown properties
+        if mode.mediterranean in player.properties and mode.baltic in player.properties:
+            player.colorBuild.add('brown')
+            mode.mediterranean.double = True
+            mode.baltic.double = True
+        #grey properties
+        if (mode.oriental in player.properties and mode.vermont in player.properties and 
+            mode.connecticut in player.properties):
+            player.colorBuild.add('grey')
+            mode.oriental.double = True
+            mode.vermont.double = True
+            mode.connecticut.double = True
+        #pink properties
+        if (mode.stCharles in player.properties and mode.state in player.properties and 
+            mode.virginia in player.properties):
+            player.colorBuild.add('pink')
+            mode.stCharles.double = True
+            mode.state.double = True
+            mode.virginia.double = True
+        #orange properties
+        if (mode.stJames in player.properties and mode.tennessee in player.properties and 
+            mode.newYork in player.properties):
+            player.colorBuild.add('orange')
+            mode.stJames.double = True
+            mode.tennessee.double = True
+            mode.newYork.double = True
+        #red properties
+        if (mode.kentucky in player.properties and mode.indiana in player.properties and 
+            mode.illinois in player.properties):
+            player.colorBuild.add('red')
+            mode.kentucky.double = True
+            mode.indiana.double = True
+            mode.illinois.double = True
+        #yellow properties
+        if (mode.atlantic in player.properties and mode.vetnor in player.properties and 
+            mode.marvin in player.properties):
+            player.colorBuild.add('yellow')
+            mode.atlantic.double = True
+            mode.vetnor.double = True
+            mode.marvin.double = True
+        #green properties
+        if (mode.pacific in player.properties and mode.northCarolina in player.properties and 
+            mode.pennsylvania in player.properties):
+            player.colorBuild.add('green')
+            mode.pacific.double = True
+            mode.northCarolina.double = True
+            mode.pennsylvania.double = True
+        #blue properties
+        if (mode.parkPlace in player.properties and mode.boardwalk in player.properties):
+            player.colorBuild.add('blue')
+            mode.parkPlace.double = True
+            mode.boardwalk.double = True
+        #utilities
+        if (mode.electric in player.properties and mode.water in player.properties):
+            mode.electric.double = True
+            mode.water.double = True
+            player.utilDouble = True
+
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property, player):
-        mode.player1.doubleRent()
-        mode.computer.doubleRent()
+        mode.doubleRent(mode.player1)
+        mode.doubleRent(mode.computer)
         if property.numHouse == 0:
             if property.color in player.colorBuild:
                 return (property.rent * 2)
@@ -1983,8 +2023,8 @@ class AIMode(Mode):
 
     #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility, player):
-        mode.player1.doubleRent()
-        mode.computer.doubleRent()
+        mode.doubleRent(mode.player1)
+        mode.doubleRent(mode.computer)
         if player.utilDouble: 
             return mode.prevRoll * 10
         else:
@@ -2057,6 +2097,7 @@ class AIMode(Mode):
     def moveForwardJail(mode, doubleBool):
         if mode.turnCounter % 2 == 0:
             if mode.player1.jailCounter == 3:
+                mode.player1.jailCounter = 0
                 mode.player1.inJail = False
                 mode.player1.money -= 50
                 mode.player1.lastTransaction = f'-$50'
@@ -2070,6 +2111,7 @@ class AIMode(Mode):
                 return True
         else:
             if mode.computer.jailCounter == 3:
+                mode.computer.jailCounter = 0
                 mode.computer.money -= 50
                 mode.computer.lastTransaction = f'-$50'
                 return True
@@ -2195,7 +2237,7 @@ class AIMode(Mode):
     def landOpponentOrTax(mode):
         if mode.turnCounter % 2 == 0:
             #redefine location as space
-            space = board[mode.player1.position % 40]
+            space = mode.board[mode.player1.position % 40]
             if space in mode.computer.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.computer)
@@ -2232,7 +2274,9 @@ class AIMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Player 1 landed on Chance':
                         mode.announcements.append('Player 1 landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Player 1 landed on {space.name}':
                     mode.announcements.append(f'Player 1 landed on {space.name}')
@@ -2240,7 +2284,7 @@ class AIMode(Mode):
 
         else:
             #redefine location as space
-            space = board[mode.computer.position % 40]
+            space = mode.board[mode.computer.position % 40]
             #if where you landed is owned by the opponent, pay rent
             if space in mode.player1.properties:
                 if isinstance(space, Property):
@@ -2278,7 +2322,9 @@ class AIMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Computer landed on Chance':
                         mode.announcements.append('Computer landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Computer landed on {space.name}':
                     mode.announcements.append(f'Computer landed on {space.name}')
@@ -2316,9 +2362,9 @@ class AIMode(Mode):
     def actionsAfterRoll(mode):
         #check pass go
         mode.landOpponentOrTax()
-        mode.player1.doubleRent()
+        mode.doubleRent(mode.player1)
         mode.player1.propertySort()
-        mode.computer.doubleRent()
+        mode.doubleRent(mode.computer)
         mode.computer.propertySort()
         mode.checkEndGame()
         
@@ -2340,6 +2386,7 @@ class AIMode(Mode):
                     
     def endTurn(mode):
         if mode.rollCounter == 1:
+            mode.communityChanceBool = True
             mode.turnCounter += 1
             mode.rollCounter = 0
             if len(mode.announcements) == 5:
@@ -2353,9 +2400,9 @@ class AIMode(Mode):
                     mode.announcements.append('Player 1 ended their turn')
                 else:
                     mode.announcements.append('Computer ended their turn')
-            mode.player1.doubleRent()
+            mode.doubleRent(mode.player1)
             mode.player1.propertySort()
-            mode.computer.doubleRent()
+            mode.doubleRent(mode.computer)
             mode.computer.propertySort()
             mode.checkEndGame()
             if mode.turnCounter % 2 == 1:
@@ -2366,86 +2413,86 @@ class AIMode(Mode):
     def propertySelection(mode, x, y):
         #print(mode.nextSelected)
         if mode.nextSelected:
-            for space in board:
+            for space in mode.board:
                 if isinstance(space,Property):
                     space.selected = False
                     
             #selection from side 1
             if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                mediterranean.selected = True
+                mode.mediterranean.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                baltic.selected = True
+                mode.baltic.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                oriental.selected = True
+                mode.oriental.selected = True
             elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                vermont.selected = True
+                mode.vermont.selected = True
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                connecticut.selected = True
+                mode.connecticut.selected = True
             
             #selection from side 2
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                stCharles.selected = True
+                mode.stCharles.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                state.selected = True
+                mode.state.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
-                virginia.selected = True
+                mode.virginia.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                stJames.selected = True
+                mode.stJames.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                tennessee.selected = True
+                mode.tennessee.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                newYork.selected = True
+                mode.newYork.selected = True
         
             #selection from side 3
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                kentucky.selected = True
+                mode.kentucky.selected = True
             elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                indiana.selected = True
+                mode.indiana.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                illinois.selected = True
+                mode.illinois.selected = True
             elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                atlantic.selected = True
+                mode.atlantic.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                vetnor.selected = True
+                mode.vetnor.selected = True
             elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                marvin.selected = True
+                mode.marvin.selected = True
             
             #selection from side 4
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                pacific.selected = True
+                mode.pacific.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                northCarolina.selected = True
+                mode.northCarolina.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                pennsylvania.selected = True
+                mode.pennsylvania.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                parkPlace.selected = True
+                mode.parkPlace.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                boardwalk.selected = True
+                mode.boardwalk.selected = True
                
             selected = None
-            for space in board:
+            for space in mode.board:
                 if isinstance(space, Property):
                     if space.selected:
                         selected = space
@@ -2549,7 +2596,7 @@ class AIMode(Mode):
                         boughtHouse = houses // 2 + 1
                         return mode.rentHomeCalculator(space, boughtHouse)
                     else:
-                        boughtHouse == houses // 2
+                        boughtHouse == mode.houses // 2
                         if boughtHouse == 0:
                             return space.rent * 2
                         else:
@@ -2621,11 +2668,11 @@ class AIMode(Mode):
         sumExpectedValuePotential = 0
         for n in range(2,13):
             posValue = (position + n) % 40
-            space = board[posValue]
+            space = mode.board[posValue]
             opponentPosValue = mode.player1.position % 40
             boolRange, distance = mode.withinRange(posValue, opponentPosValue)
             if (isinstance(space, Property) or isinstance(space, Utilities) or 
-                isinstance(space, Railroad)) and (space in propertySet):
+                isinstance(space, Railroad)) and (space in mode.propertySet):
                 #if the space we are looking at is both unowned and a space where rent needs to be paid,
                 #we assume that the opponent will buy it and therefore will require us to have some money
                 #we now have to check whether or not it will complete a set, and if it does complete a set
@@ -2639,10 +2686,10 @@ class AIMode(Mode):
     def secondDepthMaxPay(mode, position):
         maxVal = 0
         for n in range(2,13):
-            space = board[ (position + n) % 40 ]
+            space = mode.board[ (position + n) % 40 ]
             expectedPay = mode.expectedValue(space)
             for m in range(2,13):
-                secondSpace = board[(position + n + m) % 40]
+                secondSpace = mode.board[(position + n + m) % 40]
                 secondExpectedPay = mode.expectedValue(secondSpace)
                 if secondExpectedPay + expectedPay < maxVal:
                     maxVal = secondExpectedPay + expectedPay
@@ -2652,7 +2699,7 @@ class AIMode(Mode):
     def sumExpectedValue(mode, position):
         sumExpectedValueResult = 0
         for n in range(2,13):
-            space = board[(position + n) % 40]
+            space = mode.board[(position + n) % 40]
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValue(space))
             
@@ -2662,7 +2709,7 @@ class AIMode(Mode):
     def secondDepthSumExpectedValue(mode):
         sumSecondExpectedValue = 0
         for n in range(2,13):
-            space = board[(mode.computer.position + n) % 40]
+            space = mode.board[(mode.computer.position + n) % 40]
             position = mode.computer.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValue(space) + mode.sumExpectedValue(position)))
@@ -2671,7 +2718,7 @@ class AIMode(Mode):
         
     def AIBuyHouse(mode, color):
         houseBuild = []
-        for space in board:
+        for space in mode.board:
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
@@ -2692,7 +2739,7 @@ class AIMode(Mode):
         mode.computer.critMoney *= -1
         if mode.computer.money > mode.computer.critMoney:
             #buy property if you can and have extra money
-            space = board[mode.computer.position % 40]
+            space = mode.board[mode.computer.position % 40]
             if ((isinstance(space, Property) or isinstance(space, Utilities) or 
                  isinstance(space, Railroad)) and 
                  mode.computer.money - mode.computer.critMoney > space.cost):
@@ -2757,29 +2804,29 @@ class AIMode(Mode):
             #easy to show pass go 
             #easy to show critical value calculator
             mode.player1.colorBuild.add('grey')
-            mode.player1.properties.append(oriental)
-            mode.player1.properties.append(vermont)
-            mode.player1.properties.append(connecticut)
+            mode.player1.properties.append(mode.oriental)
+            mode.player1.properties.append(mode.vermont)
+            mode.player1.properties.append(mode.connecticut)
             
             mode.player1.colorBuild.add('orange')
-            mode.player1.properties.append(stJames)
-            mode.player1.properties.append(tennessee)
-            mode.player1.properties.append(newYork)
-            mode.player1.doubleRent()
+            mode.player1.properties.append(mode.stJames)
+            mode.player1.properties.append(mode.tennessee)
+            mode.player1.properties.append(mode.newYork)
+            mode.doubleRent(mode.player1)
             
-            propertySet.remove(oriental)
-            propertySet.remove(vermont)
-            propertySet.remove(connecticut)
+            mode.propertySet.remove(mode.oriental)
+            mode.propertySet.remove(mode.vermont)
+            mode.propertySet.remove(mode.connecticut)
             
-            propertySet.remove(stJames)
-            propertySet.remove(tennessee)
-            propertySet.remove(newYork)
+            mode.propertySet.remove(mode.stJames)
+            mode.propertySet.remove(mode.tennessee)
+            mode.propertySet.remove(mode.newYork)
             
         elif event.key == 'c':
             mode.computer.colorBuild.add('yellow')
-            mode.computer.properties.append(atlantic)
-            mode.computer.properties.append(vetnor)
-            mode.computer.properties.append(marvin)
+            mode.computer.properties.append(mode.atlantic)
+            mode.computer.properties.append(mode.vetnor)
+            mode.computer.properties.append(mode.marvin)
             
         elif event.key == 'j':
             mode.skipAnimation = True
@@ -2917,8 +2964,8 @@ class AIMode(Mode):
         for property in housePosition:
             if property != None:
                 counter = 0
-                if board[spaceIndex].numHouse == 5:
-                    space = board[spaceIndex]
+                if mode.board[spaceIndex].numHouse == 5:
+                    space = mode.board[spaceIndex]
                     x, y = property[1]
                     if space.color == 'brown' or space.color == 'grey':
                         canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
@@ -2934,7 +2981,7 @@ class AIMode(Mode):
                                                 y + 4.5, fill = 'red')
                 else:
                     for houseCoor in property:
-                        if counter < board[spaceIndex].numHouse and counter < 4:
+                        if counter < mode.board[spaceIndex].numHouse and counter < 4:
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
@@ -2983,7 +3030,7 @@ class AIMode(Mode):
         
         #draw board
         canvas.create_image(600, 350,
-                            image=ImageTk.PhotoImage(mode.board))
+                            image=ImageTk.PhotoImage(mode.boardPic))
                             
         #draw buy property button 
         canvas.create_image(140, 510, image =
@@ -3046,7 +3093,135 @@ class AIAIMode(Mode):
         mode.secondDepthMax = 0
         mode.endGameCounter = 0
         mode.gameOver = False
-        mode.turnLimit = 100
+        mode.communityChanceBool = True
+        mode.turnLimit = 10000
+        
+        #BOARD SETUP
+        
+        #instantiated properties        
+        mode.mediterranean = Property('Mediterranean Ave', 60, 2, 10, 30, 90, 160, 250, 50, 'brown',1, 1)
+        mode.baltic = Property('Baltic Ave', 60, 4, 20, 60, 180, 320, 450, 50, 'brown', 2, 2)
+        mode.oriental = Property('Oriental Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 1, 3)
+        mode.vermont = Property('Vermont Ave', 100, 6, 30, 90, 270, 400, 550, 50, 'grey', 2, 4)
+        mode.connecticut = Property('Connecticut Ave', 120, 8, 40, 100, 300, 450, 600, 50, 'grey', 3, 5)
+        mode.stCharles = Property('St. Charles Place', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 1, 6)
+        mode.state = Property('State Ave', 140, 10, 50, 150, 450, 625, 750, 100, 'pink', 2, 7)
+        mode.virginia = Property('Virginia Ave', 160, 12, 60, 180, 500, 700, 900, 100, 'pink', 3, 8)
+        mode.stJames = Property('St. James Place', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 1, 9)
+        mode.tennessee = Property('Tennessee Ave', 180, 14, 70, 200, 550, 750, 950, 100, 'orange', 2, 10)
+        mode.newYork = Property('New York Ave', 200, 16, 80, 220, 600, 800, 1000, 100, 'orange', 3, 11)
+        mode.kentucky = Property('Kentucky Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 1, 12)
+        mode.indiana = Property('Indiana Ave', 220, 18, 90, 250, 700, 875, 1050, 150, 'red', 2, 13)
+        mode.illinois = Property('Illinois Ave', 240, 20, 100, 300, 750, 925, 1100, 150, 'red', 3, 14)
+        mode.atlantic = Property('Atlantic Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 1, 15)
+        mode.vetnor = Property('Vetnor Ave', 260, 22, 110, 330, 800, 975, 1150, 150, 'yellow', 2, 16)
+        mode.marvin = Property('Marvin Gardens', 280, 24, 120, 360, 850, 1025, 1200, 150, 'yellow', 3,17)
+        mode.pacific = Property('Pacific Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 1, 18)
+        mode.northCarolina = Property('N. Carolina Ave', 300, 26, 130, 390, 900, 1100, 1275, 200, 'green', 2, 19)
+        mode.pennsylvania = Property('Penn Ave', 320, 28, 150, 450, 1000, 1200, 1400, 200, 'green', 3, 20)
+        mode.parkPlace = Property('Park Place',350, 35, 175, 500, 1100, 1300, 1500, 200, 'blue', 1, 21)
+        mode.boardwalk = Property('Boardwalk', 400, 50, 200, 600, 1400, 1700, 2000, 200, 'blue', 2, 22)
+        
+        #instantiated railroads
+        mode.readingRail = Railroad('Reading R.R.', 23)
+        mode.pennsylvaniaRail = Railroad('Pennsylvania R.R.', 24)
+        mode.boRail= Railroad('B & O R.R.', 25)
+        mode.shortRail = Railroad('Short Line R.R.', 26)
+        
+        #instantiated utilities
+        mode.electric = Utilities('Electric Company', 150, 27)
+        mode.water = Utilities('Water Works', 150, 28)
+        
+        #instantiated corner spaces
+        mode.passGo = CornerSpace('Pass Go')
+        mode.jailCell = CornerSpace('Jail Cell')
+        mode.freeParking = CornerSpace('Free Parking')
+        mode.goToJail = CornerSpace('Go To Jail')
+        
+        #instantiated community chest / chance spaces
+        mode.communitySide1 = CommunityChance('Community Chest Side 1')
+        mode.communitySide2 = CommunityChance('Community Chest Side 2')
+        mode.communitySide4 = CommunityChance('Community Chest Side 4')
+        mode.chanceSide1 = CommunityChance('Chance Side 1')
+        mode.chanceSide3 = CommunityChance('Chance Side 3')
+        mode.chanceSide4 = CommunityChance('Chance Side 4')
+        
+        #instantiated tax space
+        mode.incomeTax = Tax('Income Tax', 200)
+        mode.luxuryTax = Tax('Luxury Tax', 100)
+        
+        ############################  Board ############################################
+        
+        #putting each space into a list
+        mode.board = []
+        
+        #side1
+        mode.board.append(mode.passGo)
+        mode.board.append(mode.mediterranean)
+        mode.board.append(mode.communitySide1)
+        mode.board.append(mode.baltic)
+        mode.board.append(mode.incomeTax)
+        mode.board.append(mode.readingRail)
+        mode.board.append(mode.oriental)
+        mode.board.append(mode.chanceSide1)
+        mode.board.append(mode.vermont)
+        mode.board.append(mode.connecticut)
+        mode.board.append(mode.jailCell)
+        
+        #side2
+        mode.board.append(mode.stCharles)
+        mode.board.append(mode.electric)
+        mode.board.append(mode.state)
+        mode.board.append(mode.virginia)
+        mode.board.append(mode.pennsylvaniaRail)
+        mode.board.append(mode.stJames)
+        mode.board.append(mode.communitySide2)
+        mode.board.append(mode.tennessee)
+        mode.board.append(mode.newYork)
+        mode.board.append(mode.freeParking)
+        
+        #side3
+        mode.board.append(mode.kentucky)
+        mode.board.append(mode.chanceSide3)
+        mode.board.append(mode.indiana)
+        mode.board.append(mode.illinois)
+        mode.board.append(mode.boRail)
+        mode.board.append(mode.atlantic)
+        mode.board.append(mode.vetnor)
+        mode.board.append(mode.water)
+        mode.board.append(mode.marvin)
+        mode.board.append(mode.goToJail)
+        
+        #side4
+        mode.board.append(mode.pacific)
+        mode.board.append(mode.northCarolina)
+        mode.board.append(mode.communitySide4)
+        mode.board.append(mode.pennsylvania)
+        mode.board.append(mode.shortRail)
+        mode.board.append(mode.chanceSide4)
+        mode.board.append(mode.parkPlace)
+        mode.board.append(mode.luxuryTax)
+        mode.board.append(mode.boardwalk)
+        
+        
+        #property set
+        mode.propertySet = set(mode.board)
+        
+        #this removes the nonproperties from the set 
+        for element in mode.board:
+            if (isinstance(element, Tax) or isinstance(element, CornerSpace) or
+                isinstance(element, CommunityChance)):
+                mode.propertySet.remove(element)
+        
+        mode.houses = dict()
+        mode.houses['brown'] = (0,0)
+        mode.houses['grey'] = (0,0,0)
+        mode.houses['pink'] = (0,0,0)
+        mode.houses['orange'] = (0,0,0)
+        mode.houses['red'] = (0,0,0)
+        mode.houses['yellow'] = (0,0,0)
+        mode.houses['green'] = (0,0,0)
+        mode.houses['blue'] = (0,0)
         
         mode.dice = (1,1)
         
@@ -3067,7 +3242,7 @@ class AIAIMode(Mode):
         
         #this is the board image that we are uploading
         board = ('board.jpg')
-        mode.board = mode.loadImage(board)
+        mode.boardPic = mode.loadImage(board)
         
         #this is computer1
         computer1Piece = 'thimble.png'
@@ -3178,13 +3353,13 @@ class AIAIMode(Mode):
     def buyProperty(mode):
         #computer1 turn
         if mode.turnCounter % 2 == 0:
-            space = board[mode.computer1.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.computer1.position % 40]
+            if space in mode.propertySet: 
                 if mode.computer1.money >= space.cost:
                     mode.computer1.money -= space.cost
                     mode.computer1.lastTransaction = f'-${space.cost}'
                     mode.computer1.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Comp1 bought {space.name}')
@@ -3192,21 +3367,21 @@ class AIAIMode(Mode):
                         mode.announcements.append(f'Comp1 bought {space.name}')
         #computer2 turn
         else:
-            space = board[mode.computer2.position % 40]
-            if space in propertySet: 
+            space = mode.board[mode.computer2.position % 40]
+            if space in mode.propertySet: 
                 if mode.computer2.money >= space.cost:
                     mode.computer2.money -= space.cost
                     mode.computer2.lastTransaction = f'-${space.cost}'
                     mode.computer2.properties.append(space)
-                    propertySet.remove(space)
+                    mode.propertySet.remove(space)
                     if len(mode.announcements) == 5:
                         mode.announcements = mode.announcements[1:]
                         mode.announcements.append(f'Comp2 bought {space.name}')
                     elif len(mode.announcements) < 5:
                         mode.announcements.append(f'Comp2 bought {space.name}')
-        mode.computer1.doubleRent()
+        mode.doubleRent(mode.computer1)
         mode.computer1.propertySort()
-        mode.computer2.doubleRent()
+        mode.doubleRent(mode.computer2)
         mode.computer2.propertySort()
         
     def buyHouseConstraint(mode, property):
@@ -3214,13 +3389,13 @@ class AIAIMode(Mode):
         if mode.turnCounter % 2 == 0:
             if (property.color in mode.computer1.colorBuild and mode.computer1.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -3230,13 +3405,13 @@ class AIAIMode(Mode):
         else:
             if (property.color in mode.computer2.colorBuild and mode.computer2.money >= property.houseCost):
                 if property.color == 'brown' or property.color == 'blue':
-                    a, b = houses[property.color]
+                    a, b = mode.houses[property.color]
                     if property.numHouse == min(a,b):
                         return True
                     else:
                         return False
                 else:
-                    a, b, c = houses[property.color]
+                    a, b, c = mode.houses[property.color]
                     if property.numHouse == min(a,b,c):
                         return True
                     else:
@@ -3248,11 +3423,11 @@ class AIAIMode(Mode):
             if property.numHouse <= 4:
                 property.numHouse += 1
                 if property.color == 'brown' or property.color == 'blue':
-                    a,b = houses[property.color]
+                    a,b = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b)
+                        mode.houses[property.color] = (a+1,b)
                     else:
-                        houses[property.color] = (a, b+1)
+                        mode.houses[property.color] = (a, b+1)
                     if property in mode.computer1.properties:
                         mode.computer1.money -= property.houseCost
                         mode.computer1.lastTransaction = f'-${property.houseCost}'
@@ -3260,13 +3435,13 @@ class AIAIMode(Mode):
                         mode.computer2.money -= property.houseCost
                         mode.computer2.lastTransaction = f'-${property.houseCost}'
                 else:
-                    a,b,c = houses[property.color]
+                    a,b,c = mode.houses[property.color]
                     if property.setRank == 1:
-                        houses[property.color] = (a+1,b,c)
+                        mode.houses[property.color] = (a+1,b,c)
                     elif property.setRank == 2:
-                        houses[property.color] = (a,b+1,c)
+                        mode.houses[property.color] = (a,b+1,c)
                     else:
-                        houses[property.color] = (a,b,c+1)
+                        mode.houses[property.color] = (a,b,c+1)
                     if property in mode.computer1.properties:
                         mode.computer1.money -= property.houseCost
                         mode.computer1.lastTransaction = f'-${property.houseCost}'
@@ -3287,10 +3462,69 @@ class AIAIMode(Mode):
 
 #########################  Rent Price Calculator  ##############################  
 
+    def doubleRent(mode, player):
+        #brown properties
+        if mode.mediterranean in player.properties and mode.baltic in player.properties:
+            player.colorBuild.add('brown')
+            mode.mediterranean.double = True
+            mode.baltic.double = True
+        #grey properties
+        if (mode.oriental in player.properties and mode.vermont in player.properties and 
+            mode.connecticut in player.properties):
+            player.colorBuild.add('grey')
+            mode.oriental.double = True
+            mode.vermont.double = True
+            mode.connecticut.double = True
+        #pink properties
+        if (mode.stCharles in player.properties and mode.state in player.properties and 
+            mode.virginia in player.properties):
+            player.colorBuild.add('pink')
+            mode.stCharles.double = True
+            mode.state.double = True
+            mode.virginia.double = True
+        #orange properties
+        if (mode.stJames in player.properties and mode.tennessee in player.properties and 
+            mode.newYork in player.properties):
+            player.colorBuild.add('orange')
+            mode.stJames.double = True
+            mode.tennessee.double = True
+            mode.newYork.double = True
+        #red properties
+        if (mode.kentucky in player.properties and mode.indiana in player.properties and 
+            mode.illinois in player.properties):
+            player.colorBuild.add('red')
+            mode.kentucky.double = True
+            mode.indiana.double = True
+            mode.illinois.double = True
+        #yellow properties
+        if (mode.atlantic in player.properties and mode.vetnor in player.properties and 
+            mode.marvin in player.properties):
+            player.colorBuild.add('yellow')
+            mode.atlantic.double = True
+            mode.vetnor.double = True
+            mode.marvin.double = True
+        #green properties
+        if (mode.pacific in player.properties and mode.northCarolina in player.properties and 
+            mode.pennsylvania in player.properties):
+            player.colorBuild.add('green')
+            mode.pacific.double = True
+            mode.northCarolina.double = True
+            mode.pennsylvania.double = True
+        #blue properties
+        if (mode.parkPlace in player.properties and mode.boardwalk in player.properties):
+            player.colorBuild.add('blue')
+            mode.parkPlace.double = True
+            mode.boardwalk.double = True
+        #utilities
+        if (mode.electric in player.properties and mode.water in player.properties):
+            mode.electric.double = True
+            mode.water.double = True
+            player.utilDouble = True
+
     #this function takes in a property and returns how much to pay
     def rentPriceProperty(mode, property, player):
-        mode.computer1.doubleRent()
-        mode.computer2.doubleRent()
+        mode.doubleRent(mode.computer1)
+        mode.doubleRent(mode.computer2)
         if property.numHouse == 0:
             if property.color in player.colorBuild:
                 return (property.rent * 2)
@@ -3309,8 +3543,8 @@ class AIAIMode(Mode):
 
     #this function takes in a utility and returns how much to pay
     def rentPriceUtility(mode, utility, player):
-        mode.computer1.doubleRent()
-        mode.computer2.doubleRent()
+        mode.doubleRent(mode.computer1)
+        mode.doubleRent(mode.computer2)
         if player.utilDouble: 
             return mode.prevRoll * 10
         else:
@@ -3383,6 +3617,7 @@ class AIAIMode(Mode):
     def moveForwardJail(mode, doubleBool):
         if mode.turnCounter % 2 == 0:
             if mode.computer1.jailCounter == 3:
+                mode.computer1.jailCounter = 0
                 mode.computer1.inJail = False
                 mode.computer1.money -= 50
                 mode.computer1.lastTransaction = f'-$50'
@@ -3396,6 +3631,7 @@ class AIAIMode(Mode):
                 return True
         else:
             if mode.computer2.jailCounter == 3:
+                mode.computer2.jailCounter = 0
                 mode.computer2.money -= 50
                 mode.computer2.lastTransaction = f'-$50'
                 return True
@@ -3526,7 +3762,7 @@ class AIAIMode(Mode):
     def landOpponentOrTax(mode):
         if mode.turnCounter % 2 == 0:
             #redefine location as space
-            space = board[mode.computer1.position % 40]
+            space = mode.board[mode.computer1.position % 40]
             if space in mode.computer2.properties:
                 if isinstance(space, Property):
                     rent = mode.rentPriceProperty(space, mode.computer2)
@@ -3562,7 +3798,9 @@ class AIAIMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Comp1 landed on Chance':
                         mode.announcements.append('Comp1 landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Comp1 landed on {space.name}':
                     mode.announcements.append(f'Comp1 landed on {space.name}')
@@ -3571,7 +3809,7 @@ class AIAIMode(Mode):
 
         else:
             #redefine location as space
-            space = board[mode.computer2.position % 40]
+            space = mode.board[mode.computer2.position % 40]
             #if where you landed is owned by the opponent, pay rent
             if space in mode.computer1.properties:
                 if isinstance(space, Property):
@@ -3607,7 +3845,9 @@ class AIAIMode(Mode):
                 else:
                     if mode.announcements[announcementLength - 1] != 'Comp2 landed on Chance':
                         mode.announcements.append('Comp2 landed on Chance')
-                mode.landOnCommunityChance()
+                if mode.communityChanceBool:
+                    mode.landOnCommunityChance()
+                    mode.communityChanceBool = False
             else:
                 if mode.announcements[announcementLength - 1] != f'Comp2 landed on {space.name}':
                     mode.announcements.append(f'Comp2 landed on {space.name}')
@@ -3644,11 +3884,14 @@ class AIAIMode(Mode):
             
     def actionsAfterRoll(mode):
         mode.landOpponentOrTax()
-        mode.computer1.doubleRent()
+        mode.doubleRent(mode.computer1)
         mode.computer1.propertySort()
-        mode.computer2.doubleRent()
+        mode.doubleRent(mode.computer2)
         mode.computer2.propertySort()
         mode.checkEndGame()
+        space = mode.board[mode.computer1.position]
+        if isinstance(space, Property) or isinstance(space, Railroad) or isinstance(space,Utility):
+            mode.buyProperty()
         
     def checkEndGame(mode):
         global winner
@@ -3669,6 +3912,7 @@ class AIAIMode(Mode):
     def nextTurn(mode):
         if mode.rollCounter == 1 and mode.turnCounter < mode.turnLimit:
             mode.communityChanceMessage = ''
+            mode.communityChanceBool = True
             mode.turnCounter += 1
             mode.rollCounter = 0
             if len(mode.announcements) == 5:
@@ -3682,10 +3926,11 @@ class AIAIMode(Mode):
                     mode.announcements.append('Comp1 ended their turn')
                 else:
                     mode.announcements.append('Comp2 ended their turn')
-            mode.computer1.doubleRent()
+            mode.doubleRent(mode.computer1)
             mode.computer1.propertySort()
-            mode.computer2.doubleRent()
+            mode.doubleRent(mode.computer2)
             mode.computer2.propertySort()
+            mode.endScreenTimer()
             mode.checkEndGame()
             if mode.turnCounter % 2 == 1:
                 mode.monopolyAIComputer2()
@@ -3697,86 +3942,86 @@ class AIAIMode(Mode):
     def propertySelection(mode, x, y):
         #print(mode.nextSelected)
         if mode.nextSelected:
-            for space in board:
+            for space in mode.board:
                 if isinstance(space,Property):
                     space.selected = False
                     
             #selection from side 1
             if (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                mediterranean.selected = True
+                mode.mediterranean.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                baltic.selected = True
+                mode.baltic.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                oriental.selected = True
+                mode.oriental.selected = True
             elif (x >= 442.5 - 26.25 and x <= 442.5 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                vermont.selected = True
+                mode.vermont.selected = True
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 628 - 42.5 and y <= 628 + 42.5):
-                connecticut.selected = True
+                mode.connecticut.selected = True
             
             #selection from side 2
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                stCharles.selected = True
+                mode.stCharles.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                state.selected = True
+                mode.state.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 402.5 - 26.25 and y <= 402.5 + 26.25):
-                virginia.selected = True
+                mode.virginia.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                stJames.selected = True
+                mode.stJames.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                tennessee.selected = True
+                mode.tennessee.selected = True
             elif (x >= 320 - 42.5 and x <= 320 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                newYork.selected = True
+                mode.newYork.selected = True
         
             #selection from side 3
             elif (x >= 390 - 26.25 and x <= 390 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                kentucky.selected = True
+                mode.kentucky.selected = True
             elif (x >= 495 - 26.25 and x <= 495 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                indiana.selected = True
+                mode.indiana.selected = True
             elif (x >= 547.5 - 26.25 and x <= 547.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                illinois.selected = True
+                mode.illinois.selected = True
             elif (x >= 652.5 - 26.25 and x <= 652.5 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                atlantic.selected = True
+                mode.atlantic.selected = True
             elif (x >= 705 - 26.25 and x <= 705 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                vetnor.selected = True
+                mode.vetnor.selected = True
             elif (x >= 810 - 26.25 and x <= 810 + 26.25 and 
                 y >= 70 - 42.5 and y <= 70 + 42.5):
-                marvin.selected = True
+                mode.marvin.selected = True
             
             #selection from side 4
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 140 - 26.25 and y <= 140 + 26.25):
-                pacific.selected = True
+                mode.pacific.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 192.5 - 26.25 and y <= 192.5 + 26.25):
-                northCarolina.selected = True
+                mode.northCarolina.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 297.5 - 26.25 and y <= 297.5 + 26.25):
-                pennsylvania.selected = True
+                mode.pennsylvania.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 455 - 26.25 and y <= 455 + 26.25):
-                parkPlace.selected = True
+                mode.parkPlace.selected = True
             elif (x >= 878 - 42.5 and x <= 878 + 42.5 and 
                 y >= 560 - 26.25 and y <= 560 + 26.25):
-                boardwalk.selected = True
+                mode.boardwalk.selected = True
                
             selected = None
-            for space in board:
+            for space in mode.board:
                 if isinstance(space, Property):
                     if space.selected:
                         selected = space
@@ -4057,11 +4302,11 @@ class AIAIMode(Mode):
         sumExpectedValuePotential = 0
         for n in range(2,13):
             posValue = (position + n) % 40
-            space = board[posValue]
+            space = mode.board[posValue]
             opponentPosValue = mode.computer1.position % 40
             boolRange, distance = mode.withinRange(posValue, opponentPosValue)
             if (isinstance(space, Property) or isinstance(space, Utilities) or 
-                isinstance(space, Railroad)) and (space in propertySet):
+                isinstance(space, Railroad)) and (space in mode.propertySet):
                 #if the space we are looking at is both unowned and a space where rent needs to be paid,
                 #we assume that the opponent will buy it and therefore will require us to have some money
                 #we now have to check whether or not it will complete a set, and if it does complete a set
@@ -4075,11 +4320,11 @@ class AIAIMode(Mode):
         sumExpectedValuePotential = 0
         for n in range(2,13):
             posValue = (position + n) % 40
-            space = board[posValue]
+            space = mode.board[posValue]
             opponentPosValue = mode.computer2.position % 40
             boolRange, distance = mode.withinRange(posValue, opponentPosValue)
             if (isinstance(space, Property) or isinstance(space, Utilities) or 
-                isinstance(space, Railroad)) and (space in propertySet):
+                isinstance(space, Railroad)) and (space in mode.propertySet):
                 #if the space we are looking at is both unowned and a space where rent needs to be paid,
                 #we assume that the opponent will buy it and therefore will require us to have some money
                 #we now have to check whether or not it will complete a set, and if it does complete a set
@@ -4092,7 +4337,7 @@ class AIAIMode(Mode):
     def sumExpectedValueComputer2(mode, position):
         sumExpectedValueResult = 0
         for n in range(2,13):
-            space = board[(position + n) % 40]
+            space = mode.board[(position + n) % 40]
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValueComputer2(space))
         sumExpectedValueResult -= mode.potentialLossFromOpponentComputer2(position)
@@ -4101,7 +4346,7 @@ class AIAIMode(Mode):
     def sumExpectedValueComputer1(mode, position):
         sumExpectedValueResult = 0
         for n in range(2,13):
-            space = board[(position + n) % 40]
+            space = mode.board[(position + n) % 40]
             sumExpectedValueResult += (mode.probabilityCalculator(n) * 
                                        mode.expectedValueComputer1(space))
         sumExpectedValueResult -= mode.potentialLossFromOpponentComputer1(position)
@@ -4110,7 +4355,7 @@ class AIAIMode(Mode):
     def secondDepthSumExpectedValueComputer2(mode):
         sumSecondExpectedValue = 0
         for n in range(2,13):
-            space = board[(mode.computer2.position + n) % 40]
+            space = mode.board[(mode.computer2.position + n) % 40]
             position = mode.computer2.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValueComputer2(space) + mode.sumExpectedValueComputer2(position)))
@@ -4120,7 +4365,7 @@ class AIAIMode(Mode):
     def secondDepthSumExpectedValueComputer1(mode):
         sumSecondExpectedValue = 0
         for n in range(2,13):
-            space = board[(mode.computer1.position + n) % 40]
+            space = mode.board[(mode.computer1.position + n) % 40]
             position = mode.computer1.position + n
             sumSecondExpectedValue += (mode.probabilityCalculator(n) * 
                         (mode.expectedValueComputer1(space) + mode.sumExpectedValueComputer1(position)))
@@ -4130,10 +4375,10 @@ class AIAIMode(Mode):
     def secondDepthMaxPayComputer2(mode, position):
         maxVal = 0
         for n in range(2,13):
-            space = board[ (position + n) % 40 ]
+            space = mode.board[ (position + n) % 40 ]
             expectedPay = mode.expectedValueComputer2(space)
             for m in range(2,13):
-                secondSpace = board[(position + n + m) % 40]
+                secondSpace = mode.board[(position + n + m) % 40]
                 secondExpectedPay = mode.expectedValueComputer2(secondSpace)
                 if secondExpectedPay + expectedPay < maxVal:
                     maxVal = secondExpectedPay + expectedPay
@@ -4142,10 +4387,10 @@ class AIAIMode(Mode):
     def secondDepthMaxPayComputer1(mode, position):
         maxVal = 0
         for n in range(2,13):
-            space = board[ (position + n) % 40 ]
+            space = mode.board[ (position + n) % 40 ]
             expectedPay = mode.expectedValueComputer1(space)
             for m in range(2,13):
-                secondSpace = board[(position + n + m) % 40]
+                secondSpace = mode.board[(position + n + m) % 40]
                 secondExpectedPay = mode.expectedValueComputer1(secondSpace)
                 if secondExpectedPay + expectedPay < maxVal:
                     maxVal = secondExpectedPay + expectedPay
@@ -4153,7 +4398,7 @@ class AIAIMode(Mode):
         
     def AIBuyHouseComputer2(mode, color):
         houseBuild = []
-        for space in board:
+        for space in mode.board:
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
@@ -4164,7 +4409,7 @@ class AIAIMode(Mode):
                     
     def AIBuyHouseComputer1(mode, color):
         houseBuild = []
-        for space in board:
+        for space in mode.board:
             if isinstance(space, Property):
                 if space.color == color:
                     houseBuild.append(space)
@@ -4185,7 +4430,7 @@ class AIAIMode(Mode):
         mode.computer2.critMoney *= -1
         if mode.computer2.money > mode.computer2.critMoney:
             #buy property if you can and have extra money
-            space = board[mode.computer2.position % 40]
+            space = mode.board[mode.computer2.position % 40]
             if ((isinstance(space, Property) or isinstance(space, Utilities) or 
                  isinstance(space, Railroad)) and 
                  mode.computer2.money - mode.computer2.critMoney > space.cost):
@@ -4207,7 +4452,7 @@ class AIAIMode(Mode):
         mode.computer1.critMoney *= -1
         if mode.computer1.money > mode.computer1.critMoney:
             #buy property if you can and have extra money
-            space = board[mode.computer1.position % 40]
+            space = mode.board[mode.computer1.position % 40]
             if ((isinstance(space, Property) or isinstance(space, Utilities) or 
                  isinstance(space, Railroad)) and 
                  mode.computer1.money - mode.computer1.critMoney > space.cost):
@@ -4374,8 +4619,8 @@ class AIAIMode(Mode):
         for property in housePosition:
             if property != None:
                 counter = 0
-                if board[spaceIndex].numHouse == 5:
-                    space = board[spaceIndex]
+                if mode.board[spaceIndex].numHouse == 5:
+                    space = mode.board[spaceIndex]
                     x, y = property[1]
                     if space.color == 'brown' or space.color == 'grey':
                         canvas.create_rectangle(x - 4.5, y - 4.5, x + 16.5, 
@@ -4391,7 +4636,7 @@ class AIAIMode(Mode):
                                                 y + 4.5, fill = 'red')
                 else:
                     for houseCoor in property:
-                        if counter < board[spaceIndex].numHouse and counter < 4:
+                        if counter < mode.board[spaceIndex].numHouse and counter < 4:
                             x, y = houseCoor
                             canvas.create_rectangle(x-4.5,y-4.5,x+4.5,y+4.5,fill = 'green')
                         counter += 1
@@ -4419,7 +4664,7 @@ class AIAIMode(Mode):
         
         #draw board
         canvas.create_image(600, 350,
-                            image=ImageTk.PhotoImage(mode.board))
+                            image=ImageTk.PhotoImage(mode.boardPic))
                             
         #draw next turn button
         canvas.create_image(140, 500, image = 
